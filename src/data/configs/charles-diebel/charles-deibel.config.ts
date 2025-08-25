@@ -8,7 +8,7 @@ export const charlesDeibelConfig = {
     birthPlace: "Columbus, Franklin, Ohio, United States",
     birthDate: "2 February 1928",
     deathDate: "12 August 2016",
-    imageUrl: "./src/images/charlie-deibel.jpg",
+    imageUrl: "./images/charlie-deibel.jpg",
     parents: [
         {
             name: "Walter John Diebel",

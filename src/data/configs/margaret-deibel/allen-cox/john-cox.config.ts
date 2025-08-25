@@ -5,7 +5,7 @@ export const johnCoxConfig = {
     deathPlate: "Gaylord, Otsego, Michigan, United States",
     birthDate: "6 June 1828",
     deathDate: "1 December 1897",
-    imageUrl: "./src/images/john-cox-sr.jpg",
+    imageUrl: "./images/john-cox-sr.jpg",
     parents: [
         {
             name: "Mary Ann Ward",

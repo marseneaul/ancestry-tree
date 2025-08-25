@@ -8,7 +8,7 @@ export const charlesAndrewDiebelConfig = {
     deathPlace: "Licking, Ohio, United States",
     birthDate: "7 July 1860",
     deathDate: "24 September 1920",
-    imageUrl: "./src/images/charles-andrew-diebel.jpg",
+    imageUrl: "./images/charles-andrew-diebel.jpg",
     parents: [
         {
             name: "Crescentia Crenenisa Volk",

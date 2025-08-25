@@ -34,7 +34,7 @@ export const jacobMichaelFranksConfig = {
                     deathPlace: "German Township, Fayette, Pennsylvania, United States",
                     birthDate: "16 January 1725",
                     deathDate: "27 December 1792",
-                    imageUrl: "./src/images/johann-michael-franks.jpg",
+                    imageUrl: "./images/johann-michael-franks.jpg",
                     parents: []
                 }
             ]

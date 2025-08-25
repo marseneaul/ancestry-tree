@@ -8,7 +8,7 @@ export const emmaSaintJohnConfig = {
     deathPlace: "Cheboygan, Cheboygan, Michigan, United States",
     birthDate: "20 October 1883",
     deathDate: "8 October 1962",
-    imageUrl: "./src/images/emma-saint-john.jpg",
+    imageUrl: "./images/emma-saint-john.jpg",
     parents: [
         {
             name: "Laura Louisa Sharkey",

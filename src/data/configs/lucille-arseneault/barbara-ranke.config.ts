@@ -8,7 +8,7 @@ export const barbaraRankeConfig = {
     deathPlace: "UNKNOWN",
     birthDate: "20 January 1864",
     deathDate: "1922",
-    imageUrl: "./src/images/barbara-ranke.jpg",
+    imageUrl: "./images/barbara-ranke.jpg",
     parents: [
         {
             name: "Maria Margaretha Zehnder",

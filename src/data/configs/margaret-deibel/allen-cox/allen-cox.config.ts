@@ -9,7 +9,7 @@ export const allenCoxConfig = {
     deathPlace: "Onaway, Presque Isle, Michigan, United States",
     birthDate: "22 January 1882",
     deathDate: "23 August 1906",
-    imageUrl: "./src/images/allen-cox.jpg",
+    imageUrl: "./images/allen-cox.jpg",
     parents: [
         {
             name: "Huldah Franks",
@@ -36,7 +36,7 @@ export const allenCoxConfig = {
             deathPlace: "Onaway, Presque Isle, Michigan, United States",
             birthDate: "27 July 1860",
             deathDate: "8 May 1923",
-            imageUrl: "./src/images/james-cox.jpg",
+            imageUrl: "./images/james-cox.jpg",
             parents: [
                 {
                     name: "Ellen Duffy",
@@ -45,7 +45,7 @@ export const allenCoxConfig = {
                     deathPlace: "Pontiac, Oakland, Michigan, United States",
                     birthDate: "25 July 1831",
                     deathDate: "21 May 1912",
-                    imageUrl: "./src/images/ellen-duffy.jpg",
+                    imageUrl: "./images/ellen-duffy.jpg",
                     parents: [
                         {
                             name: "Mary Christy",

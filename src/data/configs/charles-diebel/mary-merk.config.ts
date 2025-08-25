@@ -6,7 +6,7 @@ export const maryMerkConfig = {
     deathPlace: "Columbus, Franklin, Ohio, United States",
     birthDate: "8 August 1867",
     deathDate: "5 March 1946",
-    imageUrl: "./src/images/mary-victoria-merk.jpg",
+    imageUrl: "./images/mary-victoria-merk.jpg",
     parents: [
         {
             name: "Barbara Pfeiffer",

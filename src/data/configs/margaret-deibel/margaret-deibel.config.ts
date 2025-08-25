@@ -16,7 +16,7 @@ export const margaretDeibelConfig = {
             deathPlace: "Mount Pleasant, Isabelle, Michigan, United States",
             birthDate: "10 July 1901",
             deathDate: "22 February 1991",
-            imageUrl: "./src/images/marie-agnes-cox.jpg",
+            imageUrl: "./images/marie-agnes-cox.jpg",
             parents: [
                 emmaSaintJohnConfig,
                 allenCoxConfig
@@ -37,7 +37,7 @@ export const margaretDeibelConfig = {
                     deathPlace: "Detroit, Michigan, United States",
                     birthDate: "5 November 1867",
                     deathDate: "19 February 1928",
-                    imageUrl: "./src/images/margarete-oconnor.jpg",
+                    imageUrl: "./images/margarete-oconnor.jpg",
                     parents: [
                         {
                             name: "Mary Fitzgerald",
@@ -107,7 +107,7 @@ export const margaretDeibelConfig = {
                             deathPlace: "Detroit, Wayne, Michigan, United States",
                             birthDate: "29 June 1832",
                             deathDate: "27 October 1908",
-                            imageUrl: "./src/images/john-dacy.jpg",
+                            imageUrl: "./images/john-dacy.jpg",
                             parents: [
                                 {
                                     name: "Marie Riordan",

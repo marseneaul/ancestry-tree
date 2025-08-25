@@ -8,7 +8,7 @@ export const georgeArseneaultConfig = {
     deathPlace: "Flint, Genesee, Michigan",
     birthDate: "31 May 1863",
     deathDate: "4 March 1931",
-    imageUrl: "./src/images/george-louis-arseneault.jpg",
+    imageUrl: "./images/george-louis-arseneault.jpg",
     parents: [
         {
             name: "Marie Laurence Mineau",

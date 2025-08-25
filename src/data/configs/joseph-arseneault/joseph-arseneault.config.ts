@@ -7,7 +7,7 @@ export const josephArseneaultConfig = {
     birthPlace: "Michigan, United States",
     birthDate: "~1923",
     deathDate: "8 February 2012",
-    imageUrl: "./src/images/joseph-arseneault.jpg",
+    imageUrl: "./images/joseph-arseneault.jpg",
     parents: [
         {
             name: "Elizabeth Hennecke",
@@ -33,7 +33,7 @@ export const josephArseneaultConfig = {
             deathPlace: "Flint, Genesee County, Michigan, United States",
             birthDate: "1 August 1889",
             deathDate: "10 August 1945",
-            imageUrl: "./src/images/edward-arseneault.jpg",
+            imageUrl: "./images/edward-arseneault.jpg",
             parents: [
                 {
                     name: "Marie Leonie Dubois",
@@ -42,7 +42,7 @@ export const josephArseneaultConfig = {
                     deathPlace: "Flint, Genesee County, Michigan, United States",
                     birthDate: "31 March 1861",
                     deathDate: "27 November 1934",
-                    imageUrl: "./src/images/marie-leonie-dubois.jpg",
+                    imageUrl: "./images/marie-leonie-dubois.jpg",
                     parents: [
                         {
                             name: "Sophie Marie Therrien dit Landry",
@@ -51,7 +51,7 @@ export const josephArseneaultConfig = {
                             deathPlace: "Baie-du-Febvre, Nicolet-Yamaska, Quebec, Canada",
                             birthDate: "23 February 1838",
                             deathDate: "9 October 1915",
-                            imageUrl: "./src/images/sophie-landry.jpg",
+                            imageUrl: "./images/sophie-landry.jpg",
                             parents: [ // QUESTIONABLE LINEAGE
                                 {
                                     name: "Sophie Desilets",
@@ -80,7 +80,7 @@ export const josephArseneaultConfig = {
                             deathPlace: "Gentilly, Nicolet, Quebec, Canada",
                             birthDate: "23 April 1831",
                             deathDate: "16 March 1905",
-                            imageUrl: "./src/images/francois-dubois.jpg",
+                            imageUrl: "./images/francois-dubois.jpg",
                             parents: [ // QUESTIONABLE LINEAGE
                                 {
                                     name: "Sophie Beaufort-Brunelle",

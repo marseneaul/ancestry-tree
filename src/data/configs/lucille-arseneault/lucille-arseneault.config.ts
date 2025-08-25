@@ -9,7 +9,7 @@ export const lucilleArseneaultConfig = {
     birthPlace: "Flint, Michigan, United States",
     birthDate: "4 Jan 1922",
     deathDate: "27 Oct 2014",
-    imageUrl: "./src/images/lucille-arseneault.jpg",
+    imageUrl: "./images/lucille-arseneault.jpg",
     parents: [
         {
             name: "Lydia Bauer Moser",
