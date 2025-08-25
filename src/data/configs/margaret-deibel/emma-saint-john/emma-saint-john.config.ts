@@ -35,12 +35,76 @@ export const emmaSaintJohnConfig = {
             ]
         },
         {
-            name: "Frederick St. John",
+            name: "Frederick (Fred) St. John",
             sex: "Male",
             birthPlace: "Fletcher, Franklin, Vermont, United States",
             deathPlace: "Onaway, Presque Isle, Michigan, United States",
             birthDate: "1 April 1849",
             deathDate: "22 December 1878",
+            parents: [
+                {
+                    name: "Amelia (Emily) Hadd",
+                    sex: "Female",
+                    birthPlace: "Canada",
+                    deathPlace: "Michigan, United States",
+                    birthDate: "~1811",
+                    deathDate: "1880",
+                },
+                {
+                    name: "Cashmere St. John",
+                    sex: "Male",
+                    birthPlace: "Departement des Yvelines, Île-de-France, France",
+                    deathPlace: "Allis, Presque Isle, Michigan, United States",
+                    birthDate: "23 November 1814",
+                    deathDate: "7 February 1904",
+                    parents: [
+                        {
+                            name: "Marie Maleret",
+                            sex: "Female",
+                            birthPlace: "UNKNOWN",
+                            deathPlace: "UNKNOWN",
+                            birthDate: "20 JUN 1790",
+                            deathDate: "UNKNOWN"
+                        },
+                        {
+                            name: "Joseph St. John",
+                            sex: "Male",
+                            birthPlace: "France",
+                            deathPlace: "UNKNOWN",
+                            birthDate: "16 November 1791",
+                            deathDate: "UNKNOWN",
+                            parents: [
+                                {
+                                    name: "Marguerite Morel",
+                                    sex: "Female",
+                                    birthPlace: "France",
+                                    deathPlace: "UNKNOWN",
+                                    birthDate: "UNKNOWN",
+                                    deathDate: "UNKNOWN"
+                                },
+                                {
+                                    name: "Benoit St. John (St. Gerand)",
+                                    sex: "Male",
+                                    birthPlace: "France",
+                                    deathPlace: "UNKNOWN",
+                                    birthDate: "UNKNOWN",
+                                    deathDate: "UNKNOWN",
+                                    parents: [
+                                        {
+                                            name: "François St. Gerand",
+                                            sex: "Male",
+                                            birthPlace: "France",
+                                            deathPlace: "UNKNOWN",
+                                            birthDate: "UNKNOWN",
+                                            deathDate: "UNKNOWN"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
             // parents: [ // This is a questionable connection!
             //     {
             //         name: "Jane Jones",
