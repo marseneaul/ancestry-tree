@@ -1,0 +1,134 @@
+import { allenCoxConfig } from "./allen-cox/allen-cox.config";
+import { emmaSaintJohnConfig } from "./emma-saint-john/emma-saint-john.config";
+
+// COMPLETE
+export const margaretDeibelConfig = {
+    name: "Margaret Mary Deibel",
+    sex: "Female",
+    birthPlace: "Detroit, Michigan, United States",
+    birthDate: "24 November 1927",
+    deathDate: "N/A",
+    parents: [
+        {
+            name: "Marie Agnes Cox",
+            sex: "Female",
+            birthPlace: "Onaway, Presque Isle, Michigan, United States",
+            deathPlace: "Mount Pleasant, Isabelle, Michigan, United States",
+            birthDate: "10 July 1901",
+            deathDate: "22 February 1991",
+            imageUrl: "./src/images/marie-agnes-cox.jpg",
+            parents: [
+                emmaSaintJohnConfig,
+                allenCoxConfig
+            ]
+        },
+        {
+            name: "Daniel Aloysius Dacey",
+            sex: "Male",
+            birthPlace: "Detroit, Wayne, Michigan, United States",
+            deathPlace: "Detroit, Wayne, Michigan, United States",
+            birthDate: "6 November 1896",
+            deathDate: "16 May 1961",
+            parents: [
+                {
+                    name: "Margarete Ellen (Maggie) O'Connor Dacy",
+                    sex: "Female",
+                    birthPlace: "Detroit, Michigan, United States",
+                    deathPlace: "Detroit, Michigan, United States",
+                    birthDate: "5 November 1867",
+                    deathDate: "19 February 1928",
+                    imageUrl: "./src/images/margarete-oconnor.jpg",
+                    parents: [
+                        {
+                            name: "Mary Fitzgerald",
+                            sex: "Female",
+                            birthPlace: "Ireland",
+                            birthDate: "1842",
+                            deathDate: "UNKNOWN",
+                            parents: []
+                        },
+                        {
+                            name: "Pierce O'Connor",
+                            sex: "Male",
+                            birthPlace: "Kerry, Ireland",
+                            deathPlace: "Detroit, Michigan, United States",
+                            birthDate: "September 1834",
+                            deathDate: "23 February 1919",
+                            parents: [
+                                {
+                                    name: "John O'Connor",
+                                    sex: "Male",
+                                    birthPlace: "Limerick, Ireland",
+                                    birthDate: "~1814",
+                                    deathDate: "UNKNOWN"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    name: "Daniel Aloysius Dacy",
+                    sex: "Male",
+                    birthPlace: "Detroit, Wayne, Michigan, United States",
+                    deathPlace: "Detroit, Wayne, Michigan, United States",
+                    birthDate: "7 August 1866",
+                    deathDate: "13 December 1901",
+                    parents: [
+                        {
+                            name: "Mary Ann Keenan or Cannane",
+                            sex: "Female",
+                            birthPlace: "Michigan, United States",
+                            deathPlace: "Detroit, Wayne, Michigan, USA",
+                            birthDate: "August 1838",
+                            deathDate: "22 February 1900",
+                            parents: [
+                                {
+                                    name: "Maria 'Mary' Franklin",
+                                    sex: "Female",
+                                    birthPlace: "Ireland",
+                                    deathPlace: "UNKNOWN",
+                                    birthDate: "UNKNOWN",
+                                    deathDate: "UNKNOWN"
+                                },
+                                {
+                                    name: "Michaelis 'Michael' Canane",
+                                    sex: "Male",
+                                    birthPlace: "Ireland",
+                                    deathPlace: "UNKNOWN",
+                                    birthDate: "UNKNOWN",
+                                    deathDate: "UNKNOWN"
+                                }
+                            ]
+                        },
+                        {   // POLICE OFFICER
+                            name: "John Dacy",
+                            sex: "Male",
+                            birthPlace: "Desertserges, Cork, Ireland",
+                            deathPlace: "Detroit, Wayne, Michigan, United States",
+                            birthDate: "29 June 1832",
+                            deathDate: "27 October 1908",
+                            imageUrl: "./src/images/john-dacy.jpg",
+                            parents: [
+                                {
+                                    name: "Marie Riordan",
+                                    sex: "Female",
+                                    birthPlace: "Ireland",
+                                    birthDate: "~1815",
+                                    deathDate: "UNKNOWN"
+                                },
+                                {
+                                    name: "Danielis 'Daniel' Deasy",
+                                    sex: "Male",
+                                    birthPlace: "Southwestern, County Cork, Ireland",
+                                    deathPlace: "UNKNOWN",
+                                    birthDate: "~1815",
+                                    deathDate: "UNKNOWN"
+                                }
+                            ]
+                        } 
+                    ]
+                },
+            ]
+        }
+    ]
+}

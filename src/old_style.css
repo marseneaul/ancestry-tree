@@ -1,0 +1,49 @@
+/* src/style.css */
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f0f0f0;
+  padding: 20px;
+}
+
+.family-tree ul {
+  list-style-type: none;
+  padding-left: 40px;
+  position: relative;
+}
+
+.family-tree li {
+  position: relative;
+  padding: 10px;
+  background-color: #fff;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: fit-content;
+}
+
+.family-tree li:before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  width: 1px;
+  height: 10px;
+  background: #ccc;
+}
+
+.family-tree li:after {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  width: 50%;
+  height: 1px;
+  background: #ccc;
+  transform: translateX(-50%);
+}
+
+.family-tree > ul > li:before,
+.family-tree > ul > li:after {
+  display: none;  /* No lines on root */
+}
