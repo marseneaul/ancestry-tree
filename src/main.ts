@@ -207,7 +207,7 @@ document.addEventListener("DOMContentLoaded", () => {
     nodeEnter.append("title")
       .text(d => {
         const age = calculateAge(d.data.birthDate ?? "", d.data.deathDate ?? "N/A");
-        return `${d.data.name || "Unknown"}\nBorn: ${d.data.birthDate || "Unknown"} in ${d.data.birthPlace || "Unknown"}\nDied: ${d.data.deathDate || "N/A"}\nAge: ${age ?? "Deceased"}\nCountry: ${getCountry(d.data.birthPlace)}\nDNA Contribution: ~${(100 / Math.pow(2, d.depth)).toFixed(2)}%`;
+        return `${d.data.name || "Unknown"}\nBorn: ${d.data.birthDate || "Unknown"} in ${d.data.birthPlace || "Unknown"}\nDied: ${d.data.deathDate || "N/A"} in ${d.data.deathPlace || "Unknown"}\nAge: ${age ?? "Deceased"}\nCountry: ${getCountry(d.data.birthPlace)}\nDNA Contribution: ~${(100 / Math.pow(2, d.depth)).toFixed(2)}%`;
       });
 
     // Generation Labels (with Total DNA)
