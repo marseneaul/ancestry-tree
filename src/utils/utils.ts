@@ -45,11 +45,12 @@ export function getCountry(birthPlace?: string): string {
     if (!birthPlace) return "Unknown";
     const place = birthPlace.toLowerCase();
     if (place.includes("france") || place.includes("french")) return "France";
-    if (place.includes("united kingdom") || place.includes("england") || place.includes("uk") || place.includes("british")) return "United Kingdom";
+    if (place.includes("united kingdom") || place.includes("england") || place.includes("british")) return "United Kingdom";
     if (place.includes("ireland") || place.includes("irish")) return "Ireland";
-    if (place.includes("germany") || place.includes("german") || place.includes("prussia") || place.includes("prussian")) return "Germany";
+    if (place.includes("germany") || place.includes("german") || place.includes("prussia") || place.includes("deutschland")) return "Germany";
     if (place.includes("canada") || place.includes("canadian")) return "Canada";
     if (place.includes("united states") || place.includes("usa") || place.includes("america")) return "United States";
+    if (place.includes("switzerland")) return "Switzerland";
     return place.split(",").pop()?.trim() || "Unknown";  // Fallback
   }
   
@@ -60,6 +61,7 @@ export function getCountry(birthPlace?: string): string {
     "Germany": "gold",             // Gold from flag (black-red-gold); Prussia often black but gold for visibility
     "Canada": "red",               // Red from maple leaf flag
     "United States": "navy",       // Blue from stars & stripes
+    "Switzerland": "#DA291C",      // Red from Swiss flag
     "Unknown": "gray",
     // Add more as needed, e.g., "Italy": "green"
   };

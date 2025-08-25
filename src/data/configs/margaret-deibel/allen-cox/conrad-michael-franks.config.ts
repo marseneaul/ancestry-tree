@@ -33,7 +33,7 @@ export const conradMichaelFranksConfig = {
                         {
                             name: "Anna Catharina Hauck",
                             sex: "Female",
-                            birthPlace: "Rohrbach-Steinweiler, Pfalz, Bavaria, Bayern, Allemagne",
+                            birthPlace: "Rohrbach-Steinweiler, Pfalz, Bavaria, Bayern, Germany",
                             deathPlace: "Steinweiler, Ansbach, Bayern, Germany",
                             birthDate: "December 1699",
                             deathDate: "8 July 1759",
@@ -41,16 +41,16 @@ export const conradMichaelFranksConfig = {
                                 {
                                     name: "Anna Barbara O. Maria Lingenfelder",
                                     sex: "Female",
-                                    birthPlace: "Steinweiler, Pfalz, Rheinland Pfalz, Allemagne",
-                                    deathPlace: "Steinweiler, Heidenheim, Baden Wurttemberg, Allemagne",
+                                    birthPlace: "Steinweiler, Pfalz, Rheinland Pfalz, Germany",
+                                    deathPlace: "Steinweiler, Heidenheim, Baden Wurttemberg, Germany",
                                     birthDate: "24 November 1660",
                                     deathDate: "8 June 1742",
                                 },
                                 {
                                     name: "Johann Bartholamus Hauck",
                                     sex: "Male",
-                                    birthPlace: "Billigheim, Neckar-Odenwald-Kreis, Baden Wurttemberg, Allemagne",
-                                    deathPlace: "Steinweiler, Rheinland Pfalz, Allemagne",
+                                    birthPlace: "Billigheim, Neckar-Odenwald-Kreis, Baden Wurttemberg, Germany",
+                                    deathPlace: "Steinweiler, Rheinland Pfalz, Germany",
                                     birthDate: "1658",
                                     deathDate: "6 April 1724",
                                     parents: []
@@ -61,15 +61,15 @@ export const conradMichaelFranksConfig = {
                             name: "Johann Paul Schmidt",
                             sex: "Male",
                             birthPlace: "Baden, Germany",
-                            deathPlace: "Winnweiler, Rhineland-Palatinate, Rheinland Pfalz, Allemagne",
+                            deathPlace: "Winnweiler, Rhineland-Palatinate, Rheinland Pfalz, Germany",
                             birthDate: "1695",
                             deathDate: "19 April 1767",
                             parents: [
                                 {
                                     name: "Anna Maria Heck",
                                     sex: "Female",
-                                    birthPlace: "Rohrbach, Aichach-Friedberg, Bayern, Allemagne",
-                                    deathPlace: "Rohrbach, Friedberg, Aichach-Friedberg, Schwaben, Bavaria, Bayern, Allemagne",
+                                    birthPlace: "Rohrbach, Aichach-Friedberg, Bayern, Germany",
+                                    deathPlace: "Rohrbach, Friedberg, Aichach-Friedberg, Schwaben, Bavaria, Bayern, Germany",
                                     birthDate: "1670",
                                     deathDate: "UNKNOWN",
                                     parents: [
@@ -112,8 +112,8 @@ export const conradMichaelFranksConfig = {
                                 {
                                     name: "Georg Schmidt",
                                     sex: "Male",
-                                    birthPlace: "Rohrbach, Aichach-Friedberg, Bayern, Allemagne",
-                                    deathPlace: "Rohrbach, Aichach-Friedberg, Bayern, Allemagne",
+                                    birthPlace: "Rohrbach, Aichach-Friedberg, Bayern, Germany",
+                                    deathPlace: "Rohrbach, Aichach-Friedberg, Bayern, Germany",
                                     birthDate: "1670",
                                     deathDate: "5 April 1766",
                                     parents: [
