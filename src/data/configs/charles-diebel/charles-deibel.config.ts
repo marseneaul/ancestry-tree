@@ -11,7 +11,7 @@ export const charlesDeibelConfig = {
     imageUrl: "./images/charlie-deibel.jpg",
     parents: [
         {
-            name: "Walter John Diebel",
+            name: "Walter John Diebel", // Served in WWI
             sex: "Male",
             birthPlace: "Columbus, Franklin, Ohio, United States",
             birthDate: "3 December 1887",
@@ -31,7 +31,7 @@ export const charlesDeibelConfig = {
                 {
                     name: "Josephine Johanna Scully",
                     sex: "Female",
-                    birthPlace: "Ohio, United States",
+                    birthPlace: "New Vienna, Ohio, United States",
                     birthDate: "12 March 1863",
                     deathDate: "6 September 1933",
                     parents: [

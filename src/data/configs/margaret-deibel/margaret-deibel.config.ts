@@ -8,6 +8,7 @@ export const margaretDeibelConfig = {
     birthPlace: "Detroit, Michigan, United States",
     birthDate: "24 November 1927",
     deathDate: "N/A",
+    imageUrl: "./images/margaret-deibel.jpg",
     parents: [
         {
             name: "Marie Agnes Cox",
@@ -42,13 +43,41 @@ export const margaretDeibelConfig = {
                         {
                             name: "Mary Fitzgerald",
                             sex: "Female",
-                            birthPlace: "Ireland",
-                            birthDate: "1842",
-                            deathDate: "UNKNOWN",
-                            parents: []
+                            birthPlace: "Galbally, Limerick, Ireland",
+                            deathPlace: "Detroit, Wayne, Michigan, United States",
+                            birthDate: "October 1842",
+                            deathDate: "23 June 1915",
+                            parents: [
+                                {
+                                    name: "Ellen Finn",
+                                    sex: "Female",
+                                    birthPlace: "Liscaroll, Ireland",
+                                    deathPlace: "Clonakilty, Ireland",
+                                    birthDate: "1813",
+                                    deathDate: "1890"
+                                },
+                                {
+                                    name: "Michael Fitzgerald",
+                                    sex: "Male",
+                                    birthPlace: "Limerick, Ireland",
+                                    deathPlace: "Caledonia County, Vermont, United States",
+                                    birthDate: "~1820",
+                                    deathDate: "12 March 1889",
+                                    parents: [
+                                        {
+                                            name: "Richard Fitzgerald",
+                                            sex: "Male",
+                                            birthPlace: "UNKNOWN",
+                                            deathPlace: "UNKNOWN",
+                                            birthDate: "UNKNOWN",
+                                            deathDate: "UNKNOWN"
+                                        }
+                                    ]
+                                }
+                            ]
                         },
                         {
-                            name: "Pierce O'Connor",
+                            name: "Pierce 'Piney' O'Connor",
                             sex: "Male",
                             birthPlace: "Kerry, Ireland",
                             deathPlace: "Detroit, Michigan, United States",
@@ -78,7 +107,7 @@ export const margaretDeibelConfig = {
                             name: "Mary Ann Keenan or Cannane",
                             sex: "Female",
                             birthPlace: "Michigan, United States",
-                            deathPlace: "Detroit, Wayne, Michigan, USA",
+                            deathPlace: "Detroit, Wayne, Michigan, United States",
                             birthDate: "August 1838",
                             deathDate: "22 February 1900",
                             parents: [
@@ -100,7 +129,7 @@ export const margaretDeibelConfig = {
                                 }
                             ]
                         },
-                        {   // POLICE OFFICER
+                        {   // POLICE OFFICER - died of brain clot after car accident (see article)
                             name: "John Dacy",
                             sex: "Male",
                             birthPlace: "Desertserges, Cork, Ireland",

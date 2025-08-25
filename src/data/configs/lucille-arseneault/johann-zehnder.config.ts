@@ -3,41 +3,47 @@ export const johannZehnderConfig = {
     name: "Johann Stephan Zehnder",
     sex: "Male",
     birthPlace: "Weißenbronn, Heilsbronn, Ansbach, Bavaria, Germany",
+    deathPlace: "Weißenbronn, Heilsbronn, Ansbach, Bavaria, Germany",
     birthDate: "22 October 1761",
     deathDate: "6 July 1835",
     parents: [
         {
-            name: "Elizabeth Weining",
+            name: "Anna Elizabeth Weining",
             sex: "Female",
-            birthPlace: "Germany",
-            birthDate: "~1730",
-            deathDate: "UNKNOWN"
+            birthPlace: "Ansbach, Stadt Ansbach, Bayern, Germany",
+            deathPlace: "Ansbach, Stadt Ansbach, Bayern, Germany",
+            birthDate: "11 February 1738",
+            deathDate: "5 March 1809"
         },
         {
             name: "Georg Jakob Zehender",
             sex: "Male",
-            birthPlace: "Germany",
+            birthPlace: "Ansbach, Bayern, Germany",
+            deathPlace: "Ansbach, Bayern, Germany",
             birthDate: "18 October 1725",
             deathDate: "18 January 1837",
             parents: [
                 {
-                    name: "Anna Sabina Jordan",
+                    name: "Anna Elizabeth Weining",
                     sex: "Female",
                     birthPlace: "Bürglein, Heilsbronn, Ansbach, Bavaria, Germany",
-                    birthDate: "~1697",
-                    deathDate: "20 April 1775"
+                    deathPlace: "Bürglein, Heilsbronn, Ansbach, Bavaria, Germany",
+                    birthDate: "11 February 1738",
+                    deathDate: "5 March 1809"
                 },
                 {
                     name: "Christoph Zehender",
                     sex: "Male",
                     birthPlace: "Bürglein, Heilsbronn, Ansbach, Bavaria, Germany",
-                    birthDate: "2 February 1692",
-                    deathDate: "7 July 1779",
+                    deathPlace: "Bonnhof, Ansbach, Bayern, Deutschland",
+                    birthDate: "30 January 1692",
+                    deathDate: "4 July 1779",
                     parents: [
                         {
-                            name: "Anna Rosen",
+                            name: "Anna Catharina Rosen",
                             sex: "Female",
-                            birthPlace: "UNKNOWN",
+                            birthPlace: "Grosshasloch, Germany",
+                            deathPlace: "Germany",
                             birthDate: "1670",
                             deathDate: "UNKNOWN"
                         },
@@ -45,6 +51,7 @@ export const johannZehnderConfig = {
                             name: "Andreas Leonhard Zehender",
                             sex: "Male",
                             birthPlace: "Baumhof, Neunburg vorm Wald, Schwandorf, Bavaria, Germany",
+                            deathPlace: "Baumhof, Neunburg vorm Wald, Schwandorf, Bavaria, Germany",
                             birthDate: "1670",
                             deathDate: "27 May 1717",
                             parents: [

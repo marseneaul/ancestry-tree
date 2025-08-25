@@ -17,6 +17,7 @@ export const maxArseneaultConfig = {
             birthPlace: "Mount Pleasant, Michigan, United States",
             birthDate: "1 December 1956",
             deathDate: "N/A",
+            imageUrl: "./images/nancy-arseneault.jpg",
             parents: [
                 margaretDeibelConfig,
                 charlesDeibelConfig
@@ -28,6 +29,7 @@ export const maxArseneaultConfig = {
             birthPlace: "Flint, Michigan, United States",
             birthDate: "16 May 1955",
             deathDate: "N/A",
+            imageUrl: "./images/michael-arseneault.jpg",
             parents: [
                 lucilleArseneaultConfig,
                 josephArseneaultConfig

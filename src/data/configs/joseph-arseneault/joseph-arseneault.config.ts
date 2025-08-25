@@ -4,7 +4,8 @@ import { georgeArseneaultConfig } from "./george-arseneault.config";
 export const josephArseneaultConfig = {
     name: "Joseph Homer Arseneault",
     sex: "Male",
-    birthPlace: "Michigan, United States",
+    birthPlace: "Flint, Genesee County, Michigan, United States",
+    deathPlace: "Asheville, Buncombe County, North Carolina, United States",
     birthDate: "~1923",
     deathDate: "8 February 2012",
     imageUrl: "./images/joseph-arseneault.jpg",
@@ -12,7 +13,8 @@ export const josephArseneaultConfig = {
         {
             name: "Elizabeth Hennecke",
             sex: "Female",
-            birthPlace: "Lake Linden, Houghton, Michigan",
+            birthPlace: "Lake Linden, Houghton, Michigan, United States",
+            deathPlace: "Flint, Genesee County, Michigan, United States",
             birthDate: "29 June 1886",
             deathDate: "27 January 1969",
             parents: [
@@ -27,7 +29,7 @@ export const josephArseneaultConfig = {
             ]
         },
         {
-            name: "Edward George Arseneault",
+            name: "Edward George Arseneault", // Fought in WWI? Draft mentioned kidney troubles
             sex: "Male",
             birthPlace: "Gentilly, Nicolet, Quebec, Canada",
             deathPlace: "Flint, Genesee County, Michigan, United States",

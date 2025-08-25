@@ -2,10 +2,11 @@
 export const friedrichMoserConfig = {
     name: "Friedrich David Moser",
     sex: "Male",
-    birthPlace: "Ontario, Canada",
+    birthPlace: "Meklenberg, Middle Franconia, Bavaria, Germany",
+    deathPlace: "Richville Township, Tuscola, Michigan, United States",
     birthDate: "14 April 1859",
     deathDate: "15 April 1945",
-    parents: [
+    parents: [ // POTENTIALLY A DIFFERENT FAMILY
         {
             name: "Anna Maria Kruspe",
             sex: "Female",
@@ -39,9 +40,10 @@ export const friedrichMoserConfig = {
             ]
         },
         {
-            name: "John George Moser",
+            name: "Johann Georg Moser",
             sex: "Male",
-            birthPlace: "Alsace, France",
+            birthPlace: "Meklenberg, Bavaria, Germany",
+            deathPlace: "Middle Franken, Saginaw Valley, Michigan, United States",
             birthDate: "1 June 1824",
             deathDate: "7 March 1880"
         }

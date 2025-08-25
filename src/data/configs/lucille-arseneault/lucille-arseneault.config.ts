@@ -4,9 +4,10 @@ import { maryZeilingerConfig } from "./mary-zeilinger.config";
 
 // COMPLETE
 export const lucilleArseneaultConfig = {
-    name: "Lucille Florence Moser Arseneault",
+    name: "Lucille Florence Moser Arseneault", // Served in WWII Navy
     sex: "Female",
-    birthPlace: "Flint, Michigan, United States",
+    birthPlace: "Flint, Genesee County, Michigan, United States",
+    deathPlace: "Asheville, Buncombe County, North Carolina, United States",
     birthDate: "4 Jan 1922",
     deathDate: "27 Oct 2014",
     imageUrl: "./images/lucille-arseneault.jpg",
@@ -21,7 +22,7 @@ export const lucilleArseneaultConfig = {
             parents: [
                 maryZeilingerConfig,
                 {
-                    name: "John George Bauer Jr.",
+                    name: "John George Bauer Jr.", // WWII Draft Card
                     sex: "Male",
                     birthPlace: "Richville, Tuscola, Michigan, United States",
                     deathPlace: "Denmark Township, Tuscola County, Michigan, United States",
