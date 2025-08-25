@@ -1,0 +1,137 @@
+/* src/style.css */
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f4f7fa;
+    margin: 0;
+    padding: 20px;
+    color: #333;
+  }
+  
+  header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  h1 {
+    margin: 0;
+    font-size: 24px;
+  }
+  
+  #search-input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 200px;
+  }
+  
+  button {
+    padding: 8px 12px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background: #0056b3;
+  }
+  
+  #tree-container {
+    border: 1px solid #ddd;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  #legend {
+    position: absolute;
+    top: 80px;
+    right: 20px;
+    background: white;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    max-width: 200px;
+  }
+  
+  #legend ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .link {
+    fill: none;
+    stroke-width: 2;
+    transition: stroke-width 0.3s;
+  }
+  
+  .node {
+    cursor: pointer;
+    transition: transform 0.3s;
+  }
+
+  .node.highlighted circle, .node.highlighted rect {
+    stroke: orange;
+    stroke-width: 3;
+  }
+  
+  .gen-label {
+    font-size: 12px;
+    fill: #666;
+  }
+  
+  text {
+    font-size: 12px;
+    user-select: none;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+  
+  .legend-section {
+    margin-top: 10px;
+    font-weight: bold;
+  }
+  
+  .line-sample {
+    width: 30px;
+    height: 2px;
+    display: inline-block;
+    border-top: 2px dashed;
+  }
+  
+  .blue-dash {
+    border-color: blue;
+  }
+  
+  .pink-dash {
+    border-color: pink;
+  }
+  
+  #color-legend li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 5px;
+  }
+  
+  .node.highlighted {
+    transform: scale(1.2);
+    filter: drop-shadow(0 0 5px orange);
+  }
+  
+  .node.highlighted circle,
+  .node.highlighted rect {
+    stroke: orange !important;
+    stroke-width: 3px;
+  }
