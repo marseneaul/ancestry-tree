@@ -1,4 +1,4 @@
-import { charlesAndrewDiebelConfig } from "./charles-andrew-diebel.config";
+import { charlesAndrewDeibelConfig } from "./charles-andrew-diebel.config";
 import { maryMerkConfig } from "./mary-merk.config";
 
 // COMPLETE
@@ -11,14 +11,14 @@ export const charlesDeibelConfig = {
     imageUrl: "./images/charlie-deibel.jpg",
     parents: [
         {
-            name: "Walter John Diebel", // Served in WWI
+            name: "Walter John Deibel", // Served in WWI (309th Engineer Regiment), was a photographer and registered in Winnipeg, Manitoba, Canada, drafted WWII in 1942 in Navy?
             sex: "Male",
             birthPlace: "Columbus, Franklin, Ohio, United States",
             birthDate: "3 December 1887",
             deathDate: "10 June 1946",
             parents: [
                 maryMerkConfig,
-                charlesAndrewDiebelConfig
+                charlesAndrewDeibelConfig
             ]
         },
         {
@@ -32,6 +32,7 @@ export const charlesDeibelConfig = {
                     name: "Josephine Johanna Scully",
                     sex: "Female",
                     birthPlace: "New Vienna, Ohio, United States",
+                    deathPlace: "UNKNOWN",
                     birthDate: "12 March 1863",
                     deathDate: "6 September 1933",
                     parents: [
@@ -47,14 +48,15 @@ export const charlesDeibelConfig = {
                             sex: "Male",
                             birthPlace: "Ireland",
                             birthDate: "~1830",
-                            deathDate: "UNKNOWN",
+                            deathDate: "UNKNOWN"
                         }
                     ]
                 },
-                {
-                    name: "John J Muth",
+                {   // There is a will
+                    name: "John Joseph Muth",
                     sex: "Male",
                     birthPlace: "Columbus, Franklin, Ohio, United States",
+                    deathPlace: "Columbus, Franklin, Ohio, United States",
                     birthDate: "24 February 1859",
                     deathDate: "16 February 1915",
                     parents: [
@@ -62,6 +64,7 @@ export const charlesDeibelConfig = {
                             name: "Catherine Green",
                             sex: "Female",
                             birthPlace: "Ireland",
+                            deathPlace: "Columbus, Franklin, Ohio, United States",
                             birthDate: "1834",
                             deathDate: "1874"
                         },
@@ -69,6 +72,7 @@ export const charlesDeibelConfig = {
                             name: "John Muth",
                             sex: "Male",
                             birthPlace: "Bavaria, Germany",
+                            deathPlace: "Columbus, Franklin, Ohio, United States",
                             birthDate: "24 April 1825",
                             deathDate: "14 July 1887",
                             parents: [

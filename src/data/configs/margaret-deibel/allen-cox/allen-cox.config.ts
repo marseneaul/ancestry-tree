@@ -1,9 +1,9 @@
-import { jacobFranksConfig } from "./jacob-franks.config";
-import { johnCoxConfig } from "./john-cox.config";
+import { jacobFranksConfig } from "./jacob-franks/jacob-franks.config";
+import { johnCoxConfig } from "./john-cox/john-cox.config";
 
 // COMPLETE
 export const allenCoxConfig = {
-    name: "Allen Duffy Cox",
+    name: "Allen Duffy Cox", // Apoplexy death
     sex: "Male",
     birthPlace: "Onaway, Presque Isle, Michigan, United States",
     deathPlace: "Onaway, Presque Isle, Michigan, United States",
@@ -14,13 +14,13 @@ export const allenCoxConfig = {
         {
             name: "Huldah Franks",
             sex: "Female",
-            birthPlace: "UNKNOWN",
-            deathPlace: "Michigan, United States",
+            birthPlace: "Ohio, United States",
+            deathPlace: "Onaway, Presque Isle, Michigan, United States",
             birthDate: "November 1864",
-            deathDate: "UNKNOWN",
+            deathDate: "19 February 1931",
             parents: [
                 {
-                    name: "Rose Belle McDowell",
+                    name: "Rosanna Belle McDowell",
                     sex: "Female",
                     birthPlace: "Wayne Township, Ohio, United States",
                     birthDate: "February 1844",
@@ -55,7 +55,7 @@ export const allenCoxConfig = {
                             birthDate: "~1811",
                             deathDate: "UNKNOWN"
                         },
-                        {
+                        {   // Found in jail documents for manslaughter? (convicted in 1844, 5' 5 3/4")
                             name: "William Duffy",
                             sex: "Male",
                             birthPlace: "Ireland",

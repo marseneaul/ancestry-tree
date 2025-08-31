@@ -20,6 +20,7 @@ export const jacobFranksConfig = {
                     name: "Anna Katherine Elizabeth Miller",
                     sex: "Female",
                     birthPlace: "Virginia, United States",
+                    deathPlace: "Wayne Township, Ohio, United States",
                     birthDate: "12 February 1781",
                     deathDate: "11 April 1854",
                     parents: [
@@ -32,7 +33,7 @@ export const jacobFranksConfig = {
                             parents: []
                         },
                         {
-                            name: "Andrew Jackson Miller Sr.",
+                            name: "Andrew Jackson Miller Sr.", // Fought in War of 1812
                             sex: "Male",
                             birthPlace: "Virginia, United States",
                             birthDate: "4 April 1743",
@@ -52,19 +53,20 @@ export const jacobFranksConfig = {
             deathDate: "15 July 1896",
             parents: [
                 {
-                    name: "Mary Magdalena Smith",
+                    name: "Mary Magdalena 'Polly' Smith",
                     sex: "Female",
                     birthPlace: "Fayette City, Fayette, Pennsylvania, United States",
-                    birthDate: "31 December 1786",
+                    deathPlace: "Smithville, Wayne, Ohio, United States",
+                    birthDate: "21 December 1786",
                     deathDate: "6 October 1868",
                     parents: [
                         {
                             name: "Barbara Grovenstadt",
                             sex: "Female",
-                            birthPlace: "UNKNOWN",
-                            deathPlace: "UNKNOWN",
-                            birthDate: "UNKNOWN",
-                            deathDate: "1839"
+                            birthPlace: "Fayette, Pennsylvania, United States",
+                            deathPlace: "Fayette City, Fayette, Pennsylvania, United States",
+                            birthDate: "1758",
+                            deathDate: "10 August 1796"
                         },
                         {
                             name: "Henry Barnabus Smith",

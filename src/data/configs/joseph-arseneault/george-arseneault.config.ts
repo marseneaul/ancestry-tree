@@ -2,7 +2,7 @@ import { antoineArseneauConfig } from "./antoine-arseneau.config";
 import { rosalieLambertConfig } from "./rosalie-lambert.config";
 
 export const georgeArseneaultConfig = {
-    name: "George Louis Arseneault",
+    name: "George Louis Arseneault", // Mill operative
     sex: "Male",
     birthPlace: "St-Etienne-Des-Gras, St-Maurice, PQ, Canada",
     deathPlace: "Flint, Genesee, Michigan",

@@ -1,8 +1,8 @@
 import { crescentiaHassConfig } from "./crescentia-haas.config";
 
 // COMPLETE
-export const charlesAndrewDiebelConfig = {
-    name: "Charles Andrew Diebel",
+export const charlesAndrewDeibelConfig = {
+    name: "Charles Andrew Deibel",
     sex: "Male",
     birthPlace: "Columbus, Franklin, Ohio, United States",
     deathPlace: "Licking, Ohio, United States",
@@ -48,7 +48,7 @@ export const charlesAndrewDiebelConfig = {
         {
             name: "Casper Deibel",
             sex: "Male",
-            birthPlace: "Württemberg, Germany",
+            birthPlace: "Baden-Württemberg, Germany",
             deathPlace: "Columbus, Franklin, Ohio, United States",
             birthDate: "6 January 1828",
             deathDate: "23 December 1878"

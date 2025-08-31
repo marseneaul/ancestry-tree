@@ -54,7 +54,7 @@ export const antoineArseneauConfig = {
                             name: "Marie Louise Dandurand",
                             sex: "Female",
                             birthPlace: "St. Thomas, Quebec, Canada",
-                            deathPlace: " St Roch des Aulnaies, Quebec, Canada",
+                            deathPlace: "St Roch des Aulnaies, Quebec, Canada",
                             birthDate: "31 August 1702",
                             deathDate: "26 December 1779",
                         },

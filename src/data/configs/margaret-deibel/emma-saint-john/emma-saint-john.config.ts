@@ -35,7 +35,7 @@ export const emmaSaintJohnConfig = {
             ]
         },
         {
-            name: "Frederick (Fred) St. John",
+            name: "Frederick (Fred) St. John", // Farmer
             sex: "Male",
             birthPlace: "Fletcher, Franklin, Vermont, United States",
             deathPlace: "Onaway, Presque Isle, Michigan, United States",
@@ -46,12 +46,12 @@ export const emmaSaintJohnConfig = {
                     name: "Amelia (Emily) Hadd",
                     sex: "Female",
                     birthPlace: "Canada",
-                    deathPlace: "Michigan, United States",
+                    deathPlace: "Cambridge, Lamoille, Vermont, United States",
                     birthDate: "~1811",
                     deathDate: "1880",
                 },
                 {
-                    name: "Cashmere St. John",
+                    name: "Cassimere St. John",
                     sex: "Male",
                     birthPlace: "Departement des Yvelines, Île-de-France, France",
                     deathPlace: "Allis, Presque Isle, Michigan, United States",

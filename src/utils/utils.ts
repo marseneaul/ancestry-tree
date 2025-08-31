@@ -55,10 +55,10 @@ export function getCountry(birthPlace?: string): string {
   }
   
   export const countryColors: Record<string, string> = {
-    "France": "royalblue",         // Heraldic: Blue from flag
+    "France": "#000091",         // Heraldic: Blue from flag
     "United Kingdom": "crimson",   // Red/Pink for British Empire
     "Ireland": "forestgreen",      // Green from flag/heraldry
-    "Germany": "gold",             // Gold from flag (black-red-gold); Prussia often black but gold for visibility
+    "Germany": "#FFCC00",             // Gold from flag (black-red-gold); Prussia often black but gold for visibility
     "Canada": "red",               // Red from maple leaf flag
     "United States": "navy",       // Blue from stars & stripes
     "Switzerland": "#DA291C",      // Red from Swiss flag

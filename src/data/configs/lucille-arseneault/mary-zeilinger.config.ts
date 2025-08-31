@@ -9,8 +9,8 @@ export const maryZeilingerConfig = {
     birthDate: "13 November 1874",
     deathDate: "30 June 1945",
     parents: [
-        {
-            name: "Eva Maria Ulrich",
+        {   // Death from diabetes or pneumonia?
+            name: "Eva Maria Ulrich", 
             sex: "Female",
             birthPlace: "Blumfield Township, Saginaw County, Michigan, United States",
             deathPlace: "Tuscola, Tuscola Township, Tuscola, Michigan, United States",
@@ -25,7 +25,7 @@ export const maryZeilingerConfig = {
                     birthDate: "11 August 1826",
                     deathDate: "30 July 1910"
                 },
-                {
+                {   // Civil war draft
                     name: "Jacob Ulrich",
                     sex: "Male",
                     birthPlace: "Württemberg, Germany",
@@ -35,7 +35,7 @@ export const maryZeilingerConfig = {
                 }
             ]
         },
-        {
+        {   // Farmer as a profession
             name: "Johann Georg Adam Zeilinger",
             sex: "Male",
             birthPlace: "Ebersdorf, Dietenhofen, Ansbach, Bavaria, Germany",

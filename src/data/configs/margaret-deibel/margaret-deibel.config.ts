@@ -31,7 +31,7 @@ export const margaretDeibelConfig = {
             birthDate: "6 November 1896",
             deathDate: "16 May 1961",
             parents: [
-                {
+                {   // Uremia carcinoma (kidney failure due to bladder carcinoma)
                     name: "Margarete Ellen (Maggie) O'Connor Dacy",
                     sex: "Female",
                     birthPlace: "Detroit, Michigan, United States",
@@ -65,12 +65,20 @@ export const margaretDeibelConfig = {
                                     deathDate: "12 March 1889",
                                     parents: [
                                         {
-                                            name: "Richard Fitzgerald",
-                                            sex: "Male",
+                                            name: "Mary Roche",
+                                            sex: "Female",
                                             birthPlace: "UNKNOWN",
                                             deathPlace: "UNKNOWN",
-                                            birthDate: "UNKNOWN",
+                                            birthDate: "~1800",
                                             deathDate: "UNKNOWN"
+                                        },
+                                        {
+                                            name: "Richard Fitzgerald",
+                                            sex: "Male",
+                                            birthPlace: "Cork, Ireland",
+                                            deathPlace: "Glin, Ireland",
+                                            birthDate: "~1801",
+                                            deathDate: "March 1885"
                                         }
                                     ]
                                 }
@@ -95,7 +103,7 @@ export const margaretDeibelConfig = {
                         }
                     ]
                 },
-                {
+                {   // Cause of death = "La Grippe", or influenza (the flu)
                     name: "Daniel Aloysius Dacy",
                     sex: "Male",
                     birthPlace: "Detroit, Wayne, Michigan, United States",
@@ -103,8 +111,8 @@ export const margaretDeibelConfig = {
                     birthDate: "7 August 1866",
                     deathDate: "13 December 1901",
                     parents: [
-                        {
-                            name: "Mary Ann Keenan or Cannane",
+                        {   // Referred to as Anna Dacey in newspaper
+                            name: "Mary Ann Keenan or Cannane", 
                             sex: "Female",
                             birthPlace: "Michigan, United States",
                             deathPlace: "Detroit, Wayne, Michigan, United States",
@@ -130,7 +138,7 @@ export const margaretDeibelConfig = {
                             ]
                         },
                         {   // POLICE OFFICER - died of brain clot after car accident (see article)
-                            name: "John Dacy",
+                            name: "John Dacey",
                             sex: "Male",
                             birthPlace: "Desertserges, Cork, Ireland",
                             deathPlace: "Detroit, Wayne, Michigan, United States",
@@ -142,6 +150,7 @@ export const margaretDeibelConfig = {
                                     name: "Marie Riordan",
                                     sex: "Female",
                                     birthPlace: "Ireland",
+                                    deathPlace: "UNKNOWN",
                                     birthDate: "~1815",
                                     deathDate: "UNKNOWN"
                                 },
