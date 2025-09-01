@@ -61,7 +61,7 @@ export const emmaSaintJohnConfig = {
                         {
                             name: "Marie Maleret",
                             sex: "Female",
-                            birthPlace: "UNKNOWN",
+                            birthPlace: "France",
                             deathPlace: "UNKNOWN",
                             birthDate: "20 JUN 1790",
                             deathDate: "UNKNOWN"

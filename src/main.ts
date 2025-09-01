@@ -95,14 +95,14 @@ document.addEventListener("DOMContentLoaded", () => {
   app.appendChild(legend);
 
   const countrySvgs: Record<string, string> = {
-    "France": "./src/data/svgs/france.svg",
-    "United Kingdom": "./src/data/svgs/uk.svg",
-    "Ireland": "./src/data/svgs/ireland.svg",
-    "Germany": "./src/data/svgs/germany.svg",
-    "Canada": "./src/data/svgs/canada.svg",
-    "United States": "./src/data/svgs/us.svg",
-    "Switzerland": "./src/data/svgs/switzerland.svg",
-    "Unknown": "./src/data/svgs/unknown.svg"  // Optional; if no SVG, will fallback to gray in nodes
+    "France": "./svgs/france.svg",
+    "United Kingdom": "./svgs/uk.svg",
+    "Ireland": "./svgs/ireland.svg",
+    "Germany": "./svgs/germany.svg",
+    "Canada": "./svgs/canada.svg",
+    "United States": "./svgs/us.svg",
+    "Switzerland": "./svgs/switzerland.svg",
+    "Unknown": "./svgs/unknown.svg"  // Optional; if no SVG, will fallback to gray in nodes
   };
 
   // Populate Color Legend Dynamically with SVGs instead of colors
@@ -444,7 +444,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const patternId = `country-pattern-${country.replace(/\s/g, "").toLowerCase()}`;
       if (d.data.imageUrl) {
         // For circles, use clipPath to clip image to circle
-        const clipId = `clip-${d.data.name.replace(/\s/g, "-")}`;
+        const clipId = `clip-${d.data.name.replace(/[^a-zA-Z0-9-]/g, "")}`;
         defs.append("clipPath")
           .attr("id", clipId)
           .append("circle")
