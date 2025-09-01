@@ -22,9 +22,89 @@ export const allenCoxConfig = {
                 {
                     name: "Rosanna Belle McDowell",
                     sex: "Female",
-                    birthPlace: "Wayne Township, Ohio, United States",
+                    birthPlace: "Pennsylvania, United States",
+                    deathPlace: "Orange, Ionia, Michigan, United States",
                     birthDate: "February 1844",
-                    deathDate: "UNKNOWN"
+                    deathDate: "~1918",
+                    parents: [
+                        {
+                            name: "Elizabeth Levers",
+                            sex: "Female",
+                            birthPlace: "Lancaster, Lancaster, Pennsylvania, United States",
+                            deathPlace: "Wooster, Wayne, Ohio, United States",
+                            birthDate: "17 February 1824",
+                            deathDate: "1924",
+                            parents: [
+                                {
+                                    name: "Elizabeth Licht",
+                                    sex: "Female",
+                                    birthPlace: "Dauphin County, Pennsylvania, United States",
+                                    deathPlace: "West Brookfield, Stark County, Ohio, United States",
+                                    birthDate: "5 August 1793",
+                                    deathDate: "2 May 1873",
+                                    imageUrl: "./images/elizabeth-licht.jpg",
+                                    parents: []
+                                },
+                                {   // "1st Lieutenant" WILLIAM S LEVERS (Served in the War of 1812, civil, rev war)
+
+                                    name: "William S Levers",
+                                    sex: "Female",
+                                    birthPlace: "Atlantic Ocean (Born at Sea), United States",
+                                    deathPlace: "Seneca, Seneca, Ohio, United States",
+                                    birthDate: "30 April 1792",
+                                    deathDate: "27 May 1855",
+                                    parents: [
+                                        {
+                                            name: "Elsche Vandergrift",
+                                            sex: "Female",
+                                            birthPlace: "Switzerland",
+                                            deathPlace: "Philadelphia, Philadelphia, Pennsylvania, United States",
+                                            birthDate: "1750",
+                                            deathDate: "UNKNOWN",
+                                            parents: []
+                                        },
+                                        {
+                                            name: "Abraham Levers",
+                                            sex: "Male",
+                                            birthPlace: "Switzerland",
+                                            deathPlace: "Philadelphia, Philadelphia, Pennsylvania, United States",
+                                            birthDate: "1741",
+                                            deathDate: "1795",
+                                            parents: [] // British?
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {   // Civil War
+                            name: "John McDowell",
+                            sex: "Male",
+                            birthPlace: "Ballymoney Parish, Antrim, Ireland",
+                            deathPlace: "UNKNOWN",
+                            birthDate: "12 JUN 1825",
+                            deathDate: "UNKNOWN",
+                            parents: [
+                                {
+                                    name: "Elizabeth McIntyre",
+                                    sex: "Female",
+                                    birthPlace: "Kirkcolm, Wigtown, Scotland, United Kingdom",
+                                    deathPlace: "Portpatrick, Wigtownshire, Scotland, United Kingdom",
+                                    birthDate: "6 July 1824",
+                                    deathDate: "1848–1851",
+                                    parents: []
+                                },
+                                {
+                                    name: "John Mc Dowall Sr",
+                                    sex: "Male",
+                                    birthPlace: "Mochrum, Wigtownshire, Scotland, United Kingdom",
+                                    deathPlace: "West Millgrove, Wood, Ohio, United States",
+                                    birthDate: "11 October 1794",
+                                    deathDate: "2 November 1855",
+                                    parents: []
+                                }
+                            ]
+                        }
+                    ]
                 },
                 jacobFranksConfig
             ]
