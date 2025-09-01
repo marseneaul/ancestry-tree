@@ -23,7 +23,7 @@ export const susanneCochemConfig = {
                         {
                             name: "Paul Höllen",
                             sex: "Male",
-                            birthPlace: "UNKNOWN",
+                            birthPlace: "Prussia",
                             birthDate: "before 1646",
                             deathDate: "UNKNOWN"
                         }

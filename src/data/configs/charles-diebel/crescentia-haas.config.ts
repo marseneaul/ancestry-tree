@@ -4,7 +4,7 @@ import { ferdinandNeefConfig } from "./ferdinand-neef.config";
 export const crescentiaHassConfig = {
     name: "Crescentia Haas",
     sex: "Female",
-    birthPlace: "UNKNOWN",
+    birthPlace: "Germany",
     deathPlace: "Schramberg, Rottweil, Baden-Wuerttemberg, Germany",
     birthDate: "1800",
     deathDate: "1849",
@@ -12,14 +12,14 @@ export const crescentiaHassConfig = {
         {   
             name: "Monika Neef",
             sex: "Female",
-            birthPlace: "UNKNOWN",
+            birthPlace: "Germany",
             birthDate: "1773",
             deathDate: "22 March 1838",
             parents: [
                 {
                     name: "Josepha Maurer",
                     sex: "Female",
-                    birthPlace: "UNKNOWN",
+                    birthPlace: "Germany",
                     birthDate: "~1750",
                     deathDate: "UNKNOWN"
                 },
@@ -29,7 +29,7 @@ export const crescentiaHassConfig = {
         {
             name: "Johannes Haas",
             sex: "Male",
-            birthPlace: "UNKNOWN",
+            birthPlace: "Germany",
             birthDate: "1777",
             deathDate: "UNKNOWN"
         }

@@ -30,14 +30,14 @@ export const charlesAndrewDeibelConfig = {
                         {
                             name: "Katar Ehle",
                             sex: "Female",
-                            birthPlace: "UNKNOWN",
+                            birthPlace: "Germany",
                             birthDate: "UNKNOWN",
                             deathDate: "UNKNOWN"
                         },
                         {
                             name: "Fidelis Volk",
                             sex: "Male",
-                            birthPlace: "UNKNOWN",
+                            birthPlace: "Germany",
                             birthDate: "UNKNOWN",
                             deathDate: "UNKNOWN"
                         }

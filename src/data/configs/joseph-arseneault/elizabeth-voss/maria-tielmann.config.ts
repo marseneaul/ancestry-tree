@@ -11,21 +11,21 @@ export const mariaTielmannConfig = {
         {
             name: "Anna Catharina Schulte",
             sex: "Female",
-            birthPlace: "UNKNOWN",
+            birthPlace: "Germany",
             birthDate: "UNKNOWN",
             deathDate: "UNKNOWN",
             parents: [
                 {
                     name: "Annae Elisabethae Steckmann",
                     sex: "Female",
-                    birthPlace: "UNKNOWN",
+                    birthPlace: "Germany",
                     birthDate: "UNKNOWN",
                     deathDate: "UNKNOWN"
                 },
                 {
                     name: "Jois Bernardi Schulte",
                     sex: "Male",
-                    birthPlace: "UNKNOWN",
+                    birthPlace: "Germany",
                     birthDate: "UNKNOWN",
                     deathDate: "UNKNOWN"
                 }
@@ -34,14 +34,14 @@ export const mariaTielmannConfig = {
         {
             name: "Johann Tillmann zu Heggen",
             sex: "Male",
-            birthPlace: "UNKNOWN",
+            birthPlace: "Germany",
             birthDate: "1769",
             deathDate: "5 May 1847",
             parents: [
                 {
                     name: "Maria Elisabeth Buchhage",
                     sex: "Female",
-                    birthPlace: "UNKNOWN",
+                    birthPlace: "Germany",
                     birthDate: "UNKNOWN",
                     deathDate: "UNKNOWN"
                 },

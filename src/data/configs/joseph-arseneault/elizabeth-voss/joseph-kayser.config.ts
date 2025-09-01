@@ -10,21 +10,21 @@ export const josephKayserConfig = {
         {
             name: "Anna Christina Koch",
             sex: "Female",
-            birthPlace: "UNKNOWN",
+            birthPlace: "Germany",
             birthDate: "1759",
             deathDate: "19 January 1823",
             parents: [
                 {
                     name: "Anna Maria Holthöver",
                     sex: "Female",
-                    birthPlace: "UNKNOWN",
+                    birthPlace: "Germany",
                     birthDate: "UNKNOWN",
                     deathDate: "UNKNOWN"
                 },
                 {
                     name: "Hermann Koch",
                     sex: "Male",
-                    birthPlace: "UNKNOWN",
+                    birthPlace: "Germany",
                     birthDate: "UNKNOWN",
                     deathDate: "UNKNOWN"
                 }
@@ -33,7 +33,7 @@ export const josephKayserConfig = {
         {
             name: "Franz Kayser",
             sex: "Male",
-            birthPlace: "UNKNOWN",
+            birthPlace: "Germany",
             birthDate: "UNKNOWN",
             deathDate: "UNKNOWN",
             parents: [
@@ -47,7 +47,7 @@ export const josephKayserConfig = {
                 {
                     name: "Heinrich Kayser",
                     sex: "Male",
-                    birthPlace: "UNKNOWN",
+                    birthPlace: "Germany",
                     birthDate: "~1735",
                     deathDate: "UNKNOWN"
                 }

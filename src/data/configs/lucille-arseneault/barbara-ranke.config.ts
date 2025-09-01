@@ -30,14 +30,14 @@ export const barbaraRankeConfig = {
                         {   // UNCLEAR IF THIS ONE IS RIGHT
                             name: "Anna Barbara Wittmann",
                             sex: "Female",
-                            birthPlace: "UNKNOWN",
+                            birthPlace: "Germany",
                             birthDate: "UNKNOWN",
                             deathDate: "28 December 1763",
                             parents: [
                                 {
                                     name: "Stephan Whittmann",
                                     sex: "Male",
-                                    birthPlace: "UNKNOWN",
+                                    birthPlace: "Germany",
                                     birthDate: "1736",
                                     deathDate: "1797"
                                 }
@@ -228,7 +228,7 @@ export const barbaraRankeConfig = {
                                                         {
                                                             name: "Hans Caspar Weber",
                                                             sex: "Male",
-                                                            birthPlace: "UNKNOWN",
+                                                            birthPlace: "Switzerland",
                                                             deathPlace: "UNKNOWN",
                                                             birthDate: "1632",
                                                             deathDate: "January 1689",

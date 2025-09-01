@@ -94,18 +94,41 @@ document.addEventListener("DOMContentLoaded", () => {
   `;
   app.appendChild(legend);
 
-  // Populate Color Legend Dynamically
+  const countrySvgs: Record<string, string> = {
+    "France": "./src/data/svgs/france.svg",
+    "United Kingdom": "./src/data/svgs/uk.svg",
+    "Ireland": "./src/data/svgs/ireland.svg",
+    "Germany": "./src/data/svgs/germany.svg",
+    "Canada": "./src/data/svgs/canada.svg",
+    "United States": "./src/data/svgs/us.svg",
+    "Switzerland": "./src/data/svgs/switzerland.svg",
+    "Unknown": "./src/data/svgs/unknown.svg"  // Optional; if no SVG, will fallback to gray in nodes
+  };
+
+  // Populate Color Legend Dynamically with SVGs instead of colors
   const colorLegend = document.getElementById("color-legend");
   Object.entries(countryColors).forEach(([country, color]) => {
     const li = document.createElement("li");
-    li.innerHTML = `<span style="background: ${color}; width: 20px; height: 20px; display: inline-block; margin-right: 5px;"></span>${country}`;
+    const svgSrc = countrySvgs[country];
+    const iconHtml = svgSrc 
+      ? `<img src="${svgSrc}" style="width: 20px; height: 20px; display: inline-block; margin-right: 5px; object-fit: contain;">`
+      : `<span style="background: ${color}; width: 20px; height: 20px; display: inline-block; margin-right: 5px;"></span>`;  // Fallback to color if no SVG
+    li.innerHTML = `${iconHtml}${country}`;
     colorLegend?.appendChild(li);
   });
 
   // Responsive SVG
-  const width = window.innerWidth * 0.8;
-  const height = window.innerHeight * 0.7;
+  let width = window.innerWidth * 0.8;
+  let height = window.innerHeight * 0.7;
   const margin = { top: 50, right: 150, bottom: 50, left: 150 };
+
+  function updateDimensions() {
+    width = window.innerWidth * 0.8;
+    height = window.innerHeight * 0.7;
+    svg
+      .attr("height", height)
+      .attr("viewBox", `${-margin.left} ${-margin.top} ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`);
+  }
 
   const svg = d3.select("#tree-container").append("svg")
     .attr("width", "100%")
@@ -114,6 +137,23 @@ document.addEventListener("DOMContentLoaded", () => {
     .attr("preserveAspectRatio", "xMidYMid meet");
 
   const g = svg.append("g");
+
+  // Defs for patterns (for images and now country SVGs)
+  const defs = svg.append("defs");  // Moved up here so it's global
+
+  // Define country SVG patterns once
+  Object.entries(countrySvgs).forEach(([country, url]) => {
+    const pattern = defs.append("pattern")
+      .attr("id", `country-pattern-${country.replace(/\s/g, "").toLowerCase()}`)
+      .attr("width", 1)
+      .attr("height", 1)
+      .attr("patternContentUnits", "objectBoundingBox");
+    pattern.append("image")
+      .attr("xlink:href", url)
+      .attr("width", 1)
+      .attr("height", 1)
+      .attr("preserveAspectRatio", "xMidYMid slice");
+  });
 
   // Minimap needs access to the current zoom transform:
   let currentTransform = d3.zoomIdentity;
@@ -306,6 +346,8 @@ document.addEventListener("DOMContentLoaded", () => {
       .attr("height", Math.max(10, rh));
   }
 
+
+
   const root = buildHierarchy(maxArseneaultConfig);
   const treeLayout = d3.tree<Person>().size([width, height - 100]).nodeSize([120, 200]);  // Adjusted for flipped layout
 
@@ -358,16 +400,16 @@ document.addEventListener("DOMContentLoaded", () => {
     // Shapes (Scaled by DNA %)
     const scaleFactor = (depth: number) => 10 + (10 / Math.pow(2, depth));  // Larger for closer gens
 
-    // Defs for patterns (for images)
-    const defs = g.append("defs");
-
     const males = nodeEnter.filter(d => d.data.sex === "Male");
     males.each(function(d) {
       const size = scaleFactor(d.depth) * 2;
+      const country = getCountry(d.data.birthPlace);
+      const svgUrl = countrySvgs[country];
+      const patternId = `country-pattern-${country.replace(/\s/g, "").toLowerCase()}`;
       if (d.data.imageUrl) {
-        const patternId = `img-${d.data.name.replace(/\s/g, "-")}`;
+        const patternIdImg = `img-${d.data.name.replace(/\s/g, "-")}`;
         defs.append("pattern")
-          .attr("id", patternId)
+          .attr("id", patternIdImg)
           .attr("width", 1)
           .attr("height", 1)
           .append("image")
@@ -381,7 +423,7 @@ document.addEventListener("DOMContentLoaded", () => {
           .attr("height", size)
           .attr("x", -scaleFactor(d.depth))
           .attr("y", -scaleFactor(d.depth))
-          .attr("fill", `url(#${patternId})`)
+          .attr("fill", `url(#${patternIdImg})`)
           .attr("stroke", "black");
       } else {
         d3.select(this).append("rect")
@@ -389,7 +431,7 @@ document.addEventListener("DOMContentLoaded", () => {
           .attr("height", size)
           .attr("x", -scaleFactor(d.depth))
           .attr("y", -scaleFactor(d.depth))
-          .attr("fill", countryColors[getCountry(d.data.birthPlace)] || "gray")
+          .attr("fill", svgUrl ? `url(#${patternId})` : countryColors[country] || "gray")
           .attr("stroke", "black");
       }
     });
@@ -397,6 +439,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const nonMales = nodeEnter.filter(d => d.data.sex !== "Male");
     nonMales.each(function(d) {
       const radius = scaleFactor(d.depth);
+      const country = getCountry(d.data.birthPlace);
+      const svgUrl = countrySvgs[country];
+      const patternId = `country-pattern-${country.replace(/\s/g, "").toLowerCase()}`;
       if (d.data.imageUrl) {
         // For circles, use clipPath to clip image to circle
         const clipId = `clip-${d.data.name.replace(/\s/g, "-")}`;
@@ -422,7 +467,7 @@ document.addEventListener("DOMContentLoaded", () => {
       } else {
         d3.select(this).append("circle")
           .attr("r", radius)
-          .attr("fill", countryColors[getCountry(d.data.birthPlace)] || "gray")
+          .attr("fill", svgUrl ? `url(#${patternId})` : countryColors[country] || "gray")
           .attr("stroke", "black");
       }
     });
@@ -522,7 +567,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Resize Handler
   window.addEventListener("resize", () => {
-    // Recompute width/height and update viewBox if needed
+    updateDimensions();
+    treeLayout.size([width, height - 100]);
     updateTree();
     updateMinimapViewport();
   });

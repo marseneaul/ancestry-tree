@@ -33,32 +33,32 @@ export const elizabethVossConfig = {
                 {
                     name: "Anna Maria Spies",
                     sex: "Female",
-                    birthPlace: "UNKNOWN",
+                    birthPlace: "Germany",
                     birthDate: "1803",
                     deathDate: "UNKNOWN",
                     parents: [
                         {
                             name: "Philippina Welter",
                             sex: "Female",
-                            birthPlace: "UNKNOWN",
+                            birthPlace: "Germany",
                             birthDate: "UNKNOWN",
-                            deathDate: "UNKNOWN",
+                            deathDate: "UNKNOWN"
                         },
                         {
                             name: "Johannes Weber",
                             sex: "Male",
-                            birthPlace: "UNKNOWN",
+                            birthPlace: "Germany",
                             birthDate: "UNKNOWN",
-                            deathDate: "UNKNOWN",
+                            deathDate: "UNKNOWN"
                         }
                     ]
                 },
                 {
                     name: "Johannes Voss",
                     sex: "Male",
-                    birthPlace: "UNKNOWN",
+                    birthPlace: "Germany",
                     birthDate: "1789",
-                    deathDate: "UNKNOWN",
+                    deathDate: "UNKNOWN"
                 }
             ]
         }

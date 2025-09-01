@@ -1,6 +1,6 @@
 <!-- Germany: Black | Red | Yellow -->
-<svg xmlns="http://www.w3.org/2000/svg" width="40" height="20">
-  <rect width="40" height="6.66" fill="#000000"/>
-  <rect y="6.66" width="40" height="6.66" fill="#DD0000"/>
-  <rect y="13.32" width="40" height="6.68" fill="#FFCC00"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+  <rect width="20" height="6.66" fill="#000000"/>
+  <rect y="6.66" width="20" height="6.66" fill="#DD0000"/>
+  <rect y="13.32" width="20" height="6.68" fill="#FFCC00"/>
 </svg>

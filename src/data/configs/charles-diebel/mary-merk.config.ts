@@ -19,14 +19,14 @@ export const maryMerkConfig = {
                 {
                     name: "Josepha Betz",
                     sex: "Female",
-                    birthPlace: "UNKNOWN",
+                    birthPlace: "Germany",
                     birthDate: "UNKNOWN",
                     deathDate: "UNKNOWN"
                 },
                 {
                     name: "Andreas Pfeifer",
                     sex: "Male",
-                    birthPlace: "UNKNOWN",
+                    birthPlace: "Germany",
                     birthDate: "UNKNOWN",
                     deathDate: "UNKNOWN"
                 }
@@ -43,7 +43,7 @@ export const maryMerkConfig = {
                 {
                     name: "John Merk",
                     sex: "Male",
-                    birthPlace: "UNKNOWN",
+                    birthPlace: "Germany",
                     birthDate: "UNKNOWN",
                     deathDate: "UNKNOWN"
                 }

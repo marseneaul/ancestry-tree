@@ -51,7 +51,7 @@ export const michelArsenaultIConfig = {
                         {
                             name: "Catherine Peiron",
                             sex: "Female",
-                            birthPlace: "UNKNOWN",
+                            birthPlace: "France",
                             deathPlace: "UNKNOWN",
                             birthDate: "UNKNOWN",
                             deathDate: "UNKNOWN"
@@ -109,7 +109,7 @@ export const michelArsenaultIConfig = {
                                         {
                                             name: "Jeannette Chaillan Chailan Cheylan",
                                             sex: "Female",
-                                            birthPlace: "UNKNOWN",
+                                            birthPlace: "France",
                                             deathPlace: "Clumanc, Alpes-de-Haute-Provence, Provence-Alpes-Côte d''Azur, France",
                                             birthDate: "1518",
                                             deathDate: "1599",
@@ -117,7 +117,7 @@ export const michelArsenaultIConfig = {
                                                 {
                                                     name: "Bertrand Chailan",
                                                     sex: "Male",
-                                                    birthPlace: "UNKNOWN",
+                                                    birthPlace: "France",
                                                     deathPlace: "UNKNOWN",
                                                     birthDate: "UNKNOWN",
                                                     deathDate: "UNKNOWN"

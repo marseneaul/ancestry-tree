@@ -33,7 +33,7 @@ export const phillipCoxConfig = {
                                 {
                                     name: "Ann",
                                     sex: "Female",
-                                    birthPlace: "UNKNOWN",
+                                    birthPlace: "England",
                                     deathPlace: "UNKNOWN",
                                     birthDate: "UNKNOWN",
                                     deathDate: "UNKNOWN"
@@ -106,7 +106,7 @@ export const phillipCoxConfig = {
                 {
                     name: "Thomas Cox",
                     sex: "Male",
-                    birthPlace: "UNKNOWN",
+                    birthPlace: "United Kingdom",
                     deathPlace: "UNKNOWN",
                     birthDate: "~1723",
                     deathDate: "~1812"

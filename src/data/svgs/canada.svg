@@ -1,6 +1,59 @@
-<!-- Canada: Red | White | Red with maple leaf simplified as central white -->
-<svg xmlns="http://www.w3.org/2000/svg" width="40" height="20">
-  <rect width="10" height="20" fill="#FF0000"/>
-  <rect x="10" width="20" height="20" fill="white"/>
-  <rect x="30" width="10" height="20" fill="#FF0000"/>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="500"
+   height="500"
+   version="1.1"
+   id="svg7"
+   sodipodi:docname="Flag of the Canadian Heraldic Authority.svg"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)">
+  <metadata
+     id="metadata13">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs11" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     id="namedview9"
+     showgrid="false"
+     inkscape:zoom="1.0346174"
+     inkscape:cx="45.995699"
+     inkscape:cy="250"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg7" />
+  <rect
+     width="500"
+     height="500"
+     fill="#fff"
+     id="rect2" />
+  <path
+     fill="#ff0000"
+     d="M 249.99228,39.0625 215.87916,102.68779 C 212.0083,109.6028 205.07289,108.96142 198.13747,105.09917 L 173.44048,92.31059 191.84753,190.0377 C 195.71839,207.89189 183.29894,207.89189 177.16988,200.17205 L 134.06883,151.92106 127.07145,176.42406 C 126.26453,179.64183 122.71664,183.0215 117.39397,182.21667 L 62.8922,170.75755 77.20744,222.8023 C 80.27195,234.38284 82.66234,239.17758 74.11369,242.23189 L 54.6875,251.36214 148.50877,327.57052 C 152.22227,330.45203 154.09848,335.63752 152.77645,340.33262 L 144.56509,367.27969 C 176.86914,363.55598 205.81407,357.95375 238.13448,354.5035 240.98771,354.19891 245.76436,358.90758 245.74477,362.21408 L 241.46453,460.9375 H 257.17092 L 254.69855,362.4258 C 254.67885,359.1193 259.01227,354.19891 261.8655,354.5035 294.18591,357.95376 323.13088,363.55598 355.43492,367.27969 L 347.22358,340.33262 C 345.90155,335.63752 347.77775,330.45203 351.49125,327.57052 L 445.3125,251.36214 425.88633,242.23189 C 417.33766,239.17758 419.72805,234.38284 422.79256,222.8023 L 437.10783,170.75755 382.60603,182.21667 C 377.28336,183.0215 373.73547,179.64183 372.92853,176.42406 L 365.93116,151.92106 322.83013,200.17205 C 316.70105,207.89189 304.28159,207.89189 308.15245,190.0377 L 326.55947,92.31059 301.86253,105.09917 C 294.92694,108.96142 287.9917,109.6028 284.12083,102.68779"
+     id="path4"
+     style="fill:#d52b1e;fill-opacity:1" />
 </svg>

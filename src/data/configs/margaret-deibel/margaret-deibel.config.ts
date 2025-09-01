@@ -67,7 +67,7 @@ export const margaretDeibelConfig = {
                                         {
                                             name: "Mary Roche",
                                             sex: "Female",
-                                            birthPlace: "UNKNOWN",
+                                            birthPlace: "Ireland",
                                             deathPlace: "UNKNOWN",
                                             birthDate: "~1800",
                                             deathDate: "UNKNOWN"

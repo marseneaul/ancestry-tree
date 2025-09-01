@@ -70,7 +70,7 @@ export const mariaWilloughbyConfig = {
                                 {
                                     name: "Jane Sparrowe",
                                     sex: "Female",
-                                    birthPlace: "UNKNOWN",
+                                    birthPlace: "United Kingdom",
                                     deathPlace: "UNKNOWN",
                                     birthDate: "UNKNOWN",
                                     deathDate: "UNKNOWN"
@@ -86,7 +86,7 @@ export const mariaWilloughbyConfig = {
                                         {
                                             name: "Jane Williams",
                                             sex: "Female",
-                                            birthPlace: "UNKNOWN",
+                                            birthPlace: "United Kingdom",
                                             deathPlace: "UNKNOWN",
                                             birthDate: "UNKNOWN",
                                             deathDate: "UNKNOWN"

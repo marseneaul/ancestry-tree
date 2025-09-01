@@ -10,7 +10,7 @@ export const margarethaZeiligerConfig = {
         {
             name: "Anna Margarethe Schuh",
             sex: "Female",
-            birthPlace: "UNKNOWN",
+            birthPlace: "Germany",
             deathPlace: "Ebersdorf, Bayern, Germany",
             birthDate: "1766",
             deathDate: "29 NOV 1843"
@@ -43,7 +43,7 @@ export const margarethaZeiligerConfig = {
                         {
                             name: "Katharina Arnold",
                             sex: "Female",
-                            birthPlace: "Höfstetten, Bürglein, Ansbach, Bayern, Deutschland",
+                            birthPlace: "Höfstetten, Bürglein, Ansbach, Bayern, Germany",
                             deathPlace: "Dietenhofen, Ansbach, Bayern, Deutschland",
                             birthDate: "~1685",
                             deathDate: "11 September 1749",
@@ -51,7 +51,7 @@ export const margarethaZeiligerConfig = {
                                 {
                                     name: "Andreas Arnold",
                                     sex: "Male",
-                                    birthPlace: "UNKNOWN",
+                                    birthPlace: "Germany",
                                     deathPlace: "UNKNOWN",
                                     birthDate: "UNKNOWN",
                                     deathDate: "<1710"

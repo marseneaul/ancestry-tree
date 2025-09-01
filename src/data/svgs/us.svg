@@ -1,13 +1,74 @@
-<!-- United States: Stripes simplified (red and white stripes only) -->
-<svg xmlns="http://www.w3.org/2000/svg" width="40" height="20">
-  <rect width="40" height="2" y="0" fill="#1E90FF"/>
-  <rect width="40" height="2" y="2" fill="#FFFFFF"/>
-  <rect width="40" height="2" y="4" fill="#B22234"/>
-  <rect width="40" height="2" y="6" fill="#FFFFFF"/>
-  <rect width="40" height="2" y="8" fill="#B22234"/>
-  <rect width="40" height="2" y="10" fill="#FFFFFF"/>
-  <rect width="40" height="2" y="12" fill="#B22234"/>
-  <rect width="40" height="2" y="14" fill="#FFFFFF"/>
-  <rect width="40" height="2" y="16" fill="#B22234"/>
-  <rect width="40" height="2" y="18" fill="#FFFFFF"/>
+<!-- United States -->
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+  <!-- Stripes (13 horizontal) -->
+  <rect width="20" height="1.54" y="0" fill="#B22234"/>
+  <rect width="20" height="1.54" y="1.54" fill="#FFFFFF"/>
+  <rect width="20" height="1.54" y="3.08" fill="#B22234"/>
+  <rect width="20" height="1.54" y="4.62" fill="#FFFFFF"/>
+  <rect width="20" height="1.54" y="6.16" fill="#B22234"/>
+  <rect width="20" height="1.54" y="7.7" fill="#FFFFFF"/>
+  <rect width="20" height="1.54" y="9.24" fill="#B22234"/>
+  <rect width="20" height="1.54" y="10.78" fill="#FFFFFF"/>
+  <rect width="20" height="1.54" y="12.32" fill="#B22234"/>
+  <rect width="20" height="1.54" y="13.86" fill="#FFFFFF"/>
+  <rect width="20" height="1.54" y="15.4" fill="#B22234"/>
+  <rect width="20" height="1.54" y="16.94" fill="#FFFFFF"/>
+  <rect width="20" height="1.54" y="18.48" fill="#B22234"/>
+  <!-- Blue canton: upper left 10x10 (1/4 area) -->
+  <rect width="10" height="10" fill="#3C3B6E"/>
+  <!-- Stars with real positioning (6-5-6-5-6-5-6-5-6 rows, staggered) -->
+  <circle cx="0.833" cy="0.556" r="0.2" fill="white"/>
+  <circle cx="2.500" cy="0.556" r="0.2" fill="white"/>
+  <circle cx="4.167" cy="0.556" r="0.2" fill="white"/>
+  <circle cx="5.833" cy="0.556" r="0.2" fill="white"/>
+  <circle cx="7.500" cy="0.556" r="0.2" fill="white"/>
+  <circle cx="9.167" cy="0.556" r="0.2" fill="white"/>
+  <circle cx="1.667" cy="1.667" r="0.2" fill="white"/>
+  <circle cx="3.333" cy="1.667" r="0.2" fill="white"/>
+  <circle cx="5.000" cy="1.667" r="0.2" fill="white"/>
+  <circle cx="6.667" cy="1.667" r="0.2" fill="white"/>
+  <circle cx="8.333" cy="1.667" r="0.2" fill="white"/>
+  <circle cx="0.833" cy="2.778" r="0.2" fill="white"/>
+  <circle cx="2.500" cy="2.778" r="0.2" fill="white"/>
+  <circle cx="4.167" cy="2.778" r="0.2" fill="white"/>
+  <circle cx="5.833" cy="2.778" r="0.2" fill="white"/>
+  <circle cx="7.500" cy="2.778" r="0.2" fill="white"/>
+  <circle cx="9.167" cy="2.778" r="0.2" fill="white"/>
+  <circle cx="1.667" cy="3.889" r="0.2" fill="white"/>
+  <circle cx="3.333" cy="3.889" r="0.2" fill="white"/>
+  <circle cx="5.000" cy="3.889" r="0.2" fill="white"/>
+  <circle cx="6.667" cy="3.889" r="0.2" fill="white"/>
+  <circle cx="8.333" cy="3.889" r="0.2" fill="white"/>
+  <circle cx="0.833" cy="5.000" r="0.2" fill="white"/>
+  <circle cx="2.500" cy="5.000" r="0.2" fill="white"/>
+  <circle cx="4.167" cy="5.000" r="0.2" fill="white"/>
+  <circle cx="5.833" cy="5.000" r="0.2" fill="white"/>
+  <circle cx="7.500" cy="5.000" r="0.2" fill="white"/>
+  <circle cx="9.167" cy="5.000" r="0.2" fill="white"/>
+  <circle cx="1.667" cy="6.111" r="0.2" fill="white"/>
+  <circle cx="3.333" cy="6.111" r="0.2" fill="white"/>
+  <circle cx="5.000" cy="6.111" r="0.2" fill="white"/>
+  <circle cx="6.667" cy="6.111" r="0.2" fill="white"/>
+  <circle cx="8.333" cy="6.111" r="0.2" fill="white"/>
+  <circle cx="0.833" cy="7.222" r="0.2" fill="white"/>
+  <circle cx="2.500" cy="7.222" r="0.2" fill="white"/>
+  <circle cx="4.167" cy="7.222" r="0.2" fill="white"/>
+  <circle cx="5.833" cy="7.222" r="0.2" fill="white"/>
+  <circle cx="7.500" cy="7.222" r="0.2" fill="white"/>
+  <circle cx="9.167" cy="7.222" r="0.2" fill="white"/>
+  <circle cx="1.667" cy="8.333" r="0.2" fill="white"/>
+  <circle cx="3.333" cy="8.333" r="0.2" fill="white"/>
+  <circle cx="5.000" cy="8.333" r="0.2" fill="white"/>
+  <circle cx="6.667" cy="8.333" r="0.2" fill="white"/>
+  <circle cx="8.333" cy="8.333" r="0.2" fill="white"/>
+  <circle cx="0.833" cy="9.444" r="0.2" fill="white"/>
+  <circle cx="2.500" cy="9.444" r="0.2" fill="white"/>
+  <circle cx="4.167" cy="9.444" r="0.2" fill="white"/>
+  <circle cx="5.833" cy="9.444" r="0.2" fill="white"/>
+  <circle cx="7.500" cy="9.444" r="0.2" fill="white"/>
+  <circle cx="9.167" cy="9.444" r="0.2" fill="white"/>
 </svg>
+
+
+
+

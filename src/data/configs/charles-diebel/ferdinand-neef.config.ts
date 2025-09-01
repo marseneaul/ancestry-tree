@@ -2,14 +2,14 @@
 export const ferdinandNeefConfig = {
     name: "Ferdinand Neef",
     sex: "Male",
-    birthPlace: "UNKNOWN",
+    birthPlace: "Germany",
     birthDate: "1748",
     deathDate: "UNKNOWN",
     parents: [
         {
             name: "Maria Caecilia Hildbrand",
             sex: "Female",
-            birthPlace: "UNKNOWN",
+            birthPlace: "Germany",
             birthDate: "UNKNOWN",
             deathDate: "UNKNOWN"
         },
@@ -23,7 +23,7 @@ export const ferdinandNeefConfig = {
                 {
                     name: "Maria Langenbach",
                     sex: "Female",
-                    birthPlace: "UNKNOWN",
+                    birthPlace: "Germany",
                     birthDate: "UNKNOWN",
                     deathDate: "UNKNOWN"
                 },

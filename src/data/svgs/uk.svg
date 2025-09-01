@@ -1,6 +1,10 @@
 <!-- United Kingdom: Red Cross on White, simplified -->
-<svg xmlns="http://www.w3.org/2000/svg" width="40" height="20">
-  <rect width="40" height="20" fill="white"/>
-  <rect x="16" width="8" height="20" fill="#CC0000"/>
-  <rect y="6" width="40" height="8" fill="#CC0000"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+  <rect width="20" height="20" fill="#00247d"/> <!-- Blue background -->
+  <path d="M0 0L20 20M20 0L0 20" stroke="#fff" stroke-width="4"/> <!-- White diagonals -->
+  <path d="M0 0L20 20M20 0L0 20" stroke="#cf142b" stroke-width="2"/> <!-- Red diagonals -->
+  <rect x="8" width="4" height="20" fill="#fff"/> <!-- White cross vertical -->
+  <rect y="8" width="20" height="4" fill="#fff"/> <!-- White cross horizontal -->
+  <rect x="9" width="2" height="20" fill="#cf142b"/> <!-- Red cross vertical -->
+  <rect y="9" width="20" height="2" fill="#cf142b"/> <!-- Red cross horizontal -->
 </svg>
