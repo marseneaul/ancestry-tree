@@ -69,7 +69,198 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const g = svg.append("g");
 
-  svg.call(d3.zoom().on("zoom", (event) => g.attr("transform", event.transform)));
+  // Minimap needs access to the current zoom transform:
+  let currentTransform = d3.zoomIdentity;
+
+  const zoom = d3.zoom().on("zoom", (event) => {
+    currentTransform = event.transform;
+    g.attr("transform", currentTransform);
+    updateMinimapViewport(); // keep minimap viewport in sync
+  });
+
+  svg.call(zoom);
+
+    // ───────────────── MINIMAP: setup ─────────────────
+  const miniW = 220;
+  const miniH = 150;
+  const miniPad = 8;
+
+  // Container (fixed, bottom-right). Style here so you don't need to touch CSS.
+  const miniWrap = document.createElement("div");
+  miniWrap.id = "minimap";
+  Object.assign(miniWrap.style, {
+    position: "fixed",
+    right: "16px",
+    bottom: "16px",
+    width: `${miniW + 2 * miniPad}px`,
+    height: `${miniH + 2 * miniPad}px`,
+    border: "1px solid #ccc",
+    background: "rgba(255,255,255,0.9)",
+    borderRadius: "8px",
+    boxShadow: "0 4px 8px rgba(0,0,0,0.15)",
+    zIndex: "999",
+    userSelect: "none",
+  });
+  app.appendChild(miniWrap);
+
+  const miniSvg = d3
+    .select(miniWrap)
+    .append("svg")
+    .attr("width", miniW + 2 * miniPad)
+    .attr("height", miniH + 2 * miniPad);
+
+  const miniG = miniSvg.append("g").attr("transform", `translate(${miniPad},${miniPad})`);
+  const miniLinksG = miniG.append("g").attr("class", "minimap-links");
+  const miniNodesG = miniG.append("g").attr("class", "minimap-nodes");
+  const miniViewport = miniG
+    .append("rect")
+    .attr("class", "minimap-viewport")
+    .attr("fill", "none")
+    .attr("stroke", "#333")
+    .attr("stroke-width", 1.5)
+    .attr("pointer-events", "all"); // needed for drag
+
+  // Bounds/scales for minimap
+  let treeBounds = { x0: 0, y0: 0, x1: 1, y1: 1 };
+  let miniScale = 1;
+
+  // Helpers to map main coords → minimap coords
+  const mx = (x: number) => (x - treeBounds.x0) * miniScale;
+  const my = (y: number) => (y - treeBounds.y0) * miniScale;
+
+  // Drag to pan main view from the minimap
+  const dragViewport = d3
+    .drag<SVGRectElement, unknown>()
+    .on("drag", (event) => {
+      // convert minimap rect top-left back to main coords
+      const x0 = event.x; // in minimap group coords (already inside miniG with translate)
+      const y0 = event.y;
+
+      const mainX0 = x0 / miniScale + treeBounds.x0;
+      const mainY0 = y0 / miniScale + treeBounds.y0;
+
+      const k = currentTransform.k;
+      const tx = -mainX0 * k;
+      const ty = -mainY0 * k;
+
+      svg.call(zoom.transform, d3.zoomIdentity.translate(tx, ty).scale(k));
+    });
+  miniViewport.call(dragViewport);
+
+  // Draw/update minimap content
+  function updateMinimap() {
+    // Compute tree bounds from current layout (after you assign d.x/d.y)
+    const nodes = root.descendants();
+    const xs = nodes.map((d) => d.x);
+    const ys = nodes.map((d) => d.y);
+
+    const x0 = Math.min(...xs);
+    const x1 = Math.max(...xs);
+    const y0 = Math.min(...ys);
+    const y1 = Math.max(...ys);
+
+    // pad bounds slightly
+    const pad = 20;
+    treeBounds = { x0: x0 - pad, x1: x1 + pad, y0: y0 - pad, y1: y1 + pad };
+
+    const bw = treeBounds.x1 - treeBounds.x0;
+    const bh = treeBounds.y1 - treeBounds.y0;
+
+    miniScale = Math.min(miniW / Math.max(bw, 1), miniH / Math.max(bh, 1));
+
+    // Links (draw as straight lines; simple & fast)
+    const miniLinks = miniLinksG
+      .selectAll<SVGLineElement, any>("line")
+      .data(root.links(), (d: any) => `${d.source.data.name}-${d.target.data.name}`);
+
+    miniLinks
+      .join(
+        (enter) =>
+          enter
+            .append("line")
+            .attr("x1", (d) => mx(d.source.x))
+            .attr("y1", (d) => my(d.source.y))
+            .attr("x2", (d) => mx(d.target.x))
+            .attr("y2", (d) => my(d.target.y))
+            .attr("stroke", "#bbb")
+            .attr("stroke-width", 1),
+        (update) =>
+          update
+            .attr("x1", (d) => mx(d.source.x))
+            .attr("y1", (d) => my(d.source.y))
+            .attr("x2", (d) => mx(d.target.x))
+            .attr("y2", (d) => my(d.target.y)),
+        (exit) => exit.remove()
+      );
+
+    // Nodes (tiny dots/squares; no images)
+    const miniNodes = miniNodesG
+      .selectAll<SVGCircleElement | SVGRectElement, any>("circle,rect")
+      .data(nodes, (d: any) => d.data.id || d.data.name + d.depth);
+
+    miniNodes.exit().remove();
+
+    // Split join to keep shapes by sex
+    const maleNodes = miniNodesG
+      .selectAll<SVGRectElement, any>("rect.minimap-male")
+      .data(nodes.filter((d) => d.data.sex === "Male"), (d: any) => d.data.id || d.data.name + d.depth);
+    maleNodes
+      .join(
+        (enter) =>
+          enter
+            .append("rect")
+            .attr("class", "minimap-male")
+            .attr("width", 3)
+            .attr("height", 3)
+            .attr("x", (d) => mx(d.x) - 1.5)
+            .attr("y", (d) => my(d.y) - 1.5)
+            .attr("fill", "#444"),
+        (update) =>
+          update.attr("x", (d) => mx(d.x) - 1.5).attr("y", (d) => my(d.y) - 1.5)
+      );
+
+    const femaleNodes = miniNodesG
+      .selectAll<SVGCircleElement, any>("circle.minimap-female")
+      .data(nodes.filter((d) => d.data.sex !== "Male"), (d: any) => d.data.id || d.data.name + d.depth);
+    femaleNodes
+      .join(
+        (enter) =>
+          enter
+            .append("circle")
+            .attr("class", "minimap-female")
+            .attr("r", 1.5)
+            .attr("cx", (d) => mx(d.x))
+            .attr("cy", (d) => my(d.y))
+            .attr("fill", "#222"),
+        (update) => update.attr("cx", (d) => mx(d.x)).attr("cy", (d) => my(d.y))
+      );
+
+    updateMinimapViewport(); // sync viewport rect
+  }
+
+  // Update the viewport rectangle in the minimap
+  function updateMinimapViewport() {
+    // visible region in content coords (approximate: use layout width/height)
+    const k = currentTransform.k;
+    const x0 = -currentTransform.x / k; // top-left in main coords
+    const y0 = -currentTransform.y / k;
+    const vw = width / k;
+    const vh = height / k;
+
+    // Convert to minimap coords
+    const rx = mx(x0);
+    const ry = my(y0);
+    const rw = vw * miniScale;
+    const rh = vh * miniScale;
+
+    miniViewport
+      .attr("x", rx)
+      .attr("y", ry)
+      .attr("width", Math.max(10, rw)) // keep visible
+      .attr("height", Math.max(10, rh));
+  }
+
+
 
   const root = buildHierarchy(maxArseneaultConfig);
   const treeLayout = d3.tree<Person>().size([width, height - 100]).nodeSize([120, 200]);  // Adjusted for flipped layout
@@ -241,6 +432,8 @@ document.addEventListener("DOMContentLoaded", () => {
       .attr("stroke", "pink")
       .attr("stroke-dasharray", "5,5")
       .attr("stroke-width", 3);
+
+    updateMinimap();
   }
 
   updateTree();
@@ -291,5 +484,6 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("resize", () => {
     // Recompute width/height and update viewBox if needed
     updateTree();
+    updateMinimapViewport();
   });
 });
