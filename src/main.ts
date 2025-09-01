@@ -4,8 +4,54 @@ import "./style.css";
 import * as d3 from "d3";
 import { maxArseneaultConfig } from "./data/configs/max-arseneault.config";
 import { Person } from "./interfaces/person";
-import { buildHierarchy, getGenerations, tracePatrilineal, traceMatrilineal, getCountry, calculateAge, countryColors } from "./utils/utils";
+import { buildHierarchy, getGenerations, tracePatrilineal, traceMatrilineal, getCountry, calculateAge, countryColors, getInitials } from "./utils/utils";
 // import { format } from "date-fns";  // Uncomment if needed
+
+/** Standardized modal image + placeholder; relation is optional */
+function showPersonModal(d: Person, relation: string = "") {
+  const modal = document.getElementById("detail-modal")!;
+  const content = document.getElementById("modal-content")!;
+  if (!modal || !content) return;
+
+  const initials = getInitials(d?.name);
+  const age = calculateAge(d.birthDate, d.deathDate);
+
+  // Prefer a large image if available, fall back to avatar
+  const imgSrc = (d as any)?.largeImageUrl || d.imageUrl || null;
+
+  // Image HTML (hidden on error and reveals placeholder)
+  const imageHtml = imgSrc
+    ? `<img
+         src="${imgSrc}"
+         alt="${(d.name || "Person").replace(/"/g, "&quot;")}"
+         style="width: min(80vw, 320px); height: min(80vw, 320px); max-width:320px; max-height:320px; object-fit:cover; border-radius:12px; box-shadow:0 6px 18px rgba(0,0,0,0.15);"
+         onerror="this.style.display='none'; const p=this.parentElement.querySelector('.modal-placeholder'); if(p) p.style.display='flex';"
+       />`
+    : "";
+
+  // Placeholder (shown when no image available or when image fails)
+  const placeholderHtml = `
+    <div class="modal-placeholder"
+         style="width: min(80vw, 320px); height: min(80vw, 320px); max-width:320px; max-height:320px; border-radius:12px; background:#f2f2f2; display:${imgSrc ? "none" : "flex"}; align-items:center; justify-content:center; font-size:48px; color:#666;">
+      ${initials}
+    </div>`;
+
+  content.innerHTML = `
+    <div style="display:flex; flex-direction:column; align-items:center; gap:12px; text-align:center; padding:8px;">
+      ${imageHtml}
+      ${placeholderHtml}
+      <h2 style="margin:0; font-size:20px; font-weight:700;">${d.name || "Unknown"}</h2>
+      ${relation ? `<div style="color:#444"><strong>Relation:</strong> ${relation}</div>` : ""}
+      <div style="color:#444">${d.birthDate ? `<strong>Born:</strong> ${d.birthDate}` : ""} ${d.birthPlace ? `(${d.birthPlace})` : ""}</div>
+      <div style="color:#444"><strong>Died:</strong> ${d.deathDate || "—"}</div>
+      ${age !== null ? `<div style="color:#444"><strong>Age:</strong> ${age}</div>` : ""}
+      <div style="margin-top:8px; color:#666; font-style:italic;">${(d as any).story || "Stories coming soon..."}</div>
+    </div>
+  `;
+
+  modal.classList.remove("hidden");
+}
+
 
 document.addEventListener("DOMContentLoaded", () => {
   const app = document.querySelector("#app");
@@ -260,8 +306,6 @@ document.addEventListener("DOMContentLoaded", () => {
       .attr("height", Math.max(10, rh));
   }
 
-
-
   const root = buildHierarchy(maxArseneaultConfig);
   const treeLayout = d3.tree<Person>().size([width, height - 100]).nodeSize([120, 200]);  // Adjusted for flipped layout
 
@@ -297,15 +341,11 @@ document.addEventListener("DOMContentLoaded", () => {
       .attr("transform", d => `translate(${d.x ?? 0},${d.y ?? 0})`)
       .attr("opacity", 0)
       .attr("aria-label", d => d.data.name)  // Accessibility
-      .on("click", (event, d) => {
-        if (d.children) {
-          d._children = d.children;
-          d.children = null;
-        } else {
-          d.children = d._children;
-          d._children = null;
-        }
-        updateTree();
+      .on("click", (_, d) => {
+        const relation = d.depth === 0 
+          ? "You"
+          : `${d.depth} generation${d.depth > 1 ? "s" : ""} back`;
+        showPersonModal(d.data, relation);
       });
 
     nodeEnter.transition().duration(300).attr("opacity", 1);

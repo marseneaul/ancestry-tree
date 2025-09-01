@@ -54,19 +54,20 @@ export function getCountry(birthPlace?: string): string {
     return place.split(",").pop()?.trim() || "Unknown";  // Fallback
   }
   
-  export const countryColors: Record<string, string> = {
-    "France": "#000091",         // Heraldic: Blue from flag
-    "United Kingdom": "crimson",   // Red/Pink for British Empire
-    "Ireland": "forestgreen",      // Green from flag/heraldry
-    "Germany": "#FFCC00",             // Gold from flag (black-red-gold); Prussia often black but gold for visibility
-    "Canada": "red",               // Red from maple leaf flag
-    "United States": "navy",       // Blue from stars & stripes
-    "Switzerland": "#DA291C",      // Red from Swiss flag
-    "Unknown": "gray",
-    // Add more as needed, e.g., "Italy": "green"
-  };
+export const countryColors: Record<string, string> = {
+    "France": "#0055A4",          // deep blue, distinct from US navy
+    "United Kingdom": "#CC0000",  // bright red, very different from Canada
+    "Ireland": "#009B3A",         // emerald green, distinct and vivid
+    "Germany": "#FFCC00",         // gold/yellow, already good contrast
+    "Canada": "#FF0000",          // pure red, distinguishable from UK crimson
+    "United States": "#1E90FF",   // dodger blue, brighter than France
+    "Switzerland": "#FF2B2B",     // lighter red to separate from Canada/UK
+    "Unknown": "#808080",         // neutral gray
+};
+
+
   
-  export function getGenerations(root: HierarchyNode<Person>): Map<number, { count: number; dnaPercentEach: number; dnaPercentTotal: number, probOfSharingDna: number }> {
+export function getGenerations(root: HierarchyNode<Person>): Map<number, { count: number; dnaPercentEach: number; dnaPercentTotal: number, probOfSharingDna: number }> {
     const gens = new Map<number, { count: number; dnaPercentEach: number; dnaPercentTotal: number, probOfSharingDna: number }>();
     root.each(d => {
       const depth = d.depth;
@@ -79,4 +80,14 @@ export function getCountry(birthPlace?: string): string {
       info.probOfSharingDna = (1 - Math.pow(Math.E, (-c / Math.pow(2, depth)))) * 100;
     });
     return gens;
-  }
+}
+
+export function getInitials(name?: string) {
+  if (!name) return "?";
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .map(s => s[0].toUpperCase())
+    .slice(0, 2)
+    .join("");
+}

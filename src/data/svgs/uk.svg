@@ -1,0 +1,6 @@
+<!-- United Kingdom: Red Cross on White, simplified -->
+<svg xmlns="http://www.w3.org/2000/svg" width="40" height="20">
+  <rect width="40" height="20" fill="white"/>
+  <rect x="16" width="8" height="20" fill="#CC0000"/>
+  <rect y="6" width="40" height="8" fill="#CC0000"/>
+</svg>
