@@ -265,7 +265,44 @@ export const barbaraRankeConfig = {
                                                                             deathPlace: "Hausen, Zurich, Switzerland",
                                                                             birthDate: "1563",
                                                                             deathDate: "1622",
-                                                                            parents: []
+                                                                            parents: [
+                                                                                {
+                                                                                    name: "Elsi Raber",
+                                                                                    sex: "Female",
+                                                                                    birthPlace: "Diemtigen, Bern, Berne, Switzerland",
+                                                                                    deathPlace: "UNKNOWN",
+                                                                                    birthDate: "1539",
+                                                                                    deathDate: "UNKNOWN"
+                                                                                },
+                                                                                {
+                                                                                    name: "Johann (Hans) Weber (Waeber)",
+                                                                                    sex: "Male",
+                                                                                    birthPlace: "Mollis, Glarus, Switzerland",
+                                                                                    deathPlace: "Hausen, Canton, Zurich, Switzerland",
+                                                                                    birthDate: "1533",
+                                                                                    deathDate: "1 March 1569",
+                                                                                    parents: [
+                                                                                        {
+                                                                                            name: "Anna Maria Kohl (Pellikan Weber Klugel Straubin)",
+                                                                                            sex: "Female",
+                                                                                            birthPlace: "Mollis, Kanton Glarus, Glarus, Switzerland",
+                                                                                            deathPlace: "Netstal, Glarus, Switzerland",
+                                                                                            birthDate: "9 August 1505",
+                                                                                            deathDate: "1540",
+                                                                                            parents: []
+                                                                                        },
+                                                                                        {   // Photo??
+                                                                                            name: "Frantz Anton Weber",
+                                                                                            sex: "Male",
+                                                                                            birthPlace: "Mollis, Kanton Glarus, Glarus, Switzerland",
+                                                                                            deathPlace: "Nestral, Glarus, Switzerland",
+                                                                                            birthDate: "1500",
+                                                                                            deathDate: "1 January 1538",
+                                                                                            parents: []
+                                                                                        }
+                                                                                    ]
+                                                                                }
+                                                                            ]
                                                                         }
                                                                     ]
                                                                 }

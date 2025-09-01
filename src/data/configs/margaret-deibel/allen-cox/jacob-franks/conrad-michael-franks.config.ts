@@ -53,7 +53,7 @@ export const conradMichaelFranksConfig = {
                                     deathPlace: "Steinweiler, Rheinland Pfalz, Germany",
                                     birthDate: "1658",
                                     deathDate: "6 April 1724",
-                                    parents: []
+                                    parents: [] // Potential Finnish route
                                 }
                             ]
                         },

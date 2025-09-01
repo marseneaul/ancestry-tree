@@ -61,20 +61,61 @@ export const jacobFranksConfig = {
                     deathDate: "6 October 1868",
                     parents: [
                         {
-                            name: "Barbara Grovenstadt",
+                            name: "Barbara / Elizabeth Grovenstadt",
                             sex: "Female",
                             birthPlace: "Fayette, Pennsylvania, United States",
                             deathPlace: "Fayette City, Fayette, Pennsylvania, United States",
                             birthDate: "1758",
                             deathDate: "10 August 1796"
                         },
-                        {
-                            name: "Henry Barnabus Smith",
+                        {   // Fought as a minute man
+                            // Manufactured powder
+                            name: "Heinrich 'Henry' Barnabus Smith",
                             sex: "Male",
                             birthPlace: "Antietam Farm, Frederick, Maryland, United States",
                             deathPlace: "Yorks Run, Fayette, Pennsylvania, United States",
                             birthDate: "25 February 1752",
-                            deathDate: "10 March 1838"
+                            deathDate: "10 March 1838",
+                            parents: [
+                                {   // Typed out lengthy will
+                                    name: "Barbara Markley",
+                                    sex: "Female",
+                                    birthPlace: "Cologne, Koln, Nordrhein-Westfalen, Germany",
+                                    deathPlace: "Apple Creek, East Union, Wayne, Ohio, United States",
+                                    birthDate: "1730",
+                                    deathDate: "6 October 1819",
+                                    parents: [] // path to parent with land plot!
+                                },
+                                {   // Captain Shamoka, fought in revolutionary war INDIAN SPY (https://www.ancestry.com/mediaui-viewer/collection/1030/tree/59059250/person/30494089996/media/a2fa169a-4f98-4812-8bd3-8b6da2fbec71?galleryindex=16&sort=-created), teutonic royalty
+                                    //https://www.ancestry.com/mediaui-viewer/collection/1030/tree/59059250/person/30494089996/media/bfd5efbb-88cc-4f97-b43c-1033d0cb08f8?galleryindex=7&sort=-created
+                                    // Played violin well and loved dances
+                                    name: "Philip Smith (Schmidt)",
+                                    sex: "Male",
+                                    birthPlace: "Cologne, Koln, Nordrhein-Westfalen, Germany",
+                                    deathPlace: "Steubenville, Jefferson, Ohio, United States",
+                                    birthDate: "18 May 1725",
+                                    deathDate: "14 June 1814",
+                                    parents: [
+                                        {
+                                            name: "Anna Elisabetha Forster",
+                                            sex: "Female",
+                                            birthPlace: "Steinweiler, Germersheim, Rheinland-Pfalz, Germany",
+                                            deathPlace: "Steinweiler, Ansbach, Bayern, Germany",
+                                            birthDate: "1699",
+                                            deathDate: "8 July 1759"
+                                        },
+                                        {
+                                            name: "Johann Paul Schmidt",
+                                            sex: "Male",
+                                            birthPlace: "Rohrbach, Aichach-Friedberg, Bayern, Germany",
+                                            deathPlace: "Schmidterhoff, Winnweiler, Bayern, Germany",
+                                            birthDate: "1701",
+                                            deathDate: "19 April 1767",
+                                            parents: []
+                                        }
+                                    ]
+                                }
+                            ]
                         }
                     ]
                 },

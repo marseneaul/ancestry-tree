@@ -40,7 +40,7 @@ export const johnBlackwellConfig = {
                             parents: []
                         },
                         {
-                            name: "William Scholes",
+                            name: "Sir William Branson Scholes",
                             sex: "Male",
                             birthPlace: "Lewknor, Oxfordshire, England, United Kingdom",
                             deathPlace: "Lewknor, Oxfordshire, England, United Kingdom",

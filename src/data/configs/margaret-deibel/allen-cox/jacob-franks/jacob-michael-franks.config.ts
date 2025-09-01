@@ -14,7 +14,25 @@ export const jacobMichaelFranksConfig = {
             deathPlace: "German Township, Fayette, Pennsylvania, United States",
             birthDate: "~1745",
             deathDate: "1790",
-            parents: []
+            parents: [
+                {
+                    name: "Ann Margaretha Schafer",
+                    sex: "Female",
+                    birthPlace: "Ringendorf, Bas-Rhin, Alsace, Germany",
+                    deathPlace: "Berks, Pennsylvania, United States",
+                    birthDate: "2 July 1698",
+                    deathDate: "14 December 1755"
+                },
+                {
+                    name: "Hans Jacob Liebengut Jr",
+                    sex: "Male",
+                    birthPlace: "Alsace, Germany",
+                    deathPlace: "Berks, Pennsylvania, United States",
+                    birthDate: "1694–1708",
+                    deathDate: "20 May 1754",
+                    parents: []
+                }
+            ]
         },
         {
             name: "Michael Franks Jr.", // Fought in American Revolution
@@ -33,7 +51,7 @@ export const jacobMichaelFranksConfig = {
                     deathDate: "1756"
                 },
                 {
-                    name: "Johann Michael Franks",
+                    name: "Johann Michael Franks", // Priscilla boat?
                     sex: "Male",
                     birthPlace: "Rhineland-Palatinate, Alsace, Lorrain, Rheinland Pfalz, Germany",
                     deathPlace: "German Township, Fayette, Pennsylvania, United States",
