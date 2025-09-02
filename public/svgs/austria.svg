@@ -1,0 +1,6 @@
+<!-- Austria: Red-white-red horizontal triband -->
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+  <rect width="20" height="6.6666666667" fill="#ED2939"/>
+  <rect y="6.6666666667" width="20" height="6.6666666667" fill="#FFFFFF"/>
+  <rect y="13.3333333334" width="20" height="6.6666666667" fill="#ED2939"/>
+</svg>

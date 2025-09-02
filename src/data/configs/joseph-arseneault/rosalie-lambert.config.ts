@@ -37,7 +37,46 @@ export const rosalieLambertConfig = {
                             birthPlace: "St-Pierre-de-l'Île-d'Orléans, Québec, Canada",
                             deathPlace: "St-Antoine-de-Rivière-du-Loup, Louiseville, Maskinongé, Quebec, Canada",
                             birthDate: "15 February 1717",
-                            deathDate: "15 April 1788"
+                            deathDate: "15 April 1788",
+                            parents: [
+                                {
+                                    name: "Marie-Anne Côté",
+                                    sex: "Male",
+                                    birthPlace: "Île-d'Orléans, Montmorency, Québec, Canada",
+                                    deathPlace: "Île-d'Orléans, Montmorency, Québec, Canada",
+                                    birthDate: "14 December 1694",
+                                    deathDate: "29 August 1729",
+                                    parents: []
+                                },
+                                {
+                                    name: "Louis Pichet",
+                                    sex: "Male",
+                                    birthPlace: "St-Pierre, Île-d'Orléans, Montmorency, Québec, Canada",
+                                    deathPlace: "St-Pierre, Île-d'Orléans, Montmorency, Québec, Canada",
+                                    birthDate: "9 February 1685",
+                                    deathDate: "13 May 1760",
+                                    parents: [
+                                        {
+                                            name: "Marie Madeleine Leblanc",
+                                            sex: "Female",
+                                            birthPlace: "St-Pierre, Île-d'Orléans, Montmorency, Québec, Canada",
+                                            deathPlace: "St-Pierre, Île-d'Orléans, Montmorency, Québec, Canada",
+                                            birthDate: "15 July 1652",
+                                            deathDate: "28 December 1708",
+                                            parents: []
+                                        },
+                                        {
+                                            name: "Jean Pichet Pegin Piget",
+                                            sex: "Male",
+                                            birthPlace: "Poitiers, Poitou, France",
+                                            deathPlace: "St-Pierre, Île-d'Orléans, Montmorency, Québec, Canada",
+                                            birthDate: "13 February 1636",
+                                            deathDate: "17 June 1699",
+                                            parents: []
+                                        }
+                                    ]
+                                }
+                            ]
                         }
                     ]
                 },
@@ -94,12 +133,31 @@ export const rosalieLambertConfig = {
                             deathDate: "1777"
                         },
                         {
-                            name: "Pierre Gerbeau Bellegarde",
+                            name: "Pierre Gerbeau dit Bellegarde",
                             sex: "Male",
                             birthPlace: "Maskinongé, Quebec, Canada",
                             deathPlace: "Quebec, Canada",
                             birthDate: "28 August 1688",
-                            deathDate: "1750"
+                            deathDate: "6 October 1760",
+                            parents: [
+                                {
+                                    name: "Marguerite Lemaistre",
+                                    sex: "Female",
+                                    birthPlace: "Trois Rivieres, St Maurice, Québec, Canada",
+                                    deathPlace: "Montmorency, Québec, Canada",
+                                    birthDate: "23 January 1664",
+                                    deathDate: "1690"
+                                },
+                                {
+                                    name: "Christophe Gerbault Debellegarde",
+                                    sex: "Male",
+                                    birthPlace: "Anjou, Isère, Rhône-Alpes, France",
+                                    deathPlace: "Maskinongé, Quebec, Canada",
+                                    birthDate: "1645",
+                                    deathDate: "3 July 1695",
+                                    parents: []
+                                }
+                            ]
                         }
                     ]
                 },

@@ -282,7 +282,7 @@ export const georgeArseneaultConfig = {
                                     deathPlace: "Louiseville, Maskinongé, Quebec, Canada",
                                     birthDate: "3 March 1744",
                                     deathDate: "13 August 1817",
-                                    parents: [ // keep going for archembault!
+                                    parents: [
                                         {
                                             name: "Marie Josephte Morneau",
                                             sex: "Female",
@@ -290,16 +290,111 @@ export const georgeArseneaultConfig = {
                                             deathPlace: "Louiseville, Maskinongé, Quebec, Canada",
                                             birthDate: "22 September 1709",
                                             deathDate: "4 January 1774",
-                                            parents: []
+                                            parents: [
+                                                {
+                                                    name: "Marie Jeanne Bibault",
+                                                    sex: "Female",
+                                                    birthPlace: "Linctôt, Bécancour, Québec, Canada",
+                                                    deathPlace: "Yamaska, Monteregie Region, Quebec, Canada",
+                                                    birthDate: "12 September 1674",
+                                                    deathDate: "12 February 1748",
+                                                    parents: [
+                                                        {
+                                                            name: "Jeanne Chalifour",
+                                                            sex: "Female",
+                                                            birthPlace: "Quebec, Capitale-Nationale Region, Quebec, Canada",
+                                                            deathPlace: "Trois-Rivières, Mauricie Region, Quebec, Canada",
+                                                            birthDate: "22 February 1654",
+                                                            deathDate: "1682",
+                                                            parents: [
+                                                                {
+                                                                    name: "Jacquette Archambault",
+                                                                    sex: "Female",
+                                                                    birthPlace: "Dompierre-sur-Mer, Departement de la Charente-Maritime, Poitou-Charentes, France",
+                                                                    deathPlace: "Quebec, Capitale-Nationale Region, Quebec, Canada",
+                                                                    birthDate: "26 December 1632",
+                                                                    deathDate: "~1700",
+                                                                    parents: [
+                                                                        {
+                                                                            name: "Renee Ouvrard",
+                                                                            sex: "Female",
+                                                                            birthPlace: "Dompierre-sur-Mer, Departement de la Charente-Maritime, Poitou-Charentes, France",
+                                                                            deathPlace: "Dompierre-sur-Mer, Departement de la Charente-Maritime, Poitou-Charentes, France",
+                                                                            birthDate: "1582",
+                                                                            deathDate: "April 1654",
+                                                                        },
+                                                                        {
+                                                                            name: "Antoine Archambault",
+                                                                            sex: "Male",
+                                                                            birthPlace: "Dompierre-sur-Mer, Departement de la Charente-Maritime, Poitou-Charentes, France",
+                                                                            deathPlace: "Dompierre-sur-Mer, Departement de la Charente-Maritime, Poitou-Charentes, France",
+                                                                            birthDate: "1574",
+                                                                            deathDate: "1654"
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                {
+                                                                    name: "Paul Charles Chalifour",
+                                                                    sex: "Male",
+                                                                    birthPlace: "Perigny, Departement de la Charente-Maritime, Poitou-Charentes, France",
+                                                                    deathPlace: "Notre-Dame-des-Anges, Capitale-Nationale Region, Quebec, Canada",
+                                                                    birthDate: "26 December 1612",
+                                                                    deathDate: "13 October 1680",
+                                                                    parents: []
+                                                                }
+                                                            ]
+                                                        },
+                                                        {
+                                                            name: "François Bibaut",
+                                                            sex: "Male",
+                                                            birthPlace: "La Rochette, Departement de la Charente, Poitou-Charentes, France",
+                                                            deathPlace: "Saint-François-du-Lac, Centre-du-Quebec Region, Quebec, Canada",
+                                                            birthDate: "1642",
+                                                            deathDate: "23 September 1708",
+                                                            parents: []
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    name: "Pierre Francois Morneau",
+                                                    sex: "Male",
+                                                    birthPlace: "Batiscan, Québec, Canada",
+                                                    deathPlace: "St-Michel d'Yamaska, Quebec, Canada",
+                                                    birthDate: "28 August 1685",
+                                                    deathDate: "29 January 1750",
+                                                    parents: []
+                                                }
+                                            ]
                                         },
-                                        {
+                                        {   // Leads to Pierre V De Rostrenen, who has a photo
+                                            // https://www.ancestry.com/family-tree/person/tree/44204929/person/430055040707/facts who has a photo
+                                            // https://en.wikipedia.org/wiki/Zacharie_Cloutier // picture
                                             name: "Rene Mineau",
                                             sex: "Male",
                                             birthPlace: "Beaumont, Bellechasse, Quebec, Canada",
                                             deathPlace: "Louiseville, Maskinongé, Quebec, Canada",
                                             birthDate: "1 April 1705",
                                             deathDate: "9 September 1767",
-                                            parents: []
+                                            parents: [
+                                                {
+                                                    name: "Marie-Anne Moreau",
+                                                    sex: "Female",
+                                                    birthPlace: "Saint-Laurent, Ile D'Orléans, Québec, Canada",
+                                                    deathPlace: "Louiseville, Maskinongé, Quebec, Canada",
+                                                    birthDate: "30 April 1682",
+                                                    deathDate: "1782",
+                                                    parents: []
+                                                },
+                                                {
+                                                    name: "Rene Mineau",
+                                                    sex: "Male",
+                                                    birthPlace: "St Laurent, Ile, Quebec, Canada",
+                                                    deathPlace: "Louiseville, Maskinongé, Quebec, Canada",
+                                                    birthDate: "10 October 1683",
+                                                    deathDate: "2 January 1750",
+                                                    parents: []
+                                                }
+                                            ] 
                                         }
                                     ]
                                 }

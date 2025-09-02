@@ -30,7 +30,26 @@ export const margarethaZeiligerConfig = {
                     deathPlace: "Herpersdorf, Dietenhofen, Ansbach, Bavaria, Germany",
                     birthDate: "2 February 1724",
                     deathDate: "26 February 1792",
-                    parents: []
+                    parents: [
+                        {
+                            name: "Eva Dorothea Behringer",
+                            sex: "Female",
+                            birthPlace: "Germany",
+                            deathPlace: "UNKNOWN",
+                            birthDate: "UNKNOWN",
+                            deathDate: "UNKNOWN",
+                            parents: []
+                        },
+                        {
+                            name: "Johann Georg Redlingshöfer",
+                            sex: "Male",
+                            birthPlace: "Dietenhofen, Ansbach, Bavaria, Germany",
+                            deathPlace: "UNKNOWN",
+                            birthDate: "24 September 1666",
+                            deathDate: "UNKNOWN",
+                            parents: []
+                        }
+                    ]
                 },
                 {
                     name: "Johann Leonhard Zeilinger",
@@ -65,7 +84,43 @@ export const margarethaZeiligerConfig = {
                             deathPlace: "Dietenhofen, Germany",
                             birthDate: "23 February 1679",
                             deathDate: "9 April 1760",
-                            parents: []
+                            parents: [
+                                {
+                                    name: "Margaretha Unger",
+                                    sex: "Female",
+                                    birthPlace: "Germany",
+                                    deathPlace: "Dietenhofen, Germany",
+                                    birthDate: "May 1654",
+                                    deathDate: "21 June 1717",
+                                    parents: []
+                                },
+                                {
+                                    name: "Gabriel Zeilinger",
+                                    sex: "Male",
+                                    birthPlace: "Hörleinsdorf, Bürglein, Ansbach, Bavaria, Germany",
+                                    deathPlace: "Dietenhofen, Germany",
+                                    birthDate: "1650",
+                                    deathDate: "1720",
+                                    parents: [
+                                        {
+                                            name: "Anna Catharina Lenz Zeilinger",
+                                            sex: "Male",
+                                            birthPlace: "Austria",
+                                            deathPlace: "Hörleinsdorf, Bürglein, Ansbach, Bavaria, Germany",
+                                            birthDate: "~1611",
+                                            deathDate: "21 November 1687"
+                                        },
+                                        {
+                                            name: "Joseph Zeilinger",
+                                            sex: "Male",
+                                            birthPlace: "Pyhra, Melk, Niederösterreich, Austria",
+                                            deathPlace: "Hörleinsdorf, Bürglein, Ansbach, Bavaria, Germany",
+                                            birthDate: "~1611",
+                                            deathDate: "21 October 1684"
+                                        }
+                                    ]
+                                }
+                            ]
                         }
                     ]
                 }

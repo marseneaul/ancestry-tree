@@ -1,0 +1,6 @@
+// She was one of the King's Daughters and founding Mothers, 1663-1673
+
+// Notes for Elisabeth Prevost/Provost:
+// "King's Daughters", page 469, Elisabeth Prevost was born about 1646 in the parish of Saint-Nicolas in Rouen, Normandie, the daughter of master tailor Adrien Prévost and Marie Leblond. After losing her father and watching sister Marguerite leave as a Fille du Roi in 1669, Elisabeth left for Canada in 1671 at about age 25, taking with her goods worth an estimated 300 livres for her dowry. A value of about $4,275 in the USA in the year 2000.
+// On 14 November 1671, Elisabeth married Jean-François Foucault at Québec City and was given the King's Gift of 50 livres (this was about what an unskilled man was paid for a year's work). She signed the marriage contract drawn up 08 November by notary Becquet, but her husband could not.
+// Elisabeth Prévost was buried 04 January 1722 at Trois Rivières.
