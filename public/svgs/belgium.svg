@@ -1,0 +1,6 @@
+<!-- Belgium: Black, yellow, red vertical tricolor -->
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+  <rect width="6.6666666667" height="20" fill="#000000"/>
+  <rect x="6.6666666667" width="6.6666666667" height="20" fill="#FFD500"/>
+  <rect x="13.3333333334" width="6.6666666667" height="20" fill="#ED2939"/>
+</svg>

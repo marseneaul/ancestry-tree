@@ -51,17 +51,19 @@ export function getCountry(birthPlace?: string): string {
     if (place.includes("canada") || place.includes("canadian")) return "Canada";
     if (place.includes("united states") || place.includes("usa") || place.includes("america")) return "United States";
     if (place.includes("switzerland")) return "Switzerland";
+    if (place.includes("belgium")) return "Belgium";
     return place.split(",").pop()?.trim() || "Unknown";  // Fallback
   }
   
 export const countryColors: Record<string, string> = {
+    "Germany": "#FFCC00",         // gold/yellow, already good contrast
+    "Ireland": "#009B3A",         // emerald green, distinct and vivid
     "France": "#0055A4",          // deep blue, distinct from US navy
     "United Kingdom": "#CC0000",  // bright red, very different from Canada
-    "Ireland": "#009B3A",         // emerald green, distinct and vivid
-    "Germany": "#FFCC00",         // gold/yellow, already good contrast
     "Canada": "#FF0000",          // pure red, distinguishable from UK crimson
     "United States": "#1E90FF",   // dodger blue, brighter than France
     "Switzerland": "#FF2B2B",     // lighter red to separate from Canada/UK
+    "Belgium": "FFCD00",          // yellow from flag
     "Unknown": "#808080",         // neutral gray
 };
 

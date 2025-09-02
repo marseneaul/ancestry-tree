@@ -89,7 +89,78 @@ export const georgeArseneaultConfig = {
                                                             deathPlace: "Quebec, Quebec, Canada",
                                                             birthDate: "30 August 1666",
                                                             deathDate: "1708",
-                                                            parents: [] // leads to famous settler Nicolas Pelletier
+                                                            parents: [
+                                                                {
+                                                                    name: "Marguerite Madeleine Morisseau",
+                                                                    sex: "Female",
+                                                                    birthPlace: "Amiens, Somme, Picardie, France",
+                                                                    deathPlace: "Hotel, Quebec, Canada",
+                                                                    birthDate: "1637",
+                                                                    deathDate: "15 December 1707"
+                                                                },
+                                                                {
+                                                                    name: "Francois Pelletier",
+                                                                    sex: "Male",
+                                                                    birthPlace: "Québec, Quebec, Canada",
+                                                                    deathPlace: "Quebec, Quebec, Canada",
+                                                                    birthDate: "1636",
+                                                                    deathDate: "14 May 1690",
+                                                                    parents: [
+                                                                        {
+                                                                            name: "Jeanne DeVousy",
+                                                                            sex: "Female",
+                                                                            birthPlace: "Beaucé, Ille-et-Vilaine, Bretagne, France",
+                                                                            deathPlace: "Richelieu, Quebec, Canada",
+                                                                            birthDate: "27 April 1612",
+                                                                            deathDate: "12 December 1689",
+                                                                            parents: [
+                                                                                {
+                                                                                    name: "Jeanne Gardony",
+                                                                                    sex: "Female",
+                                                                                    birthPlace: "Gallardon, Eure-et-Loir, Centre, France",
+                                                                                    deathPlace: "Beaucé, Ille-et-Vilaine, Bretagne, France",
+                                                                                    birthDate: "~1590",
+                                                                                    deathDate: "~1641"
+                                                                                },
+                                                                                {
+                                                                                    name: "Barthelemy Jean De Vouzy",
+                                                                                    sex: "Male",
+                                                                                    birthPlace: "Gallardon, Eure-et-Loir, Centre, France",
+                                                                                    deathPlace: "Ille, Pyrenees-Orientales, Languedoc-Roussillon, France",
+                                                                                    birthDate: "~1585",
+                                                                                    deathDate: "~1652"
+                                                                                }
+                                                                            ]
+                                                                        },
+                                                                        {   // https://www.tfcg.ca/nicolas-pelletier-and-jeanne-devoisy Pioneer of New France
+                                                                            name: "Nicolas Pelletier",
+                                                                            sex: "Female",
+                                                                            birthPlace: "Beaucé, Ille-et-Vilaine, Bretagne, France",
+                                                                            deathPlace: "Sillery, Quebec, Canada",
+                                                                            birthDate: "1 January 1590",
+                                                                            deathDate: "9 November 1674",
+                                                                            parents: [
+                                                                                {
+                                                                                    name: "Simonne Pichereau",
+                                                                                    sex: "Female",
+                                                                                    birthPlace: "France",
+                                                                                    deathPlace: "UNKNOWN",
+                                                                                    birthDate: "UNKNOWN",
+                                                                                    deathDate: "UNKNOWN"
+                                                                                },
+                                                                                {
+                                                                                    name: "François Pelletier",
+                                                                                    sex: "Male",
+                                                                                    birthPlace: "France",
+                                                                                    deathPlace: "UNKNOWN",
+                                                                                    birthDate: "UNKNOWN",
+                                                                                    deathDate: "UNKNOWN"
+                                                                                }
+                                                                            ]
+                                                                        }
+                                                                    ]
+                                                                }
+                                                            ]
                                                         },
                                                         {
                                                             name: "Charles Boucher",
@@ -127,7 +198,78 @@ export const georgeArseneaultConfig = {
                                                     deathPlace: "Berthierville, Quebec, Canada",
                                                     birthDate: "1691",
                                                     deathDate: "1752",
-                                                    parents: []
+                                                    parents: [
+                                                        {
+                                                            name: "Genevieve Tessier",
+                                                            sex: "Female",
+                                                            birthPlace: "Champagne, Dordogne, Aquitaine, France",
+                                                            deathPlace: "L'Île-Dupas, Quebec, Canada",
+                                                            birthDate: "1653",
+                                                            deathDate: "12 November 1721",
+                                                        },
+                                                        {
+                                                            name: "Pierre Joly Laforest dit Delbec",
+                                                            sex: "Male",
+                                                            birthPlace: "Brugge, West-Vlaanderen, Belgium",
+                                                            deathPlace: "L'Île-Dupas, Quebec, Canada",
+                                                            birthDate: "1651",
+                                                            deathDate: "12 November 1721",
+                                                            parents: [
+                                                                {
+                                                                    name: "Jeanne Feziere Fezier",
+                                                                    sex: "Female",
+                                                                    birthPlace: "Brugge, West-Vlaanderen, Belgium",
+                                                                    deathPlace: "Brugge, West-Vlaanderen, Belgium",
+                                                                    birthDate: "1621",
+                                                                    deathDate: "4 July 1673",
+                                                                    parents: [
+                                                                        {
+                                                                            name: "Anne Boucher",
+                                                                            sex: "Female",
+                                                                            birthPlace: "l'aube, France",
+                                                                            deathPlace: "l'aube, France",
+                                                                            birthDate: "~1600",
+                                                                            deathDate: "UNKNOWN"
+                                                                        },
+                                                                        {
+                                                                            name: "Nicholas Tessier",
+                                                                            sex: "Male",
+                                                                            birthPlace: "Troyes, Aube, Champagne-Ardenne, France",
+                                                                            deathPlace: "Troyes, Aube, Champagne-Ardenne, France",
+                                                                            birthDate: "~1600",
+                                                                            deathDate: "~1690"
+                                                                        },
+                                                                    ]
+                                                                },
+                                                                {
+                                                                    name: "Armand Delbec Joly",
+                                                                    sex: "Male",
+                                                                    birthPlace: "Brugge, West-Vlaanderen, Belgium",
+                                                                    deathPlace: "Brugge, West-Vlaanderen, Belgium",
+                                                                    birthDate: "1631",
+                                                                    deathDate: "4 July 1673",
+                                                                    parents: [
+                                                                        {
+                                                                            name: "Maria",
+                                                                            sex: "Female",
+                                                                            birthPlace: "Belgium",
+                                                                            deathPlace: "UNKNOWN",
+                                                                            birthDate: "~1610",
+                                                                            deathDate: "UNKNOWN"
+                                                                        },
+                                                                        {
+                                                                            name: "Antonius Delbec",
+                                                                            sex: "Male",
+                                                                            birthPlace: "Warneton, Hainaut, Belgium",
+                                                                            deathPlace: "Comines, Nord, Nord-Pas-de-Calais, France",
+                                                                            birthDate: "~1600",
+                                                                            deathDate: "~1644"
+                                                                        }
+                                                                    ]
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
                                                 }
                                             ]
                                         }
