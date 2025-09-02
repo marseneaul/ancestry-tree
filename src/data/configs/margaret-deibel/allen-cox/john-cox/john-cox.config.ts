@@ -3,7 +3,7 @@ import { mariaWilloughbyConfig } from "./maria-willoughby/maria-willoughby.confi
 import { phillipCoxConfig } from "./phillip-cox.config";
 
 export const johnCoxConfig = {
-    name: "John D. Cox",
+    name: "John Edwin Cox",
     sex: "Male",
     birthPlace: "Buckland, Berkshire, England, United Kingdom",
     deathPlate: "Gaylord, Otsego, Michigan, United States",

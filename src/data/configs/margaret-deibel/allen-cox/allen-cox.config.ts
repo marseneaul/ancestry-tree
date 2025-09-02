@@ -18,6 +18,7 @@ export const allenCoxConfig = {
             deathPlace: "Onaway, Presque Isle, Michigan, United States",
             birthDate: "November 1864",
             deathDate: "19 February 1931",
+            imageUrl: "./images/huldah-franks.jpg",
             parents: [
                 {
                     name: "Rosanna Belle McDowell",

@@ -26,15 +26,17 @@ export const emmaSaintJohnConfig = {
                     deathDate: "UNKNOWN"
                 },
                 {
-                    name: "Antoine Sharkey",
+                    name: "Antoine Chartier Sharkey",
                     sex: "Male",
                     birthPlace: "Canada",
+                    deathPlace: "UNKNOWN",
                     birthDate: "~1821",
                     deathDate: "UNKNOWN"
                 }
             ]
         },
         {
+            // Alphonse?
             name: "Frederick (Fred) St. John", // Farmer
             sex: "Male",
             birthPlace: "Fletcher, Franklin, Vermont, United States",

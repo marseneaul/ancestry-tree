@@ -10,7 +10,7 @@ export const margaretDeibelConfig = {
     deathDate: "N/A",
     imageUrl: "./images/margaret-deibel.jpg",
     parents: [
-        {
+        {   //https://www.ancestry.com/mediaui-viewer/collection/1030/tree/60895791/person/332206913685/media/07d98952-c9c4-47a7-a6e4-83be3238abbe?galleryindex=1&sort=-created - AD Cox piano
             name: "Marie Agnes Cox",
             sex: "Female",
             birthPlace: "Onaway, Presque Isle, Michigan, United States",
