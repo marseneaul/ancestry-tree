@@ -12,7 +12,7 @@ export const josephArseneaultConfig = {
     imageUrl: "./images/joseph-arseneault.jpg",
     parents: [
         {
-            name: "Elizabeth Hennecke",
+            name: "Elizabeth E Hennecke",
             sex: "Female",
             birthPlace: "Lake Linden, Houghton, Michigan, United States",
             deathPlace: "Flint, Genesee County, Michigan, United States",
@@ -20,10 +20,11 @@ export const josephArseneaultConfig = {
             deathDate: "27 January 1969",
             parents: [
                 elizabethVossConfig,
-                {
+                {   // Farmer as occupation
                     name: "Joseph Hennecke",
                     sex: "Male",
                     birthPlace: "Fleckenberg, Schmallenberg, Hochsauerlandkreis, North Rhine-Westphalia, Germany",
+                    deathPlace: "Schoolcraft, Houghton, Michigan, United States",
                     birthDate: "8 April 1847",
                     deathDate: "20 August 1927"
                 }

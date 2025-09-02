@@ -54,7 +54,80 @@ export const margaretDeibelConfig = {
                                     birthPlace: "Liscaroll, Ireland",
                                     deathPlace: "Clonakilty, Ireland",
                                     birthDate: "1813",
-                                    deathDate: "1890"
+                                    deathDate: "June 1889",
+                                    parents: [
+                                        {
+                                            name: "Mary Denahy",
+                                            sex: "Female",
+                                            birthPlace: "Ireland",
+                                            deathPlace: "Cork, Ireland",
+                                            birthDate: "28 March 1785",
+                                            deathDate: "1868",
+                                            parents: [
+                                                {
+                                                    name: "Elinora Canty",
+                                                    sex: "Female",
+                                                    birthPlace: "Cork, Ireland",
+                                                    deathPlace: "Cork, Ireland",
+                                                    birthDate: "1782",
+                                                    deathDate: "1868"
+                                                },
+                                                {
+                                                    name: "Cornelius Denahy",
+                                                    sex: "Male",
+                                                    birthPlace: "Cork, Ireland",
+                                                    deathPlace: "Cork, Ireland",
+                                                    birthDate: "1760",
+                                                    deathDate: "UNKNOWN"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            name: "Ingram Patrick 'Pat' Fenn",
+                                            sex: "Male",
+                                            birthPlace: "Ireland",
+                                            deathPlace: "Blackwater and Killala, Wexford, Ireland",
+                                            birthDate: "30 November 1757",
+                                            deathDate: "26 September 1854",
+                                            parents: [
+                                                {
+                                                    name: "Elizabeth Lyal aka Carwal",
+                                                    sex: "Female",
+                                                    birthPlace: "Ireland",
+                                                    deathPlace: "UNKNOWN",
+                                                    birthDate: "1733",
+                                                    deathDate: "UNKNOWN",
+                                                    parents: []
+                                                },
+                                                {
+                                                    name: "William Finny",
+                                                    sex: "Male",
+                                                    birthPlace: "Edinburgh Parish, Edinburgh, Midlothian, Scotland, United Kingdom",
+                                                    deathPlace: "UNKNOWN",
+                                                    birthDate: "~1809",
+                                                    deathDate: "28 November 1733",
+                                                    parents: [
+                                                        {
+                                                            name: "Margaret Midletone",
+                                                            sex: "Female",
+                                                            birthPlace: "St Nicholas, Aberdeen, Aberdeenshire, Scotland, United Kingdom",
+                                                            deathPlace: "St Nicholas, Aberdeen, Aberdeenshire, Scotland, United Kingdom",
+                                                            birthDate: "~1700",
+                                                            deathDate: "28 May 1736"
+                                                        },
+                                                        {
+                                                            name: "George Finnie",
+                                                            sex: "Male",
+                                                            birthPlace: "Cramond, Midlothian, Scotland, United Kingdom",
+                                                            deathPlace: "UNKNOWN",
+                                                            birthDate: "~1713",
+                                                            deathDate: "~1786"
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
                                 },
                                 {
                                     name: "Michael Fitzgerald",

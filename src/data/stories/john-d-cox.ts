@@ -1,0 +1,9 @@
+// Proprietors of the Hotel Greenwood, A Favorite Hostelry
+
+// There are few men better known in this neck of the woods than J.D., better known as "Jim" Cox, who in partnership with his son, Allen D., operates the Hotel Greenwood, as good a house as northern Michigan affords for $1.50 and $2.00 per day. Both Mr. Cox and his son, as well as Mrs. Cox, are continually on the alert looking after the welfare and comfort of their guests. In consequence of which no one visits the place that does not feel at home. The Greenwood is centrally located, well furnished and pleasingly arranged. It has exceptonally large and convenient sample rooms for commercial men, and is altogether a most desirable hotel in every respect.
+
+// When Jim came to Onaway March 29, 1898, there were just 28 people here, but he was alive to the fact that a town of some pretense would soon grow up and accordingly laid his plans for a hotel. He was the first barber in the place, which business he followed until May, 1899, when he engaged in hotel life, which he has continually followed since with marked success.
+
+// He seems to have been cut out for the hotel business, for he possesses the happy faculty of greeting everybody at all times and under all circumstances with a pleasant smile and cordial handshake, and in consequence makes firm friends of all with whom he comes in contact. In connection with the hotel is the Greenwood sample room, as nicely finished and well stocked a liquor house as there is in the county. All the best brands of whiskey, brandy, wines, etc., as well as the leading cigars are carried, and that this place receives a large patronage is but to be expected.
+
+// When in Onaway make your home at the Greenwood and enjoy life.

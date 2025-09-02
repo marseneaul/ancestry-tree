@@ -39,6 +39,7 @@ export const michelArsenaultIConfig = {
             deathPlace: "Cap-de-la-Madeleine, Québec, Canada",
             birthDate: "8 October 1623",
             deathDate: "10 February 1669",
+            imageUrl: "./images/francois-arseneau.jpg",
             parents: [
                 {
                     name: "Michelle Giraud",

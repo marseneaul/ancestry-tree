@@ -2,7 +2,7 @@ import { conradMichaelFranksConfig } from "./conrad-michael-franks.config";
 import { jacobMichaelFranksConfig } from "./jacob-michael-franks.config";
 
 export const jacobFranksConfig = {
-    name: "Jacob Conrad Franks",
+    name: "Jacob Conrad Franks", // paid sureties for a new bar (divine bar)
     sex: "Male",
     birthPlace: "Wayne Township, Ohio, United States",
     deathPlace: "Portland, Ionia, Michigan, United States",
@@ -45,7 +45,7 @@ export const jacobFranksConfig = {
             ]
         },
         {
-            name: "Cornelius Franks",
+            name: "Cornelius E. Franks",
             sex: "Male",
             birthPlace: "East Union, Wayne, Ohio, United States",
             deathPlace: "Orange, Ionia, Michigan, United States",
