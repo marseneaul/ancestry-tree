@@ -1,3 +1,4 @@
+import { francoisDuboisStory } from "../../../stories/francois-dubois";
 import { thomasTherrienConfig } from "./thomas-therrien.config";
 
 export const marieDuboisConfig = {
@@ -55,6 +56,7 @@ export const marieDuboisConfig = {
             birthDate: "23 April 1831",
             deathDate: "16 March 1905",
             imageUrl: "./images/francois-dubois.jpg",
+            story: francoisDuboisStory,
             parents: [ // QUESTIONABLE LINEAGE
                 {
                     name: "Sophie Beaufort-Brunelle",

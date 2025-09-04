@@ -1,3 +1,5 @@
+import { henrySmithStory } from "../../../../stories/henry-smith";
+import { philipSmithStory } from "../../../../stories/philip-smith";
 import { conradMichaelFranksConfig } from "./conrad-michael-franks.config";
 import { jacobMichaelFranksConfig } from "./jacob-michael-franks.config";
 
@@ -68,7 +70,7 @@ export const jacobFranksConfig = {
                             birthDate: "1758",
                             deathDate: "10 August 1796"
                         },
-                        {   // Fought as a minute man
+                            {
                             // Manufactured powder
                             name: "Heinrich 'Henry' Barnabus Smith",
                             sex: "Male",
@@ -76,6 +78,7 @@ export const jacobFranksConfig = {
                             deathPlace: "Yorks Run, Fayette, Pennsylvania, United States",
                             birthDate: "25 February 1752",
                             deathDate: "10 March 1838",
+                            story: henrySmithStory,
                             parents: [
                                 {   // Typed out lengthy will
                                     name: "Barbara Markley",
@@ -86,15 +89,14 @@ export const jacobFranksConfig = {
                                     deathDate: "6 October 1819",
                                     parents: [] // path to parent with land plot!
                                 },
-                                {   // Captain Shamoka, fought in revolutionary war INDIAN SPY (https://www.ancestry.com/mediaui-viewer/collection/1030/tree/59059250/person/30494089996/media/a2fa169a-4f98-4812-8bd3-8b6da2fbec71?galleryindex=16&sort=-created), teutonic royalty
-                                    //https://www.ancestry.com/mediaui-viewer/collection/1030/tree/59059250/person/30494089996/media/bfd5efbb-88cc-4f97-b43c-1033d0cb08f8?galleryindex=7&sort=-created
-                                    // Played violin well and loved dances
+                                {  
                                     name: "Philip Smith (Schmidt)",
                                     sex: "Male",
                                     birthPlace: "Cologne, Koln, Nordrhein-Westfalen, Germany",
                                     deathPlace: "Steubenville, Jefferson, Ohio, United States",
                                     birthDate: "18 May 1725",
                                     deathDate: "14 June 1814",
+                                    story: philipSmithStory,
                                     parents: [
                                         {
                                             name: "Anna Elisabetha Forster",

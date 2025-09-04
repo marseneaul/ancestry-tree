@@ -1,3 +1,5 @@
+import { marinBoucherStory } from "../../../stories/marin-boucher";
+
 export const isaacMineauConfig = {
     name: "Isaac Mineau",
     sex: "Male",
@@ -157,7 +159,8 @@ export const isaacMineauConfig = {
                                                     deathPlace: "Chateau Richer, Quebec, Canada",
                                                     birthDate: "15 April 1589",
                                                     deathDate: "25 March 1671",
-                                                    imageUrl: "./images/marin-boucher.jpg"
+                                                    imageUrl: "./images/marin-boucher.jpg",
+                                                    story: marinBoucherStory
                                                 }
                                             ]
                                         }

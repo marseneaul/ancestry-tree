@@ -9,3 +9,5 @@
 // Charles was preceded in death by his parents; brother, Walter; and sister, Henrietta Trick.
 
 // To send flowers to the family of Charles A. Deibel, please visit our Heartfelt Sympathies Store.
+
+export const charlieDeibelStory = "Charles A. Deibel married Margaret Dacey in 1951 and enjoyed 65 years together while raising a family in Mt. Pleasant, MI. A Central Michigan University graduate, he served as the city's chief finance director for 32 years and was active in community groups like the Knights of Columbus, Jaycees, and Toastmasters. An avid outdoorsman, Charles loved deer hunting, fishing, and wine-making until his passing on August 12, 2016, at age 88, leaving behind three children, six grandchildren, and four great-grandchildren.";

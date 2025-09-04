@@ -1,3 +1,4 @@
+import { charlesAndrewDeibelStory } from "../../stories/charles-andrew-deibel";
 import { crescentiaHassConfig } from "./crescentia-haas.config";
 
 // COMPLETE
@@ -9,6 +10,7 @@ export const charlesAndrewDeibelConfig = {
     birthDate: "7 July 1860",
     deathDate: "24 September 1920",
     imageUrl: "./images/charles-andrew-diebel.jpg",
+    story: charlesAndrewDeibelStory,
     parents: [
         {
             name: "Crescentia Crenenisa Volk",

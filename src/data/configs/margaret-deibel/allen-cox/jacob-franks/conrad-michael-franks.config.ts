@@ -1,10 +1,17 @@
+import { barbaraBrandenburgStory } from "../../../../stories/barbara-brandenburg";
+import { conradMichaelFranksStory } from "../../../../stories/conrad-michael-franks";
+import { georgeFranksStory } from "../../../../stories/george-franks";
+import { jacobFranksStory } from "../../../../stories/jacob-franks";
+import { michaelFranksSrStory } from "../../../../stories/michael-franks-sr";
+
 export const conradMichaelFranksConfig = {
-    name: "Conrad Michael Franks", // Fought in War of 1812
+    name: "Conrad Michael Franks",
     sex: "Male",
     birthPlace: "Hempfield Township, Westmoreland, Pennsylvania, United States",
     deathPlace: "Union Township, Wayne, Ohio, United States",
     birthDate: "7 October 1786",
     deathDate: "7 March 1869",
+    story: conradMichaelFranksStory,
     parents: [
         {
             name: "Abigail Apollina Smith",
@@ -148,6 +155,7 @@ export const conradMichaelFranksConfig = {
             deathPlace: "German Township, Fayette, Pennsylvania, United States",
             birthDate: "23 September 1765",
             deathDate: "13 December 1821",
+            story: georgeFranksStory,
             parents: [
                 {
                     name: "Barbara Brandenburg",
@@ -156,6 +164,7 @@ export const conradMichaelFranksConfig = {
                     deathPlace: "German Township, Fayette, Pennsylvania, United States",
                     birthDate: "1741",
                     deathDate: "12 May 1839",
+                    story: barbaraBrandenburgStory,
                     parents: [
                         {
                             name: "Anna",
@@ -182,6 +191,7 @@ export const conradMichaelFranksConfig = {
                     deathPlace: "German Township, Fayette, Pennsylvania, United States",
                     birthDate: "27 May 1743",
                     deathDate: "5 February 1802",
+                    story: jacobFranksStory,
                     parents: [
                         {
                             name: "Mary Miller",
@@ -199,6 +209,7 @@ export const conradMichaelFranksConfig = {
                             birthDate: "16 January 1725",
                             deathDate: "27 December 1792",
                             imageUrl: "./images/johann-michael-franks.jpg",
+                            story: michaelFranksSrStory,
                             parents: []
                         }
                     ]

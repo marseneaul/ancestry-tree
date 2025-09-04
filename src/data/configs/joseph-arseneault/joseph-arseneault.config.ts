@@ -1,5 +1,6 @@
+import { josephArseneaultStory } from "../../stories/joseph-arseneault";
 import { elizabethVossConfig } from "./elizabeth-voss/elizabeth-voss.config";
-import { georgeArseneaultConfig } from "./george-arseneault.config";
+import { georgeArseneaultConfig } from "./george-arseneault/george-arseneault.config";
 import { marieDuboisConfig } from "./marie-dubois/marie-dubois.config";
 
 export const josephArseneaultConfig = {
@@ -10,6 +11,7 @@ export const josephArseneaultConfig = {
     birthDate: "~1923",
     deathDate: "8 February 2012",
     imageUrl: "./images/joseph-arseneault.jpg",
+    story: josephArseneaultStory,
     parents: [
         {
             name: "Elizabeth E Hennecke",

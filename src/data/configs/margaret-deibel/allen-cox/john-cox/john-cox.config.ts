@@ -1,3 +1,4 @@
+import { johnDCoxStory } from "../../../../stories/john-d-cox";
 import { jamesWardConfig } from "./james-ward.config";
 import { mariaWilloughbyConfig } from "./maria-willoughby/maria-willoughby.config";
 import { phillipCoxConfig } from "./phillip-cox.config";
@@ -10,6 +11,7 @@ export const johnCoxConfig = {
     birthDate: "6 June 1828",
     deathDate: "1 December 1897",
     imageUrl: "./images/john-cox-sr.jpg",
+    story: johnDCoxStory,
     parents: [
         {
             name: "Mary Ann Ward",

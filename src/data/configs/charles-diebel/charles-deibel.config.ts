@@ -1,3 +1,5 @@
+import { charlieDeibelStory } from "../../stories/charles-deibel";
+import { walterJohnDeibelStory } from "../../stories/walter-john-deibel";
 import { charlesAndrewDeibelConfig } from "./charles-andrew-diebel.config";
 import { maryMerkConfig } from "./mary-merk.config";
 
@@ -9,13 +11,15 @@ export const charlesDeibelConfig = {
     birthDate: "2 February 1928",
     deathDate: "12 August 2016",
     imageUrl: "./images/charlie-deibel.jpg",
+    story: charlieDeibelStory,
     parents: [
         {
-            name: "Walter John Deibel", // Served in WWI (309th Engineer Regiment), was a photographer and registered in Winnipeg, Manitoba, Canada, drafted WWII in 1942 in Navy?
+            name: "Walter John Deibel",
             sex: "Male",
             birthPlace: "Columbus, Franklin, Ohio, United States",
             birthDate: "3 December 1887",
             deathDate: "10 June 1946",
+            story: walterJohnDeibelStory,
             parents: [
                 maryMerkConfig,
                 charlesAndrewDeibelConfig

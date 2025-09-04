@@ -7,4 +7,5 @@ export interface Person {
     deathDate?: string;
     parents?: Person[];  // Recursive for parents/grandparents
     imageUrl?: string;
+    story?: string;
   }

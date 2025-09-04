@@ -1,3 +1,4 @@
+import { johnDaceyStory } from "../../stories/john-dacey";
 import { allenCoxConfig } from "./allen-cox/allen-cox.config";
 import { emmaSaintJohnConfig } from "./emma-saint-john/emma-saint-john.config";
 
@@ -218,6 +219,7 @@ export const margaretDeibelConfig = {
                             birthDate: "29 June 1832",
                             deathDate: "27 October 1908",
                             imageUrl: "./images/john-dacy.jpg",
+                            story: johnDaceyStory,
                             parents: [
                                 {
                                     name: "Marie Riordan",

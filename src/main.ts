@@ -59,7 +59,7 @@ function showPersonModal(d: Person, depth: number) {
       <div style="color:#444">${d.birthDate ? `<strong>Born:</strong> ${d.birthDate}` : ""} ${d.birthPlace ? `(${d.birthPlace})` : ""}</div>
       <div style="color:#444"><strong>Died:</strong> ${d.deathDate || "—"}</div>
       ${age !== null ? `<div style="color:#444"><strong>Age:</strong> ${age}</div>` : ""}
-      <div style="margin-top:8px; color:#666; font-style:italic;">${(d as any).story || "Stories coming soon..."}</div>
+      <div style="margin-top:8px; color:#666; font-style:italic; max-width:70vw">${(d as Person).story || "Stories coming soon..."}</div>
     </div>
   `;
 

@@ -1,3 +1,4 @@
+import { lucilleArseneaultStory } from "../../stories/lucille-arseneault";
 import { barbaraRankeConfig } from "./barbara-ranke.config";
 import { friedrichMoserConfig } from "./friedrich-moser.config";
 import { maryZeilingerConfig } from "./mary-zeilinger.config";
@@ -11,6 +12,7 @@ export const lucilleArseneaultConfig = {
     birthDate: "4 Jan 1922",
     deathDate: "27 Oct 2014",
     imageUrl: "./images/lucille-arseneault.jpg",
+    story: lucilleArseneaultStory,
     parents: [
         {
             name: "Lydia Bauer Moser",

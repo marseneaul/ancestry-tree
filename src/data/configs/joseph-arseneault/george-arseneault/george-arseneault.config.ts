@@ -1,4 +1,4 @@
-import { antoineArseneauConfig } from "./antoine-arseneau.config";
+import { antoineArseneauConfig } from "./antoine-arseneau/antoine-arseneau.config";
 import { isaacMineauConfig } from "./isaac-mineau.config";
 import { rosalieLambertConfig } from "./rosalie-lambert.config";
 

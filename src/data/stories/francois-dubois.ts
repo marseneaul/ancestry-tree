@@ -1,0 +1,1 @@
+export const francoisDuboisStory = "Francois Dubois, born April 23, 1831, in Gentilly, Quebec, worked as a jeweler before marrying Sophie Marie Therrien dit Landry on August 26, 1853, in Ste. Anne Parish, Manchester, NH—venturing across the border for the union. He returned to Gentilly, where he lived until his death on March 16, 1905.";
