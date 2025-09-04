@@ -1,3 +1,5 @@
+import { antoineArseneauStory } from "../../../../stories/antoine-arseneau";
+import { louisArseneauStory } from "../../../../stories/louis-arseneau-1769";
 import { louisJosephArsenaultConfig } from "./louis-joseph-arseneau/louis-joseph-arseneau.config";
 import { marieCarronConfig } from "./marie-carron.config";
 import { marieRivardLavigneConfig } from "./marie-rivard-lavigne.config";
@@ -9,6 +11,7 @@ export const antoineArseneauConfig = {
     deathPlace: "Louiseville, Maskinongé, Quebec, Canada",
     birthDate: "8 August 1793",
     deathDate: "24 June 1886",
+    story: antoineArseneauStory,
     parents: [
         {
             name: "Marie Victoire Damphousse",
@@ -54,6 +57,7 @@ export const antoineArseneauConfig = {
             deathPlace: "St-Stanislas-de-Champlain, Les Chenaux, Quebec, Canada",
             birthDate: "28 August 1769",
             deathDate: "10 August 1849",
+            story: louisArseneauStory,
             parents: [
                 marieRivardLavigneConfig,
                 louisJosephArsenaultConfig

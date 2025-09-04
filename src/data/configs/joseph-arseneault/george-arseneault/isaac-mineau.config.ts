@@ -1,4 +1,5 @@
 import { marinBoucherStory } from "../../../stories/marin-boucher";
+import { nicolasPelletierStory } from "../../../stories/nicolas-pelletier";
 
 export const isaacMineauConfig = {
     name: "Isaac Mineau",
@@ -108,11 +109,13 @@ export const isaacMineauConfig = {
                                                         },
                                                         {   // https://www.tfcg.ca/nicolas-pelletier-and-jeanne-devoisy Pioneer of New France
                                                             name: "Nicolas Pelletier",
-                                                            sex: "Female",
+                                                            sex: "Male",
                                                             birthPlace: "Beaucé, Ille-et-Vilaine, Bretagne, France",
                                                             deathPlace: "Sillery, Quebec, Canada",
                                                             birthDate: "1 January 1590",
                                                             deathDate: "9 November 1674",
+                                                            imageUrl: "./images/nicolas-pelletier.jpg",
+                                                            story: nicolasPelletierStory,
                                                             parents: [
                                                                 {
                                                                     name: "Simonne Pichereau",

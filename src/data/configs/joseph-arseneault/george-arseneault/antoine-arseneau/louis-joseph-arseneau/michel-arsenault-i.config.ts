@@ -1,3 +1,6 @@
+import { francoisArseneauStory } from "../../../../../stories/francois-arseneau";
+import { michelArsenaultIStory } from "../../../../../stories/michel-arsenault-i";
+
 export const michelArsenaultIConfig = {
     name: "Michel Arsenault I",
     sex: "Male",
@@ -5,6 +8,7 @@ export const michelArsenaultIConfig = {
     deathPlace: "Montréal, Montréal (Urban Agglomeration), Québec, Canada",
     birthDate: "24 December 1666",
     deathDate: "12 May 1731",
+    story: michelArsenaultIStory,
     parents: [
         {
             name: "Suzanne Lecompte",
@@ -40,6 +44,7 @@ export const michelArsenaultIConfig = {
             birthDate: "8 October 1623",
             deathDate: "10 February 1669",
             imageUrl: "./images/francois-arseneau.jpg",
+            story: francoisArseneauStory,
             parents: [
                 {
                     name: "Michelle Giraud",

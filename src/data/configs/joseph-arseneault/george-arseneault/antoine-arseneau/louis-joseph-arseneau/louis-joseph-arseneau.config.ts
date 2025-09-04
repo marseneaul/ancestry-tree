@@ -1,3 +1,5 @@
+import { louisJosephArseneauStory } from "../../../../../stories/louis-joseph-arseneau";
+import { pierrePaulArseneaultStory } from "../../../../../stories/pierre-paul-arseneault";
 import { marieDejarlaisConfig } from "./marie-dejarlais.config";
 import { michelArsenaultIConfig } from "./michel-arsenault-i.config";
 
@@ -8,6 +10,7 @@ export const louisJosephArsenaultConfig = {
     deathPlace: "Louiseville, Maskinongé, Quebec, Canada",
     birthDate: "9 July 1745",
     deathDate: "5 January 1811",
+    story: louisJosephArseneauStory,
     parents: [
         {
             name: "Marie Josephe Brisard St-Germain",
@@ -30,13 +33,13 @@ export const louisJosephArsenaultConfig = {
             ]
         },
         {   // ?? The founders of Tignish were Joseph DesRoches, Joseph Richard, Jacques Chiasson, Pierre Arsenault, Pierre Poirier, Basile Poirier, Germain DesRoches and Grégoire Bernard
-            // On Jan 7, 1737, the Ursuline nuns of Trois-Rivieres ceded a grant of land to their miller, Pierre Arsenaux.  This land was held in litigation.  In this time it was believed that "a colonist who was able to at least sign his own name had climed a run of a social ladder in the parish hierarchy."  Pierre had signed his name on several documents, se we can assume that he was one of the ones who climbed a rung of a social ladder.  (Source:  Descendants of Francois Arseneau by Estelle Arseneault McGlynn)
             name: "Pierre Paul Arsenault",
             sex: "Male",
             birthPlace: "Quebec, Canada",
             deathPlace: "Louiseville, Maskinongé, Quebec, Canada",
             birthDate: "~1708",
             deathDate: "19 January 1785",
+            story: pierrePaulArseneaultStory,
             parents: [
                 {
                     name: "Marie Madeleine Leblanc Labrie",

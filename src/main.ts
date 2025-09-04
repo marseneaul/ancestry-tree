@@ -135,12 +135,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Responsive SVG
   let width = window.innerWidth * 0.8;
-  let height = window.innerHeight * 0.7;
+  let height = window.innerHeight * 0.55;
   const margin = { top: 50, right: 150, bottom: 50, left: 150 };
 
   function updateDimensions() {
     width = window.innerWidth * 0.8;
-    height = window.innerHeight * 0.7;
+    height = window.innerHeight * 0.55;
     svg
       .attr("height", height)
       .attr("viewBox", `${-margin.left} ${-margin.top} ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`);

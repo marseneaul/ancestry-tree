@@ -1,3 +1,5 @@
+import { georgeLouisArseneaultStory } from "../../../stories/george-louis-arseneault";
+import { louisArseneauStory } from "../../../stories/louis-arseneau";
 import { antoineArseneauConfig } from "./antoine-arseneau/antoine-arseneau.config";
 import { isaacMineauConfig } from "./isaac-mineau.config";
 import { rosalieLambertConfig } from "./rosalie-lambert.config";
@@ -10,6 +12,7 @@ export const georgeArseneaultConfig = {
     birthDate: "31 May 1863",
     deathDate: "4 March 1931",
     imageUrl: "./images/george-louis-arseneault.jpg",
+    story: georgeLouisArseneaultStory,
     parents: [
         {   
             name: "Emerentienne Marie Laurence Mineau",
@@ -37,6 +40,7 @@ export const georgeArseneaultConfig = {
             deathPlace: "St-Etienne-des-Gres, Quebec, Canada",
             birthDate: "15 February 1830",
             deathDate: "14 March 1868",
+            story: louisArseneauStory,
             parents: [
                 rosalieLambertConfig,
                 antoineArseneauConfig

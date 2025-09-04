@@ -140,7 +140,7 @@ export const allenCoxConfig = {
                             birthDate: "~1811",
                             deathDate: "UNKNOWN"
                         },
-                        {   // Found in jail documents for manslaughter? (convicted in 1844, 5' 5 3/4")
+                        {   // Found in jail documents for manslaughter? (convicted in 1844, 5' 5 3/4") - not possible https://www.ancestry.com/search/collections/61943/records/2914642?tid=83632330&pid=242691108848&queryId=42ba6538-3bb5-4ca9-8d95-0d4c14a1f11c&usePUBJs=true
                             name: "William Duffy",
                             sex: "Male",
                             birthPlace: "Ireland",

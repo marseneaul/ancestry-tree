@@ -1,3 +1,6 @@
+import { barbaraRankeStory } from "../../stories/barbara-ranke";
+import { christianRankeStory } from "../../stories/christian-ranke";
+import { mariaZehnderStory } from "../../stories/maria-zehnder";
 import { johannZehnderConfig } from "./johann-zehnder.config";
 
 // COMPLETE
@@ -9,6 +12,7 @@ export const barbaraRankeConfig = {
     birthDate: "20 January 1864",
     deathDate: "1922",
     imageUrl: "./images/barbara-ranke.jpg",
+    story: barbaraRankeStory,
     parents: [
         {
             name: "Maria Margaretha Zehnder",
@@ -18,6 +22,7 @@ export const barbaraRankeConfig = {
             birthDate: "2 May 1841",
             deathDate: "8 December 1919",
             imageUrl: "./images/maria-zehnder.jpg",
+            story: mariaZehnderStory,
             parents: [
                 {
                     name: "Maria Margaretha Fuerwitt",
@@ -325,10 +330,11 @@ export const barbaraRankeConfig = {
             name: "Christian Friedrich Ranke",
             sex: "Male",
             birthPlace: "Saschen, Hasselwerder, Hannover, Kingdom of Prussia, Germany",
-            deathPlace: "UNKNOWN",
+            deathPlace: "Frankenmuth, Saginaw, Michigan, United States",
             birthDate: "16 January 1836",
             deathDate: "29 September 1918",
             imageUrl: "./images/christian-ranke.jpg",
+            story: christianRankeStory,
             parents: [
                 {
                     name: "Dorothea Fuecksel",

@@ -1,10 +1,10 @@
 export const phillipCoxConfig = {
-    name: "Phillip Cox",
+    name: "Phillip Comley Cox",
     sex: "Male",
     birthPlace: "Buckland, Berkshire, England, United Kingdom",
     deathPlace: "Buckland, Berkshire, England, United Kingdom",
     birthDate: "3 May 1778",
-    deathDate: "1801",
+    deathDate: "28 May 1798",
     parents: [
         {
             name: "Hannah Comly",

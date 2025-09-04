@@ -1,4 +1,5 @@
 import { francoisDuboisStory } from "../../../stories/francois-dubois";
+import { marieDuboisStory } from "../../../stories/marie-dubois";
 import { thomasTherrienConfig } from "./thomas-therrien.config";
 
 export const marieDuboisConfig = {
@@ -9,6 +10,7 @@ export const marieDuboisConfig = {
     birthDate: "31 March 1861",
     deathDate: "27 November 1934",
     imageUrl: "./images/marie-leonie-dubois.jpg",
+    story: marieDuboisStory,
     parents: [
         {
             name: "Sophie Marie Therrien dit Landry",

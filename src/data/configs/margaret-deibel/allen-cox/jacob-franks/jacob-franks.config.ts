@@ -1,4 +1,6 @@
+import { corneliusFranksStory } from "../../../../stories/cornelius-franks";
 import { henrySmithStory } from "../../../../stories/henry-smith";
+import { jacobConradFranksStory } from "../../../../stories/jacob-conrad-franks";
 import { philipSmithStory } from "../../../../stories/philip-smith";
 import { conradMichaelFranksConfig } from "./conrad-michael-franks.config";
 import { jacobMichaelFranksConfig } from "./jacob-michael-franks.config";
@@ -10,6 +12,7 @@ export const jacobFranksConfig = {
     deathPlace: "Portland, Ionia, Michigan, United States",
     birthDate: "8 July 1844",
     deathDate: "9 February 1918",
+    story: jacobConradFranksStory,
     parents: [
         {
             name: "Sarah Ann Franks",
@@ -53,6 +56,7 @@ export const jacobFranksConfig = {
             deathPlace: "Orange, Ionia, Michigan, United States",
             birthDate: "1820",
             deathDate: "15 July 1896",
+            story: corneliusFranksStory,
             parents: [
                 {
                     name: "Mary Magdalena 'Polly' Smith",
