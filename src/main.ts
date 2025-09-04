@@ -81,6 +81,8 @@ document.addEventListener("DOMContentLoaded", () => {
   `;
   app.appendChild(header);
 
+  const searchInput = document.getElementById("search-input") as HTMLInputElement;
+
   const container = document.createElement("div");
   container.id = "tree-container";
   app.appendChild(container);
@@ -219,7 +221,7 @@ document.addEventListener("DOMContentLoaded", () => {
     .append("rect")
     .attr("class", "minimap-viewport")
     .attr("fill", "none")
-    .attr("stroke", "#333")
+    .attr("stroke", "#FF0000")
     .attr("stroke-width", 1.5)
     .attr("pointer-events", "all"); // needed for drag
 
@@ -425,34 +427,44 @@ document.addEventListener("DOMContentLoaded", () => {
     const males = nodeEnter.filter(d => d.data.sex === "Male");
     males.each(function(d) {
       const size = scaleFactor(d.depth) * 2;
+      const halfSize = scaleFactor(d.depth);  // For centering: x/y = -halfSize
       const country = getCountry(d.data.birthPlace);
       const svgUrl = countrySvgs[country];
       const patternId = `country-pattern-${country.replace(/\s/g, "").toLowerCase()}`;
       if (d.data.imageUrl) {
-        const patternIdImg = `img-${d.data.name.replace(/\s/g, "-")}`;
-        defs.append("pattern")
-          .attr("id", patternIdImg)
-          .attr("width", 1)
-          .attr("height", 1)
-          .append("image")
+        // For rects, use clipPath to clip image to square
+        const clipId = `clip-${d.data.name.replace(/[^a-zA-Z0-9-]/g, "")}`;
+        defs.append("clipPath")
+          .attr("id", clipId)
+          .append("rect")
+          .attr("x", -halfSize)
+          .attr("y", -halfSize)
+          .attr("width", size)
+          .attr("height", size);
+      
+        d3.select(this).append("image")
           .attr("xlink:href", d.data.imageUrl)
+          .attr("x", -halfSize)
+          .attr("y", -halfSize)
           .attr("width", size)
           .attr("height", size)
-          .attr("preserveAspectRatio", "xMidYMid slice");
-
+          .attr("preserveAspectRatio", "xMidYMid slice")
+          .attr("clip-path", `url(#${clipId})`);
+      
+        // Add rect stroke on top
         d3.select(this).append("rect")
+          .attr("x", -halfSize)
+          .attr("y", -halfSize)
           .attr("width", size)
           .attr("height", size)
-          .attr("x", -scaleFactor(d.depth))
-          .attr("y", -scaleFactor(d.depth))
-          .attr("fill", `url(#${patternIdImg})`)
+          .attr("fill", "none")
           .attr("stroke", "black");
       } else {
         d3.select(this).append("rect")
           .attr("width", size)
           .attr("height", size)
-          .attr("x", -scaleFactor(d.depth))
-          .attr("y", -scaleFactor(d.depth))
+          .attr("x", -halfSize)
+          .attr("y", -halfSize)
           .attr("fill", svgUrl ? `url(#${patternId})` : countryColors[country] || "gray")
           .attr("stroke", "black");
       }
@@ -550,12 +562,70 @@ document.addEventListener("DOMContentLoaded", () => {
 
   updateTree();
 
-  // Search Functionality
-  const searchInput = document.getElementById("search-input") as HTMLInputElement;
+    // Collect unique names from the tree (run once after updateTree)
+  const allNames = [...new Set(root.descendants().map(d => d.data.name || "Unknown"))];
+
+  // After app.appendChild(header); add this to create the datalist:
+  const datalist = document.createElement("datalist");
+  datalist.id = "name-suggestions";
+  app.appendChild(datalist);  // Or append to header if preferred
+  searchInput.setAttribute("list", "name-suggestions");
+
+  // Search Functionality with Autocomplete and Zoom
   searchInput.addEventListener("input", (e) => {
     const query = (e.target as HTMLInputElement).value.toLowerCase();
+
+    // Clear existing suggestions
+    datalist.innerHTML = "";
+
+    // Filter names containing the substring (case-insensitive)
+    const suggestions = allNames.filter(name => name.toLowerCase().includes(query));
+
+    // Add up to 10 suggestions (adjust limit as needed)
+    suggestions.slice(0, 10).forEach(name => {
+      const option = document.createElement("option");
+      option.value = name;
+      datalist.appendChild(option);
+    });
+
+    // Highlight matching nodes (keep current behavior)
     g.selectAll(".node")
       .classed("highlighted", d => query && (d.data.name?.toLowerCase().includes(query) ?? false));
+  });
+
+  // On selection (change event fires when picking from datalist)
+  searchInput.addEventListener("change", (e) => {
+    const selectedName = (e.target as HTMLInputElement).value;
+    if (!selectedName) return;
+
+    // Find the node with exact name match (assume unique names; if not, take first)
+    const selectedNode = root.descendants().find(d => d.data.name === selectedName);
+    if (!selectedNode) return;
+
+    // Remove highlights
+    g.selectAll(".node").classed("highlighted", false);
+
+    // Zoom/Center: Compute transform to center the node at scale 1
+    const k = 1;  // Fixed scale; adjust if you want to zoom in (e.g., 2)
+    const tx = (width / 2) - (selectedNode.x ?? 0) * k;
+    const ty = (height / 2) - (selectedNode.y ?? 0) * k;
+
+    // Transition smoothly
+    svg.transition().duration(750).call(
+      zoom.transform,
+      d3.zoomIdentity.translate(tx, ty).scale(k)
+    );
+
+    // Optionally clear input after selection
+    searchInput.value = "";
+  });
+
+  // Bonus: Handle Enter key for manual input (if not using datalist pick)
+  searchInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      const event = new Event("change");
+      searchInput.dispatchEvent(event);  // Trigger the change handler
+    }
   });
 
   // Export PNG
