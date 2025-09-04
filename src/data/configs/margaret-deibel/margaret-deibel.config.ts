@@ -1,4 +1,6 @@
+import { danielAloysiusDaceyStory } from "../../stories/daniel-aloysius-dacey";
 import { johnDaceyStory } from "../../stories/john-dacey";
+import { marieAgnesCoxStory } from "../../stories/marie-agnes-cox";
 import { allenCoxConfig } from "./allen-cox/allen-cox.config";
 import { emmaSaintJohnConfig } from "./emma-saint-john/emma-saint-john.config";
 
@@ -19,6 +21,7 @@ export const margaretDeibelConfig = {
             birthDate: "10 July 1901",
             deathDate: "22 February 1991",
             imageUrl: "./images/marie-agnes-cox.jpg",
+            story: marieAgnesCoxStory,
             parents: [
                 emmaSaintJohnConfig,
                 allenCoxConfig
@@ -31,6 +34,7 @@ export const margaretDeibelConfig = {
             deathPlace: "Detroit, Wayne, Michigan, United States",
             birthDate: "6 November 1896",
             deathDate: "16 May 1961",
+            story: danielAloysiusDaceyStory,
             parents: [
                 {   // Uremia carcinoma (kidney failure due to bladder carcinoma)
                     name: "Margarete Ellen (Maggie) O'Connor Dacy",

@@ -1,4 +1,5 @@
 import { charlieDeibelStory } from "../../stories/charles-deibel";
+import { florenceMuthStory } from "../../stories/florence-muth";
 import { walterJohnDeibelStory } from "../../stories/walter-john-deibel";
 import { charlesAndrewDeibelConfig } from "./charles-andrew-diebel.config";
 import { maryMerkConfig } from "./mary-merk.config";
@@ -31,6 +32,7 @@ export const charlesDeibelConfig = {
             birthPlace: "Columbus, Franklin, Ohio, United States",
             birthDate: "20 May 1891",
             deathDate: "8 January 1953",
+            story: florenceMuthStory,
             parents: [
                 {
                     name: "Josephine Johanna Scully",

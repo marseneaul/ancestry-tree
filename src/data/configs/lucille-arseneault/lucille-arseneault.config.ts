@@ -1,3 +1,4 @@
+import { johannAdolphMoserStory } from "../../stories/johann-adolph-moser";
 import { lucilleArseneaultStory } from "../../stories/lucille-arseneault";
 import { barbaraRankeConfig } from "./barbara-ranke.config";
 import { friedrichMoserConfig } from "./friedrich-moser.config";
@@ -5,7 +6,7 @@ import { maryZeilingerConfig } from "./mary-zeilinger.config";
 
 // COMPLETE
 export const lucilleArseneaultConfig = {
-    name: "Lucille Florence Moser Arseneault", // Served in WWII Navy
+    name: "Lucille Florence Moser Arseneault",
     sex: "Female",
     birthPlace: "Flint, Genesee County, Michigan, United States",
     deathPlace: "Asheville, Buncombe County, North Carolina, United States",
@@ -69,13 +70,14 @@ export const lucilleArseneaultConfig = {
                 }
             ]
         },
-        {   // Tall, light brown hair, light blue eyes, medium build (WWI and WWII draft cards)
+        {
             name: "Johann Adolph Sigismund Moser",
             sex: "Male",
             birthPlace: "Frankenmuth, Saginaw, Michigan, United States",
             deathPlace: "Flint, Genesee County, Michigan, United States",
             birthDate: "3 October 1891",
             deathDate: "18 February 1960",
+            story: johannAdolphMoserStory,
             parents: [
                 barbaraRankeConfig,
                 friedrichMoserConfig

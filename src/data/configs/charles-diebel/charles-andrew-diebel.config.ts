@@ -12,7 +12,7 @@ export const charlesAndrewDeibelConfig = {
     imageUrl: "./images/charles-andrew-diebel.jpg",
     story: charlesAndrewDeibelStory,
     parents: [
-        {
+        {   // stonecutter by trade
             name: "Crescentia Crenenisa Volk",
             sex: "Female",
             birthPlace: "Schramberg, Rottweil, Baden-Württemberg, Germany",

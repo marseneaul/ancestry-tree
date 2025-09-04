@@ -49,7 +49,7 @@ export const marieDuboisConfig = {
             ]
         },
         {
-            name: "Francois Dubois", // Jeweler
+            name: "Francois Dubois",
             sex: "Male",
             birthPlace: "Gentilly, Nicolet, Quebec, Canada",
             deathPlace: "Gentilly, Nicolet, Quebec, Canada",

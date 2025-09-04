@@ -1,3 +1,4 @@
+import { edwardGeorgeArseneaultStory } from "../../stories/edward-george-arseneault";
 import { josephArseneaultStory } from "../../stories/joseph-arseneault";
 import { elizabethVossConfig } from "./elizabeth-voss/elizabeth-voss.config";
 import { georgeArseneaultConfig } from "./george-arseneault/george-arseneault.config";
@@ -33,13 +34,14 @@ export const josephArseneaultConfig = {
             ]
         },
         {
-            name: "Edward George Arseneault", // Fought in WWI? Draft mentioned kidney troubles
+            name: "Edward George Arseneault",
             sex: "Male",
             birthPlace: "Gentilly, Nicolet, Quebec, Canada",
             deathPlace: "Flint, Genesee County, Michigan, United States",
             birthDate: "1 August 1889",
             deathDate: "10 August 1945",
             imageUrl: "./images/edward-arseneault.jpg",
+            story: edwardGeorgeArseneaultStory,
             parents: [
                 marieDuboisConfig,
                 georgeArseneaultConfig

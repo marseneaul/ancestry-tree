@@ -1,3 +1,4 @@
+import { emmaSaintJohnStory } from "../../../stories/emma-saint-john";
 import { leviSaintJohnConfig } from "./levi-saint-john.config";
 
 // COMPLETE
@@ -9,6 +10,7 @@ export const emmaSaintJohnConfig = {
     birthDate: "20 October 1883",
     deathDate: "8 October 1962",
     imageUrl: "./images/emma-saint-john.jpg",
+    story: emmaSaintJohnStory,
     parents: [
         {
             name: "Laura Louisa Sharkey",

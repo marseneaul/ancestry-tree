@@ -1,15 +1,18 @@
+import { allenDuffyCoxStory } from "../../../stories/allen-duffy-cox";
+import { jamesDCoxStory } from "../../../stories/james-d-cox";
 import { jacobFranksConfig } from "./jacob-franks/jacob-franks.config";
 import { johnCoxConfig } from "./john-cox/john-cox.config";
 
 // COMPLETE
 export const allenCoxConfig = {
-    name: "Allen Duffy Cox", // Apoplexy death
+    name: "Allen Duffy Cox",
     sex: "Male",
     birthPlace: "Onaway, Presque Isle, Michigan, United States",
     deathPlace: "Onaway, Presque Isle, Michigan, United States",
     birthDate: "22 January 1882",
     deathDate: "23 August 1906",
     imageUrl: "./images/allen-cox.jpg",
+    story: allenDuffyCoxStory,
     parents: [
         {
             name: "Huldah Franks",
@@ -117,6 +120,7 @@ export const allenCoxConfig = {
             deathPlace: "Onaway, Presque Isle, Michigan, United States",
             birthDate: "27 July 1860",
             deathDate: "8 May 1923",
+            story: jamesDCoxStory,
             imageUrl: "./images/james-cox.jpg",
             parents: [
                 {

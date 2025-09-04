@@ -1,11 +1,16 @@
+import { jacobMichaelFranksStory } from "../../../../stories/jacob-michael-franks";
+import { michaelFranksJrStory } from "../../../../stories/micahel-franks-jr";
+import { michaelFranksSrStory } from "../../../../stories/michael-franks-sr";
+
 // https://www.ancestry.com/mediaui-viewer/collection/1030/tree/51090679/person/110134656237/media/efecb844-2898-4275-8fe6-8ccec7979899?galleryindex=1&sort=-created
 export const jacobMichaelFranksConfig = {
-    name: "Jacob Michael Franks",
+    name: "Jacob Michael Franks Sr.",
     sex: "Male",
     birthPlace: "Fayette, Pennsylvania, United States",
     deathPlace: "East Union Township, Wayne, Ohio, United States",
     birthDate: "2 December 1781",
     deathDate: "13 January 1868",
+    story: jacobMichaelFranksStory,
     parents: [
         {
             name: "Elizabeth Leibenguht / Livingood",
@@ -35,12 +40,13 @@ export const jacobMichaelFranksConfig = {
             ]
         },
         {
-            name: "Michael Franks Jr.", // Fought in American Revolution
+            name: "Michael Franks Jr.",
             sex: "Male",
             birthPlace: "Rhine, Palatinate, Germany",
             deathPlace: "German Township, Fayette, Pennsylvania, United States",
             birthDate: "14 July 1747",
             deathDate: "3 February 1814",
+            story: michaelFranksJrStory,
             parents: [
                 {
                     name: "Mary Mueller",
@@ -58,6 +64,7 @@ export const jacobMichaelFranksConfig = {
                     birthDate: "16 January 1725",
                     deathDate: "17 March 1793",
                     imageUrl: "./images/johann-michael-franks.jpg",
+                    story: michaelFranksSrStory,
                     parents: []
                 }
             ]

@@ -1,3 +1,5 @@
+import { maryMerkStory } from "../../stories/mary-merk";
+
 // COMPLETE
 export const maryMerkConfig = {
     name: "Mary Victoria Merk",
@@ -7,6 +9,7 @@ export const maryMerkConfig = {
     birthDate: "8 August 1867",
     deathDate: "5 March 1946",
     imageUrl: "./images/mary-victoria-merk.jpg",
+    story: maryMerkStory,
     parents: [
         {
             name: "Barbara Pfeiffer",
