@@ -54,7 +54,7 @@ export const allenCoxConfig = {
                                 {   // "1st Lieutenant" WILLIAM S LEVERS (Served in the War of 1812, civil, rev war)
 
                                     name: "William S Levers",
-                                    sex: "Female",
+                                    sex: "Male",
                                     birthPlace: "Atlantic Ocean (Born at Sea), United States",
                                     deathPlace: "Seneca, Seneca, Ohio, United States",
                                     birthDate: "30 April 1792",

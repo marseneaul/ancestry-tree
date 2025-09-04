@@ -33,16 +33,37 @@ export const jacobFranksConfig = {
                             name: "Barbara Hock",
                             sex: "Female",
                             birthPlace: "Virginia, United States",
+                            deathPlace: "Wayne Township, Ohio, United States",
                             birthDate: "29 September 1750",
                             deathDate: "1818",
-                            parents: []
+                            parents: [ // Uncertain connections
+                            ]
                         },
                         {
                             name: "Andrew Jackson Miller Sr.", // Fought in War of 1812
                             sex: "Male",
                             birthPlace: "Virginia, United States",
+                            deathPlace: "Wayne Township, Ohio, United States",
                             birthDate: "4 April 1743",
-                            deathDate: "3 June 1816"
+                            deathDate: "3 June 1816",
+                            parents: [
+                                {
+                                    name: "Barbara Daeschler",
+                                    sex: "Female",
+                                    birthPlace: "Northampton, Northampton, Pennsylvania, United States",
+                                    deathPlace: "Northampton, Northampton, Pennsylvania, United States",
+                                    birthDate: "15 December 1721",
+                                    deathDate: "19 March 1816"
+                                },
+                                {
+                                    name: "Johann Georg Müller",
+                                    sex: "Male",
+                                    birthPlace: "Monheim, Rheim, Prussia, Germany",
+                                    deathPlace: "Carlisle, Cumberland, Pennsylvania, United States",
+                                    birthDate: "1722",
+                                    deathDate: "1762"
+                                }
+                            ]
                         }
                     ]
                 },

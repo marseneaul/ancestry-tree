@@ -63,7 +63,7 @@ export const marieDuboisConfig = {
                 {
                     name: "Sophie Beaufort-Brunelle",
                     sex: "Female",
-                    birthPlace: "UNKNOWN",
+                    birthPlace: "Canada",
                     deathPlace: "Manchester, Hillsborough, New Hampshire, United States",
                     birthDate: "2 April 1796",
                     deathDate: "3 August 1832",

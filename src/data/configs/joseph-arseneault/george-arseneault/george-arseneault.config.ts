@@ -1,11 +1,11 @@
 import { georgeLouisArseneaultStory } from "../../../stories/george-louis-arseneault";
 import { louisArseneauStory } from "../../../stories/louis-arseneau";
 import { antoineArseneauConfig } from "./antoine-arseneau/antoine-arseneau.config";
-import { isaacMineauConfig } from "./isaac-mineau.config";
+import { isaacMineauConfig } from "./isaac-mineau/isaac-mineau.config";
 import { rosalieLambertConfig } from "./rosalie-lambert.config";
 
 export const georgeArseneaultConfig = {
-    name: "George Louis Arseneault", // Mill operative
+    name: "George Louis Arseneault",
     sex: "Male",
     birthPlace: "St-Etienne-Des-Gras, St-Maurice, PQ, Canada",
     deathPlace: "Flint, Genesee, Michigan",
@@ -21,7 +21,7 @@ export const georgeArseneaultConfig = {
             deathPlace: "St-Mathieu, St-Maurice County, Quebec, Canada",
             birthDate: "20 December 1832",
             deathDate: "6 August 1912",
-            parents: [ //https://en.wikipedia.org/wiki/Marin_Boucher
+            parents: [
                 {
                     name: "Emelie Beland",
                     sex: "Female",

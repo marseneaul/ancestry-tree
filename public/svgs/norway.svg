@@ -1,0 +1,8 @@
+<!-- Norway: Red with a white-bordered blue Nordic cross -->
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+  <rect width="20" height="20" fill="#EF2B2D"/>
+  <rect y="7.5" width="20" height="5" fill="#FFFFFF"/>
+  <rect x="5.4545454545" width="3.6363636364" height="20" fill="#FFFFFF"/>
+  <rect y="8.75" width="20" height="2.5" fill="#002868"/>
+  <rect x="6.3636363636" width="1.8181818182" height="20" fill="#002868"/>
+</svg>
