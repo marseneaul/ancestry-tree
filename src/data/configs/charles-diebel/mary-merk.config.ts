@@ -1,4 +1,5 @@
 import { maryMerkStory } from "../../stories/mary-merk";
+import { valentineMerkStory } from "../../stories/valentine-merk";
 
 // COMPLETE
 export const maryMerkConfig = {
@@ -42,6 +43,7 @@ export const maryMerkConfig = {
             deathPlace: "Columbus, Franklin, Ohio, United States",
             birthDate: "19 December 1827",
             deathDate: "1 December 1880",
+            story: valentineMerkStory,
             parents: [
                 {
                     name: "John Merk",

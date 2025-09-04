@@ -1,4 +1,5 @@
 import { allenDuffyCoxStory } from "../../../stories/allen-duffy-cox";
+import { huldahFranksStory } from "../../../stories/huldah-franks";
 import { jamesDCoxStory } from "../../../stories/james-d-cox";
 import { jacobFranksConfig } from "./jacob-franks/jacob-franks.config";
 import { johnCoxConfig } from "./john-cox/john-cox.config";
@@ -22,6 +23,7 @@ export const allenCoxConfig = {
             birthDate: "November 1864",
             deathDate: "19 February 1931",
             imageUrl: "./images/huldah-franks.jpg",
+            story: huldahFranksStory,
             parents: [
                 {
                     name: "Rosanna Belle McDowell",
