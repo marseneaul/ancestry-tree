@@ -54,6 +54,7 @@ export function getCountry(birthPlace?: string): string {
     if (place.includes("belgium")) return "Belgium";
     if (place.includes("austria")) return "Austria";
     if (place.includes("norway")) return "Norway";
+    if (place.includes("luxembourg")) return "Luxembourg";
     return place.split(",").pop()?.trim() || "Unknown";  // Fallback
   }
   
@@ -68,6 +69,7 @@ export const countryColors: Record<string, string> = {
     "Belgium": "FFCD00",          // yellow from flag
     "Austria": "FFFFFF",          // white from flag
     "Norway": "FFFFFF",          // white from flag
+    "Luxembourg": "FFFFFF",          // white from flag
     "Unknown": "#808080",         // neutral gray
 };
 

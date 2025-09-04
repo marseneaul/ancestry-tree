@@ -7,6 +7,7 @@ export const robertIConfig = {
 	deathPlace: "UNKNOWN",
 	birthDate: "866",
 	deathDate: "15 June 923",
+	imageUrl: "./images/robert-i-of-france.jpg",
 	parents: [
 		{
 			name: "Adelais of Tours",
@@ -38,6 +39,8 @@ export const robertIConfig = {
 			deathPlace: "Brissarthe, France",
 			birthDate: "~820",
 			deathDate: "2 July 866",
+			imageUrl: "./images/robert-the-strong.jpg",
+			parents: []
 		}
 	]
 }

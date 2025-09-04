@@ -6,6 +6,7 @@ import { herveIIIConfig } from "./herve-iii.config";
 import { hildegardVonKraichgauConfig } from "./hildegard-von-kraichgau.config";
 import { jeanneDeParthenayConfig } from "./jeanne-de-parthenay.config";
 import { pierreIIIConfig } from "./pierre-iii-config";
+import { plezouDeRostrenenConfig } from "./plezou-de-rostrenen.config";
 import { rivallonDeRosmadecConfig } from "./rivallon-de-rosmadec.config";
 import { robertIConfig } from "./robert-i.config";
 
@@ -617,22 +618,8 @@ export const francoisDupontConfig = {
 													birthDate: "UNKNOWN",
 													deathDate: "UNKNOWN",
 													parents: [
-														{
-															name: "UNKNOWN",
-															sex: "Female",
-															birthPlace: "UNKNOWN",
-															deathPlace: "UNKNOWN",
-															birthDate: "UNKNOWN",
-															deathDate: "UNKNOWN",
-														},
-														{
-															name: "UNKNOWN",
-															sex: "Male",
-															birthPlace: "UNKNOWN",
-															deathPlace: "UNKNOWN",
-															birthDate: "UNKNOWN",
-															deathDate: "UNKNOWN",
-														}
+														plezouDeRostrenenConfig,
+														herveIIIConfig
 													]
 												},
 												{	// Seigneur de Rosmadec
@@ -915,10 +902,11 @@ export const francoisDupontConfig = {
 																															// Countess of Boulogne; Queen Consort of England at Westminster Abbey 22 Mar 1136.
 																															name: "Mathilde de Boulogne",
 																															sex: "Female",
-																															birthPlace: "UNKNOWN",
+																															birthPlace: "France",
 																															deathPlace: "Essex, England",
 																															birthDate: "1103/1105",
 																															deathDate: "30 May or 3 July 1151",
+																															imageUrl: "./images/matilda-of-boulogne.jpg",
 																															parents: [
 																																{
 																																	name: "Mary of Scotland",
@@ -945,6 +933,7 @@ export const francoisDupontConfig = {
 																																			deathPlace: "Alnwick, Northumberland, England",
 																																			birthDate: "1031",
 																																			deathDate: "13 November 1093",
+																																			imageUrl: "./images/malcolm-iii-of-scotland.jpg",
 																																			parents: [
 																																				{
 																																					name: "Sybilla of Northumberland",
@@ -964,6 +953,7 @@ export const francoisDupontConfig = {
 																																					deathPlace: "Burghead, Moray, Scotland, United Kingdom",
 																																					birthDate: "~1001",
 																																					deathDate: "14 August 1040",
+																																					imageUrl: "./iamges/duncan-i-of-scotland.jpg",
 																																					parents: [
 																																						{
 																																							name: "Bethoc of Scotland",
@@ -1055,6 +1045,7 @@ export const francoisDupontConfig = {
 																																	deathPlace: "Marcigny, Departement de Saône-et-Loire, Bourgogne, France",
 																																	birthDate: "1066",
 																																	deathDate: "8 March 1137",
+																																	imageUrl: "./images/adela-of-normandy.jpg",
 																																	parents: [
 																																		{
 																																			// Over time Matilda's tomb was desecrated and her original coffin destroyed. Her remains were placed in a sealed box and reburied under the original black slab.[20] In 1959 Matilda's incomplete skeleton was examined and her femur and tibia were measured to d
@@ -1065,6 +1056,7 @@ export const francoisDupontConfig = {
 																																			deathPlace: "Caen, Departement du Calvados, Basse-Normandie, France",
 																																			birthDate: "1030",
 																																			deathDate: "3 November 1083",
+																																			imageUrl: "./images/matilda-of-flanders.jpg",
 																																			parents: [
 																																				{
 																																					// https://www.ancestry.com/family-tree/person/tree/44204929/person/430054484734/facts
@@ -1076,6 +1068,7 @@ export const francoisDupontConfig = {
 																																					deathPlace: "France",
 																																					birthDate: "1009",
 																																					deathDate: "8 January 1079",
+																																					imageUrl: "./images/adele-capet.jpg",
 																																					parents: [
 																																						{
 																																							name: "Constance of Arles",
@@ -1093,6 +1086,7 @@ export const francoisDupontConfig = {
 																																							deathPlace: "Meulan, Aquitaine, France",
 																																							birthDate: "27 March 972",
 																																							deathDate: "20 July 1031",
+																																							imageUrl: "./images/robert-ii-of-france.jpg",
 																																							parents: [
 																																								{
 																																									name: "Adelaide of Aquitaine",
@@ -1112,6 +1106,7 @@ export const francoisDupontConfig = {
 																																									deathPlace: "UNKNOWN",
 																																									birthDate: "938",
 																																									deathDate: "14 October 996",
+																																									imageUrl: "./images/hugh-capet.jpg",
 																																									parents: [
 																																										{
 																																											// Duchess consort of the Franks by her marriage to the Robertian duke Hugh the Great. Upon her husband's death in 956, she acted as a regent during the minority of their son Hugh Capet,
@@ -1121,6 +1116,7 @@ export const francoisDupontConfig = {
 																																											deathPlace: "UNKNOWN",
 																																											birthDate: "901",
 																																											deathDate: "10 May 965",
+																																											imageUrl: "./images/hedwig-of-saxony.jpg",
 																																											parents: [
 																																												{
 																																													// PAINTING https://www.ancestry.com/family-tree/person/tree/44204929/person/430051861798/facts
@@ -1136,12 +1132,13 @@ export const francoisDupontConfig = {
 																																													// Cerebral stroke
 																																													// HEINRICH I "der Vogelsteller/the Fowler" King of Germany at Fritzlar 6 May 919, duke of Saxony from 912 and the elected king of East Francia from 919 until his death in 936.
 																																													// PAINTINGS https://www.ancestry.com/family-tree/person/tree/44204929/person/430051861753/facts
-																																													name: "Heinrich I of Germany",
+																																													name: "Heinrich I ('The Fowler King') of Germany",
 																																													sex: "Male",
 																																													birthPlace: "Membleben, Germany",
 																																													deathPlace: "Memleben, Burgenlandkreis, Saxony-Anhalt, Germany",
 																																													birthDate: "876",
 																																													deathDate: "2 July 936",
+																																													imageUrl: "./images/heinrich-i-of-germany.jpg",
 																																													parents: [
 																																														{
 																																															name: "Hathui of Babenburg",
@@ -1161,7 +1158,31 @@ export const francoisDupontConfig = {
 																																															deathPlace: "UNKNOWN",
 																																															birthDate: "851",
 																																															deathDate: "912",
-																																															parents: []
+																																															imageUrl: "./images/otto-i.jpg",
+																																															parents: [
+																																																{
+																																																	name: "Oda Bilung",
+																																																	sex: "Female",
+																																																	birthPlace: "Germany",
+																																																	deathPlace: "UNKNOWN",
+																																																	birthDate: "~806",
+																																																	deathDate: "17 May 0913",
+																																																	parents: []
+																																																},
+																																																{
+																																																	// https://www.ancestry.com/family-tree/person/tree/44204929/person/430052144824/facts
+																																																	// a Carolingian office bearer and count in the Duchy of Saxony from about 844.
+																																																	// ars of the East Frankish king Louis the German against Norman invasions, the Polabian Slavs, and Great Moravia.
+																																																	name: "Liudolf of Saxony",
+																																																	sex: "Male",
+																																																	birthPlace: "Germany",
+																																																	deathPlace: "UNKNOWN",
+																																																	birthDate: "805-820",
+																																																	deathDate: "11/12 March 866",
+																																																	imageUrl: "./images/liudolf-of-saxony.jpg",
+																																																	parents: []
+																																																}
+																																															]
 																																														}
 																																													]
 																																												}
@@ -1175,6 +1196,7 @@ export const francoisDupontConfig = {
 																																											deathPlace: "UNKNOWN",
 																																											birthDate: "898",
 																																											deathDate: "16 June 956",
+																																											imageUrl: "./images/hugh-the-great-of-france.jpg",
 																																											parents: [
 																																												{
 																																													// Baldwin II to have him assassinated in 907.
@@ -1207,7 +1229,7 @@ export const francoisDupontConfig = {
 																																						{
 																																							name: "Ogive de Luxembourg",
 																																							sex: "Female",
-																																							birthPlace: "UNKNOWN",
+																																							birthPlace: "Luxembourg",
 																																							deathPlace: "UNKNOWN",
 																																							birthDate: "UNKNOWN",
 																																							deathDate: "21 February 1030",
@@ -1265,7 +1287,7 @@ export const francoisDupontConfig = {
 																																																		{
 																																																			name: "Adelaide of Paris",
 																																																			sex: "Female",
-																																																			birthPlace: "UNKNOWN",
+																																																			birthPlace: "France",
 																																																			deathPlace: "UNKNOWN",
 																																																			birthDate: "850-853",
 																																																			deathDate: "10 November 901",
@@ -1278,7 +1300,26 @@ export const francoisDupontConfig = {
 																																																					deathPlace: "UNKNOWN",
 																																																					birthDate: "830-890",
 																																																					deathDate: "UNKNOWN",
-																																																					parents: []
+																																																					parents: [
+																																																						{
+																																																							name: "Susanna de Paris",
+																																																							sex: "Female",
+																																																							birthPlace: "France",
+																																																							deathPlace: "UNKNOWN",
+																																																							birthDate: "~812",
+																																																							deathDate: "~859",
+																																																							parents: []
+																																																						},
+																																																						{
+																																																							// Comte de Flavigny {Flavigny-sur-Ozerain, Côte d'Or.
+																																																							name: "Vulfard de Flavigny",
+																																																							sex: "Male",
+																																																							birthPlace: "France",
+																																																							deathPlace: "UNKNOWN",
+																																																							birthDate: "UNKNOWN",
+																																																							deathDate: "~856"
+																																																						}
+																																																					]
 																																																				}
 																																																			]
 																																																		},
@@ -1291,6 +1332,7 @@ export const francoisDupontConfig = {
 																																																			deathPlace: "Delincourt, Departement de l'Oise, Picardie, France",
 																																																			birthDate: "1 November 846",
 																																																			deathDate: "10 April 879",
+																																																			imageUrl: "./images/louis-ii-of-france.jpg",
 																																																			parents: [
 																																																				{
 																																																					name: "Ermentrude of Orleans",
@@ -1312,6 +1354,7 @@ export const francoisDupontConfig = {
 																																																					deathPlace: "Brides, Les Bains, Pyrénées-Orientales, Languedoc-Roussillon, France",
 																																																					birthDate: "13 June 823",
 																																																					deathDate: "6 October 877",
+																																																					imageUrl: "./images/charles-the-bald.jpg",
 																																																					parents: [
 																																																						{
 																																																							// PAINTING https://www.ancestry.com/family-tree/person/tree/44204929/person/430051962545/facts
@@ -1387,10 +1430,11 @@ export const francoisDupontConfig = {
 																																							// PAINTING https://en.wikipedia.org/wiki/Baldwin_IV,_Count_of_Flanders
 																																							name: "Baldwin IV De Flanders",
 																																							sex: "Male",
-																																							birthPlace: "UNKNOWN",
+																																							birthPlace: "Belgium",
 																																							deathPlace: "UNKNOWN",
 																																							birthDate: "980",
 																																							deathDate: "30 March 1035",
+																																							imageUrl: "./images/baldwin-iv-de-flanders.jpg",
 																																							parents: []
 																																						}
 																																					]
@@ -1400,12 +1444,13 @@ export const francoisDupontConfig = {
 																																		{
 																																			// GUILLAUME II Duke of Normandy; WILLIAM I "the Conqueror" King of England . the first Norman King of England
 																																			// https://www.ancestry.com/family-tree/person/tree/44204929/person/430054483814/facts
-																																			name: "Guillaume de Normandie",
+																																			name: "Guillaume de Normandie (William I 'The Conqueror' King of England)",
 																																			sex: "Male",
 																																			birthPlace: "Falaise, Departement du Calvados, Basse-Normandie, France",
 																																			deathPlace: "Rouen, Departement de la Seine-Maritime, Haute-Normandie, France",
 																																			birthDate: "1027",
 																																			deathDate: "9 September 1087",
+																																			imageUrl: "./images/william-the-conqueror.jpg",
 																																			parents: [
 																																				{
 																																					name: "Herleve de Falaise",
@@ -1437,12 +1482,13 @@ export const francoisDupontConfig = {
 																																					// Returning from pilgrimage to Jerusalem. he set out on pilgrimage to Jerusalem.[14] According to the Gesta Normannorum Ducum he travelled by way of Constantinople, reached Jerusalem, fell seriously ill and died[b] on the return journey at Nicaea on 2 July 1
 																																					// ROBERT II Duke of Normandy
 																																					// Sculpture
-																																					name: "Robert II of Normandie",
+																																					name: "Robert (Curthose) II of Normandie",
 																																					sex: "Male",
 																																					birthPlace: "France",
 																																					deathPlace: "Nikaia, Attiki, Attiki, Greece",
 																																					birthDate: "22 June 1000",
 																																					deathDate: "22 July 1035",
+																																					imageUrl: "./images/robert-ii-of-normandie.jpg",
 																																					parents: [
 																																						{
 																																							name: "Judith de Bretagne",
@@ -1536,7 +1582,7 @@ export const francoisDupontConfig = {
 																																																					// Holy Roman Emperess
 																																																					name: "Engelberga of Italy",
 																																																					sex: "Female",
-																																																					birthPlace: "UNKNOWN",
+																																																					birthPlace: "Germany",
 																																																					deathPlace: "UNKNOWN",
 																																																					birthDate: "UNKNOWN",
 																																																					deathDate: "896-901",
@@ -1980,14 +2026,15 @@ export const francoisDupontConfig = {
 																																											]
 																																										},
 																																										{
-																																											// murdered
+																																											// murdered (assassinated)
 																																											// William Longsword; GUILLAUME I "Longuespee" Comte [de Normandie]
-																																											name: "William of Normandy I",
+																																											name: "William Longsword",
 																																											sex: "Male",
 																																											birthPlace: "France",
 																																											deathPlace: "Pequigny, France",
 																																											birthDate: "893",
 																																											deathDate: "17 December 942",
+																																											imageUrl: "./images/william-longsword.jpg",
 																																											parents: [
 																																												{
 																																													name: "Poppa of Bayeaux",
@@ -1996,6 +2043,7 @@ export const francoisDupontConfig = {
 																																													deathPlace: "UNKNOWN",
 																																													birthDate: "UNKNOWN",
 																																													deathDate: "UNKNOWN",
+																																													imageUrl: "./images/poppa-de-bayeux.jpg",
 																																													parents: [
 																																														{
 																																															// Comte de Bayeux.
@@ -2197,18 +2245,7 @@ export const francoisDupontConfig = {
 															birthDate: "UNKNOWN",
 															deathDate: "<1328",
 															parents: [
-																{
-																	name: "Plezou de Rostrenen",
-																	sex: "Female",
-																	birthPlace: "France",
-																	deathPlace: "UNKNOWN",
-																	birthDate: "~1237",
-																	deathDate: "UNKNOWN",
-																	parents: [
-																		jeanneDeParthenayConfig,
-																		pierreIIIConfig
-																	]
-																},
+																plezouDeRostrenenConfig,
 																herveIIIConfig
 															]
 														}

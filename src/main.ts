@@ -121,6 +121,7 @@ document.addEventListener("DOMContentLoaded", () => {
     "Belgium": "./svgs/belgium.svg",
     "Austria": "./svgs/austria.svg",
     "Norway": "./svgs/norway.svg",
+    "Luxembourg": "./svgs/luxembourg.svg",
     "Unknown": "./svgs/unknown.svg"  // Optional; if no SVG, will fallback to gray in nodes
   };
 
