@@ -1,10 +1,13 @@
 import { aleixDePlusquellecConfig } from "./alix-de-plusquellec.config";
+import { charlemagneConfig } from "./charlemagne.config";
 import { herveDeRosmadec1240Config } from "./herve-de-rosmadec-1240.config";
 import { herveDeRosmadecConfig } from "./herve-de-rosmadec.config";
 import { herveIIIConfig } from "./herve-iii.config";
+import { hildegardVonKraichgauConfig } from "./hildegard-von-kraichgau.config";
 import { jeanneDeParthenayConfig } from "./jeanne-de-parthenay.config";
 import { pierreIIIConfig } from "./pierre-iii-config";
 import { rivallonDeRosmadecConfig } from "./rivallon-de-rosmadec.config";
+import { robertIConfig } from "./robert-i.config";
 
 export const francoisDupontConfig = {
 	name: "Francois Du Pont-L'Abbe",
@@ -238,7 +241,89 @@ export const francoisDupontConfig = {
 									deathPlace: "UNKNOWN",
 									birthDate: "1320",
 									deathDate: ">1405",
-									parents: []
+									parents: [
+										{
+											name: "Marie de Guesclin",
+											sex: "Female",
+											birthPlace: "France",
+											deathPlace: "UNKNOWN",
+											birthDate: "UNKNOWN",
+											deathDate: "UNKNOWN",
+											parents: [
+												{
+													name: "Jeanne de la Motte-Broons",
+													sex: "Female",
+													birthPlace: "France",
+													deathPlace: "UNKNOWN",
+													birthDate: "UNKNOWN",
+													deathDate: "UNKNOWN",
+													parents: []
+												},
+												{
+													// Sieur, de Broons, de la Ville-Anne, du Clos-Poulet, de Quatre-Voyes, de Vauruzé
+													name: "Bertrand IV de Guesclin",
+													sex: "Male",
+													birthPlace: "France",
+													deathPlace: "UNKNOWN",
+													birthDate: "1250",
+													deathDate: "1293",
+													parents: [
+														{
+															// Sieur, du Plessis-Bertrand, 1247, du Guarplic, Chevalier
+															name: "Bertrand III de Guesclin",
+															sex: "Male",
+															birthPlace: "France",
+															deathPlace: "UNKNOWN",
+															birthDate: "UNKNOWN",
+															deathDate: "~1260",
+															parents: [
+																{
+																	// Sieur, du Guarplic, de Saint-Coulomb, de Saint-Ideuc, de Cancale, de Saint-Meloir
+																	name: "Pierre I de Guesclin",
+																	sex: "Male",
+																	birthPlace: "France",
+																	deathPlace: "UNKNOWN",
+																	birthDate: "UNKNOWN",
+																	deathDate: "1247",
+																	parents: [
+																		{
+																			// Sieur, du Guarplic, de Saint-Coulomb, de Saint-Ideuc, de Cancale, de Saint-Meloir
+																			name: "Bertrand de Guarplic",
+																			sex: "Male",
+																			birthPlace: "France",
+																			deathPlace: "UNKNOWN",
+																			birthDate: "1160",
+																			deathDate: "UNKNOWN",
+																			parents: [
+																				{
+																					// Sieur, du Guarplic
+																					name: "Geoffroy de Guarplic",
+																					sex: "Male",
+																					birthPlace: "France",
+																					deathPlace: "UNKNOWN",
+																					birthDate: "1130",
+																					deathDate: "UNKNOWN",
+																				}
+																			]
+																		}
+																	]
+																}
+															]
+														}
+													]
+												}
+											]
+										},
+										{
+											// Lord of Thorigny
+											name: "Herve de Mauny",
+											sex: "Male",
+											birthPlace: "France",
+											deathPlace: "UNKNOWN",
+											birthDate: "UNKNOWN",
+											deathDate: "1344"
+										}
+									]
 								}
 							]
                         },
@@ -692,7 +777,27 @@ export const francoisDupontConfig = {
 																	deathPlace: "UNKNOWN",
 																	birthDate: "UNKNOWN",
 																	deathDate: "<1322",
-																	parents: []
+																	parents: [
+																		{
+																			name: "Jeanne de Brienne Ramerupt",
+																			sex: "Female",
+																			birthPlace: "France",
+																			deathPlace: "UNKNOWN",
+																			birthDate: "1216",
+																			deathDate: ">1 August 1270",
+																			parents: []
+																		},
+																		{
+																			// Seigneur de Montmorency.
+																			name: "Mathieu de Montmorency III",
+																			sex: "Male",
+																			birthPlace: "France",
+																			deathPlace: "Tunis, Tunisia",
+																			birthDate: "~1221",
+																			deathDate: "~1270",
+																			parents: []
+																		}
+																	]
 																}
 															]
 														},
@@ -814,7 +919,125 @@ export const francoisDupontConfig = {
 																															deathPlace: "Essex, England",
 																															birthDate: "1103/1105",
 																															deathDate: "30 May or 3 July 1151",
-																															parents: []
+																															parents: [
+																																{
+																																	name: "Mary of Scotland",
+																																	sex: "Female",
+																																	birthPlace: "Scotland, United Kingdom",
+																																	deathPlace: "UNKNOWN",
+																																	birthDate: "UNKNOWN",
+																																	deathDate: "31 May 1116",
+																																	parents: [
+																																		{
+																																			name: "Margaret of Wessex",
+																																			sex: "Female",
+																																			birthPlace: "Hungary",
+																																			deathPlace: "Edinburgh, Midlothian, Scotland",
+																																			birthDate: "1046/1053",
+																																			deathDate: "16 November 1093",
+																																			parents: []
+																																		},
+																																		{
+																																			// later moved to Dunfermline and later still to and later still to Escorial, Madrid
+																																			name: "Malcolm III of Scotland",
+																																			sex: "Male",
+																																			birthPlace: "Scotland, United Kingdom",
+																																			deathPlace: "Alnwick, Northumberland, England",
+																																			birthDate: "1031",
+																																			deathDate: "13 November 1093",
+																																			parents: [
+																																				{
+																																					name: "Sybilla of Northumberland",
+																																					sex: "Female",
+																																					birthPlace: "Scotland, United Kingdom",
+																																					deathPlace: "UNKNOWN",
+																																					birthDate: "UNKNOWN",
+																																					deathDate: "UNKNOWN"
+																																				},
+																																				{
+																																					// Historical basis of Duncan in MacBeth!
+																																					// PAINTINGS
+																																					// He was killed in battle by his first cousin, Macbeth, who succeeded as King of Scotland
+																																					name: "Duncan I of Scotland",
+																																					sex: "Male",
+																																					birthPlace: "Scotland, United Kingdom",
+																																					deathPlace: "Burghead, Moray, Scotland, United Kingdom",
+																																					birthDate: "~1001",
+																																					deathDate: "14 August 1040",
+																																					parents: [
+																																						{
+																																							name: "Bethoc of Scotland",
+																																							sex: "Female",
+																																							birthPlace: "Scotland, United Kingdom",
+																																							deathPlace: "UNKNOWN",
+																																							birthDate: "UNKNOWN",
+																																							deathDate: "~1050",
+																																							parents: [
+																																								{
+																																									// King of Scotland
+																																									name: "Malcolm II of Scotland",
+																																									sex: "Male",
+																																									birthPlace: "Scotland, United Kingdom",
+																																									deathPlace: "Angus, Scotland, United Kingdom",
+																																									birthDate: "~954",
+																																									deathDate: "25 November 1034",
+																																									parents: [
+																																										{
+																																											// King of Scotland
+																																											// Killed -"Finuele filie filie Cunthar comitis de Anguss"
+																																											name: "Kenneth II of Scotland",
+																																											sex: "Male",
+																																											birthPlace: "Scotland, United Kingdom",
+																																											deathPlace: "Fettercairn, Mearns, Scotland, United Kingdom",
+																																											birthDate: "UNKNOWN",
+																																											deathDate: "995",
+																																											parents: [
+																																												{
+																																													// killed
+																																													// PAINTING https://www.ancestry.com/family-tree/person/tree/44204929/person/430103244854/facts
+																																													name: "Malcolm I of Scotland",
+																																													sex: "Male",
+																																													birthPlace: "Scotland, United Kingdom",
+																																													deathPlace: "Vlurn, Scotland, United Kingdom",
+																																													birthDate: "UNKNOWN",
+																																													deathDate: "954",
+																																													parents: [] // continues w kings
+																																												}
+																																											]
+																																										}
+																																									]
+																																								}
+																																							]
+																																						},
+																																						{
+																																							// Abthane of Dule. Lay abbot of Dunkeld. Steward of the Western Isles. Mormaer of Atholl.
+																																							// Killed in battle w MacBeth
+																																							name: "Crinan the Thane of Atholl",
+																																							sex: "Male",
+																																							birthPlace: "Scotland, United Kingdom",
+																																							deathPlace: "UNKNOWN",
+																																							birthDate: "UNKNOWN",
+																																							deathDate: "1045"
+																																						}
+																																					]
+																																				}
+																																			]
+																																		}
+																																	]
+																																},
+																																{
+																																	// participated in the First Crusade of 1096. present at the Siege of Nicaea (May–June 1097), helped rescue Bohemund of Taranto's beleaguered troops at the Battle of Dorylaeum (July 1, 1097), defeated an enemy ambush during the Siege of Antioch
+																																	// commanded a division of the crusader army during the Battle of Ascalon patron of the Knights Templar
+																																	// Comte de Boulogne, Comte de Lens.
+																																	name: "Eustache III de Boulogne",
+																																	sex: "Male",
+																																	birthPlace: "France",
+																																	deathPlace: "UNKNOWN",
+																																	birthDate: "UNKNOWN",
+																																	deathDate: "1125",
+																																	parents: []
+																																}
+																															]
 																														},
 																														{	// PICTURE https://www.ancestry.com/family-tree/person/tree/44204929/person/430060991048/facts
 																															// King of England from 1135 to his death. Count of Boulogne from 1125 until 1147 and Duke of Normandy from 1135 until 1144.
@@ -891,13 +1114,58 @@ export const francoisDupontConfig = {
 																																									deathDate: "14 October 996",
 																																									parents: [
 																																										{
+																																											// Duchess consort of the Franks by her marriage to the Robertian duke Hugh the Great. Upon her husband's death in 956, she acted as a regent during the minority of their son Hugh Capet,
 																																											name: "Hedwig of Saxony",
 																																											sex: "Female",
 																																											birthPlace: "Germany",
 																																											deathPlace: "UNKNOWN",
 																																											birthDate: "901",
 																																											deathDate: "10 May 965",
-																																											parents: []
+																																											parents: [
+																																												{
+																																													// PAINTING https://www.ancestry.com/family-tree/person/tree/44204929/person/430051861798/facts
+																																													name: "Matilda of Ringelheim",
+																																													sex: "Female",
+																																													birthPlace: "Germany",
+																																													deathPlace: "Quedlinburg, Harz, Saxony-Anhalt, Germany",
+																																													birthDate: "894/897",
+																																													deathDate: "14 March 968",
+																																													parents: []
+																																												},
+																																												{
+																																													// Cerebral stroke
+																																													// HEINRICH I "der Vogelsteller/the Fowler" King of Germany at Fritzlar 6 May 919, duke of Saxony from 912 and the elected king of East Francia from 919 until his death in 936.
+																																													// PAINTINGS https://www.ancestry.com/family-tree/person/tree/44204929/person/430051861753/facts
+																																													name: "Heinrich I of Germany",
+																																													sex: "Male",
+																																													birthPlace: "Membleben, Germany",
+																																													deathPlace: "Memleben, Burgenlandkreis, Saxony-Anhalt, Germany",
+																																													birthDate: "876",
+																																													deathDate: "2 July 936",
+																																													parents: [
+																																														{
+																																															name: "Hathui of Babenburg",
+																																															sex: "Female",
+																																															birthPlace: "Germany",
+																																															deathPlace: "UNKNOWN",
+																																															birthDate: "853",
+																																															deathDate: "24 December 903",
+																																															parents: []
+																																														},
+																																														{
+																																															// Graf im Südthüringau. Graf im Eichsfeld.Duke of Saxony from 880 to his death.
+																																															// PAINTING https://www.ancestry.com/family-tree/person/tree/44204929/person/430052144048/facts
+																																															name: "Otto I of Saxony",
+																																															sex: "Male",
+																																															birthPlace: "Germany",
+																																															deathPlace: "UNKNOWN",
+																																															birthDate: "851",
+																																															deathDate: "912",
+																																															parents: []
+																																														}
+																																													]
+																																												}
+																																											]
 																																										},
 																																										{
 																																											// Duc des Francs. 954 Duke of Burgundy in Apr 956. the Duke of the Franks and Count of Paris.
@@ -918,49 +1186,7 @@ export const francoisDupontConfig = {
 																																													deathDate: "March 931",
 																																													parents: []
 																																												},
-																																												{
-																																													// Robert participated in the defence of Paris during the Viking siege of Paris. Robert defeated a large band of Vikings in the Loire Valley in 921, after which the defeated invaders converted to Christianity and settled near Nantes.
-																																													// King of West Francia from 922 to 923. Before his election to the throne he was Count of Poitiers, Count of Paris and Marquis of Neustria and Orléans
-																																													name: "Robert I of France",
-																																													sex: "Male",
-																																													birthPlace: "France",
-																																													deathPlace: "UNKNOWN",
-																																													birthDate: "866",
-																																													deathDate: "15 June 923",
-																																													parents: [
-																																														{
-																																															name: "Adelais of Tours",
-																																															sex: "Female",
-																																															birthPlace: "France",
-																																															deathPlace: "UNKNOWN",
-																																															birthDate: "UNKNOWN",
-																																															deathDate: "886",
-																																															parents: [
-																																																{
-																																																	// Hugh the Timid
-																																																	// Count of Tours and Sens
-																																																	name: "Hugh of Tours",
-																																																	sex: "Male",
-																																																	birthPlace: "Tours Indre et Loire, France",
-																																																	deathPlace: "UNKNOWN",
-																																																	birthDate: "765",
-																																																	deathDate: "20 October 837",
-																																																	parents: []
-																																																}
-																																															]
-																																														},
-																																														{
-																																															// Battle of Brissarthe. On 2 July 866, Robert was killed at the Battle of Brissarthe while defending Francia against a joint Breton-Viking raiding party led by Salomon, King of Brittany and the Viking chieftain Hastein
-																																															// Margrave in Neustria. Count in the march of Anjou Comte d'Auxerre and Comte de Nevers 865.
-																																															name: "Robert the Strong of Anjou",
-																																															sex: "Male",
-																																															birthPlace: "France",
-																																															deathPlace: "Brissarthe, France",
-																																															birthDate: "~820",
-																																															deathDate: "2 July 866",
-																																														}
-																																													]
-																																												}
+																																												robertIConfig
 																																											]
 																																										}
 																																									]
@@ -977,6 +1203,197 @@ export const francoisDupontConfig = {
 																																					deathPlace: "Lille, Departement du Nord, Nord-Pas-de-Calais, France",
 																																					birthDate: "19 August 1012",
 																																					deathDate: "1 September 1067",
+																																					parents: [
+																																						{
+																																							name: "Ogive de Luxembourg",
+																																							sex: "Female",
+																																							birthPlace: "UNKNOWN",
+																																							deathPlace: "UNKNOWN",
+																																							birthDate: "UNKNOWN",
+																																							deathDate: "21 February 1030",
+																																							parents: [
+																																								{
+																																									name: "Ermentrude Gleiberg",
+																																									sex: "Female",
+																																									birthPlace: "Germany",
+																																									deathPlace: "UNKNOWN",
+																																									birthDate: "964",
+																																									deathDate: ">985",
+																																								},
+																																								{
+																																									// Graf im Moselgau. Vogt of Stablo and Malmédy.
+																																									// PAINTING https://www.ancestry.com/family-tree/person/tree/44204929/person/430054782388/facts
+																																									name: "Frederick I de Luxembourg",
+																																									sex: "Male",
+																																									birthPlace: "Luxembourg",
+																																									deathPlace: "UNKNOWN",
+																																									birthDate: "965",
+																																									deathDate: "6 October 1019",
+																																									parents: [
+																																										{
+																																											name: "Hedwig N.",
+																																											sex: "Female",
+																																											birthPlace: "France",
+																																											deathPlace: "UNKNOWN",
+																																											birthDate: "932",
+																																											deathDate: "992",
+																																											parents: [
+																																												{
+																																													name: "Luitgarde of Bidgau",
+																																													sex: "Female",
+																																													birthPlace: "Germany",
+																																													deathPlace: "UNKNOWN",
+																																													birthDate: "UNKNOWN",
+																																													deathDate: "960",
+																																													parents: [
+																																														{
+																																															name: "Cunigunda of France",
+																																															sex: "Female",
+																																															birthPlace: "France",
+																																															deathPlace: "UNKNOWN",
+																																															birthDate: "893",
+																																															deathDate: ">923",
+																																															parents: [
+																																																{
+																																																	name: "Ermentrude of France",
+																																																	sex: "Female",
+																																																	birthPlace: "France",
+																																																	deathPlace: "UNKNOWN",
+																																																	birthDate: "875/878",
+																																																	deathDate: "UNKNOWN",
+																																																	parents: [
+																																																		{
+																																																			name: "Adelaide of Paris",
+																																																			sex: "Female",
+																																																			birthPlace: "UNKNOWN",
+																																																			deathPlace: "UNKNOWN",
+																																																			birthDate: "850-853",
+																																																			deathDate: "10 November 901",
+																																																			parents: [
+																																																				{
+																																																					// Comte de Paris [885]. Comte 875. Comte palatin 877. Comte de Paris [885].
+																																																					name: "Adalard of Paris",
+																																																					sex: "Male",
+																																																					birthPlace: "France",
+																																																					deathPlace: "UNKNOWN",
+																																																					birthDate: "830-890",
+																																																					deathDate: "UNKNOWN",
+																																																					parents: []
+																																																				}
+																																																			]
+																																																		},
+																																																		{
+																																																			// PAINTING https://www.ancestry.com/family-tree/person/tree/44204929/person/430051917418/facts
+																																																			// King of West Francia LUDWIG III King of West Lotharingia
+																																																			name: "Louis II of France",
+																																																			sex: "Male",
+																																																			birthPlace: "France",
+																																																			deathPlace: "Delincourt, Departement de l'Oise, Picardie, France",
+																																																			birthDate: "1 November 846",
+																																																			deathDate: "10 April 879",
+																																																			parents: [
+																																																				{
+																																																					name: "Ermentrude of Orleans",
+																																																					sex: "Female",
+																																																					birthPlace: "Germany",
+																																																					deathPlace: "UNKNOWN",
+																																																					birthDate: "27 September 823",
+																																																					deathDate: "6 October 869",
+																																																					parents: []
+																																																				},
+																																																				{
+																																																					// King of West Francia; King of Aquitaine
+																																																					// Holy Roman Emperor, Charles II
+																																																					// King of Italy
+																																																					// PAINTING https://www.ancestry.com/family-tree/person/tree/44204929/person/430051918090/facts
+																																																					name: "Charles 'The Bald' of the West Franks",
+																																																					sex: "Male",
+																																																					birthPlace: "Frankfurt Am Main, Darmstadt, Hesse, Germany",
+																																																					deathPlace: "Brides, Les Bains, Pyrénées-Orientales, Languedoc-Roussillon, France",
+																																																					birthDate: "13 June 823",
+																																																					deathDate: "6 October 877",
+																																																					parents: [
+																																																						{
+																																																							// PAINTING https://www.ancestry.com/family-tree/person/tree/44204929/person/430051962545/facts
+																																																							// Queen and Empress
+																																																							name: "Judith von Swabia",
+																																																							sex: "Female",
+																																																							birthPlace: "Altdorf, Eichstatt, Bayern, Germany",
+																																																							deathPlace: "Tours, Indre-et-Loire, Centre, France",
+																																																							birthDate: "800",
+																																																							deathDate: "19 April 843",
+																																																							parents: []
+																																																						},
+																																																						{
+																																																							// King of the Franks, co-emperor Louis I (holy roman empire)
+																																																							// PAINTING https://www.ancestry.com/family-tree/person/tree/44204929/person/430051962540/facts
+																																																							name: "Louis I of the Franks (Louis the Pious)",
+																																																							sex: "Male",
+																																																							birthPlace: "Casseneuil, Lot-et-Garonne, Aquitaine, France",
+																																																							deathPlace: "Ingelheim Am Rhein, Mainz-Bingen, Rhineland-Palatinate, Germany",
+																																																							birthDate: "15 August 778",
+																																																							deathDate: "20 June 840",
+																																																							imageUrl: "./images/louis-the-pious.jpg",
+																																																							parents: [
+																																																								hildegardVonKraichgauConfig,
+																																																								charlemagneConfig
+																																																							]
+																																																						}
+																																																					]
+																																																				}
+																																																			]
+																																																		}
+																																																	]
+																																																}
+																																															]
+																																														},
+																																														{
+																																															// Founder House of Ardennes, Graf von Bidgau; Comte d'Ardenne
+																																															name: "Wigeric III von Bidgau",
+																																															sex: "Male",
+																																															birthPlace: "Germany",
+																																															deathPlace: "UNKNOWN",
+																																															birthDate: "UNKNOWN",
+																																															deathDate: "921"
+																																														}
+																																													]
+																																												},
+																																												{
+																																													name: "Eberhard IV de Nordgau",
+																																													sex: "Male",
+																																													birthPlace: "France",
+																																													deathPlace: "UNKNOWN",
+																																													birthDate: "UNKNOWN",
+																																													deathDate: "18 December 972/973",
+																																													parents: []
+																																												}
+																																											]
+																																										},
+																																										{
+																																											name: "Siegfried de Luxembourg",
+																																											sex: "Male",
+																																											birthPlace: "Luxembourg",
+																																											deathPlace: "UNKNOWN",
+																																											birthDate: "15 August 922",
+																																											deathDate: "28 October 998",
+
+																																										}
+																																									]
+																																								}
+																																							]
+																																						},
+																																						{
+																																							// Count of Flanders (The Beareded)
+																																							// PAINTING https://en.wikipedia.org/wiki/Baldwin_IV,_Count_of_Flanders
+																																							name: "Baldwin IV De Flanders",
+																																							sex: "Male",
+																																							birthPlace: "UNKNOWN",
+																																							deathPlace: "UNKNOWN",
+																																							birthDate: "980",
+																																							deathDate: "30 March 1035",
+																																							parents: []
+																																						}
+																																					]
 																																				}
 																																			]
 																																		},
@@ -1051,7 +1468,263 @@ export const francoisDupontConfig = {
 																																											deathPlace: "France",
 																																											birthDate: "934",
 																																											deathDate: "982",
-																																											parents: []
+																																											parents: [
+																																												{
+																																													name: "Adelaide (Wera) de Bourgogne",
+																																													sex: "Female",
+																																													birthPlace: "Marmagne, Departement de la Côte-d'Or, Bourgogne, France",
+																																													deathPlace: "Departement de l'Aisne, Picardie, France",
+																																													birthDate: "~918",
+																																													deathDate: "19 August 967",
+																																													parents: [
+																																														{
+																																															name: "Ermengarde de Bourgogne",
+																																															sex: "Female",
+																																															birthPlace: "Dijon, Departement de la Côte-d'Or, Bourgogne, France",
+																																															deathPlace: "Departement de l'Yonne, Bourgogne, France",
+																																															birthDate: "UNKNOWN",
+																																															deathDate: "UNKNOWN",
+																																															parents: [
+																																																{
+																																																	name: "Adelaide d'Auxerre",
+																																																	sex: "Female",
+																																																	birthPlace: "Auxerre, Departement de l'Yonne, Bourgogne, France",
+																																																	deathPlace: "Departement de l'Yonne, Bourgogne, France",
+																																																	birthDate: "UNKNOWN",
+																																																	deathDate: "UNKNOWN",
+																																																	parents: []
+																																																},
+																																																{
+																																																	// Comte d’Autun. Comte d'Auxerre in 886. RICHARD "le Justicier" Duke of Burgundy,
+																																																	name: "Richard de Bourgogne",
+																																																	sex: "Male",
+																																																	birthPlace: "France",
+																																																	deathPlace: "France",
+																																																	birthDate: "858",
+																																																	deathDate: "921",
+																																																	parents: []
+																																																}
+																																															]
+																																														},
+																																														{
+																																															// GISELBERT Duke of Burgundy,
+																																															name: "Giselbert de Bourgogne",
+																																															sex: "Male",
+																																															birthPlace: "France",
+																																															deathPlace: "Paris, France",
+																																															birthDate: "UNKNOWN",
+																																															deathDate: "> Easter 956",
+																																															parents: [
+																																																{
+																																																	name: "Ermengarde de Provence",
+																																																	sex: "Female",
+																																																	birthPlace: "Châlons-En-Champagne, Champagne-Ardenne, France",
+																																																	deathPlace: "Reulle Vergy, Cote D'or, Bourgogne, France",
+																																																	birthDate: "~873",
+																																																	deathDate: "12 April 935",
+																																																	parents: [
+																																																		{
+																																																			// queen and regent of Provence.
+																																																			name: "Ermengarde d'Italie",
+																																																			sex: "Female",
+																																																			birthPlace: "Frankish Empire (Within Present Italy)",
+																																																			deathPlace: "Vienne, Département De L'isère, Kingdom of Provence (Present Rhône-Alpes), Frankish Empire (Within Present France)",
+																																																			birthDate: "852-855",
+																																																			deathDate: "2-22 June 896",
+																																																			parents: [
+																																																				{
+																																																					// Holy Roman Emperess
+																																																					name: "Engelberga of Italy",
+																																																					sex: "Female",
+																																																					birthPlace: "UNKNOWN",
+																																																					deathPlace: "UNKNOWN",
+																																																					birthDate: "UNKNOWN",
+																																																					deathDate: "896-901",
+																																																					parents: [
+																																																						{
+																																																							// 824 as ADELGIS I Duke of Spoleto, Count of Parma. Cremona after 841, and eventually of Brescia.
+																																																							name: "Adelgis I of Spoleto",
+																																																							sex: "Male",
+																																																							birthPlace: "UNKNOWN",
+																																																							deathPlace: "UNKNOWN",
+																																																							birthDate: "UNKNOWN",
+																																																							deathDate: ">861",
+																																																							parents: [
+																																																								{
+																																																									// Count of Brescia, Parma, Piacenza, Modena, and Bergamo SUPPO I Duke of Spoleto in 822
+																																																									// Frankish nobleman, wife probably Lombard
+																																																									name: "Suppo I of Spoleto",
+																																																									sex: "Male",
+																																																									birthPlace: "UNKNOWN",
+																																																									deathPlace: "UNKNOWN",
+																																																									birthDate: "UNKNOWN",
+																																																									deathDate: "5 March 824"
+																																																								}
+																																																							]
+																																																						}
+																																																					]
+																																																				},
+																																																				{
+																																																					name: "UNKNOWN",
+																																																					sex: "Male",
+																																																					birthPlace: "UNKNOWN",
+																																																					deathPlace: "UNKNOWN",
+																																																					birthDate: "UNKNOWN",
+																																																					deathDate: "UNKNOWN",
+																																																				}
+																																																			]
+																																																		},
+																																																		{
+																																																			// appointed count of Lyon and Vienne,; Comte de Vienne in 870 ; King BOSON of Provence
+																																																			name: "Boso de Provence",
+																																																			sex: "Male",
+																																																			birthPlace: "Metz, Moselle, Lorraine, France",
+																																																			deathPlace: "Provence, France",
+																																																			birthDate: "850-860",
+																																																			deathDate: "11 January 887-945",
+																																																			parents: []
+																																																		}
+																																																	]
+																																																},
+																																																{
+																																																	// Comte de Dijon
+																																																	name: "Manasses II de Dijon",
+																																																	sex: "Male",
+																																																	birthPlace: "France",
+																																																	deathPlace: "UNKNOWN",
+																																																	birthDate: "900",
+																																																	deathDate: "925",
+																																																	parents: [
+																																																		{
+																																																			// Comte de Dijon
+																																																			name: "Manasses I de Dijon",
+																																																			sex: "Male",
+																																																			birthPlace: "France",
+																																																			deathPlace: "UNKNOWN",
+																																																			birthDate: "875",
+																																																			deathDate: "918"
+																																																		}
+																																																	]
+																																																}
+																																															]
+																																														}
+																																													]
+																																												},
+																																												{
+																																													name: "Robert de Vermandois",
+																																													sex: "Male",
+																																													birthPlace: "Meaux, Departement de Seine-et-Marne, Île-de-France, France",
+																																													deathPlace: "Departement de Seine-et-Marne, Île-de-France, France",
+																																													birthDate: "~916",
+																																													deathDate: "29 August 968",
+																																													parents: [
+																																														{
+																																															name: "Adela of France",
+																																															sex: "Female",
+																																															birthPlace: "Vermandois, East Picardy, France",
+																																															deathPlace: "St Quentin, Pas De Calais, Normandy, France",
+																																															birthDate: "895",
+																																															deathDate: "23 Februrary 942",
+																																															parents: [
+																																																{
+																																																	name: "Aelis of Maine",
+																																																	sex: "Female",
+																																																	birthPlace: "France",
+																																																	deathPlace: "UNKNOWN",
+																																																	birthDate: "UNKNOWN",
+																																																	deathDate: "UNKNOWN"
+																																																},
+																																																robertIConfig
+																																															]
+																																														},
+																																														{
+																																															// HAS PAINTING https://www.ancestry.com/family-tree/person/tree/44204929/person/430053355487/facts
+																																															// Count of Vermandois, Count of Meaux, and Count of Soissons. He was the first to exercise power over the territory that became the province of Champagne.
+																																															name: "Heribert II De Vermandois",
+																																															sex: "Male",
+																																															birthPlace: "Vermandois, Nuestria Western, France",
+																																															deathPlace: "St Quentin, Marne, Champagne-Ardenne, France",
+																																															birthDate: "23 February 885",
+																																															deathDate: "23 February 923",
+																																															parents: [
+																																																{
+																																																	name: "Lietgardis N.",
+																																																	sex: "Female",
+																																																	birthPlace: "France",
+																																																	deathPlace: "UNKNOWN",
+																																																	birthDate: "UNKNOWN",
+																																																	deathDate: "UNKNOWN"
+																																																},
+																																																{
+																																																	// Baldwin II to have him assassinated in 907.
+																																																	// probably charged with defending the Oise against Viking intrusions
+																																																	// Count of Vermandois, Count of Meaux, Count of Soissons, and lay abbot of Saint Quentin
+																																																	name: "Heribert I De Vermandois",
+																																																	sex: "Male",
+																																																	birthPlace: "Vermandois, Aisne, Picardie, France",
+																																																	deathPlace: "Vermandois, Aisne, Picardie, France",
+																																																	birthDate: "1 January 848",
+																																																	deathDate: "6 November 907",
+																																																	parents: [
+																																																		{
+																																																			// first count of Vermandois, lord of Senlis, Péronne, and Saint Quentin.
+																																																			name: "Pepin De Vermando",
+																																																			sex: "Male",
+																																																			birthPlace: "Bohain-en-Vermandois, Departement de l'Aisne, Picardie, France",
+																																																			deathPlace: "Milan, Provincia di Milano, Lombardia, Italy",
+																																																			birthDate: "817",
+																																																			deathDate: ">854",
+																																																			parents: [
+																																																				{
+																																																					name: "Cunigunda of Laon",
+																																																					sex: "Female",
+																																																					birthPlace: "Bohain-en-Vermandois, Departement de l'Aisne, Picardie, France",
+																																																					deathPlace: "Provincia di Milano, Lombardia, Italy",
+																																																					birthDate: "UNKNOWN",
+																																																					deathDate: "UNKNOWN"
+																																																				},
+																																																				{
+																																																					// plot against Louis the Pious led to his blinding (carried out by means of pressing a red-hot stiletto to the eyeballs) proved so traumatic that Bernard died in agony two days after the procedure was carried out.
+																																																					// 11 Sep 813 at Aix-la-Chapelle as BERNARD I King of Italy
+																																																					name: "Bernard of Italy",
+																																																					sex: "Male",
+																																																					birthPlace: "Bohain-en-Vermandois, Departement de l'Aisne, Picardie, France",
+																																																					deathPlace: "Aachen, Aachener Stadtkreis, Nordrhein-Westfalen, Germany",
+																																																					birthDate: "797",
+																																																					deathDate: "17 April 818",
+																																																					parents: [
+																																																						{
+																																																							name: "Berthe Ingeltrude de Toulouse of Italy",
+																																																							sex: "Female",
+																																																							birthPlace: "Toulouse, Departement de la Haute-Garonne, Midi-Pyrénées, France",
+																																																							deathPlace: "Lombardia, Italy",
+																																																							birthDate: "UNKNOWN",
+																																																							deathDate: "UNKNOWN"
+																																																						},
+																																																						{
+																																																							// PEPIN King of Italy 15 Apr 781. He was made "king of Italy"[2] after his father's conquest of the Lombards, in 781, and crowned by Pope Hadrian I with the Iron Crown of Lombardy.
+																																																							name: "Pepin Carolingian of Italy",
+																																																							sex: "Male",
+																																																							birthPlace: "Aachen, Aachener Stadtkreis, Nordrhein-Westfalen, Germany",
+																																																							deathPlace: "Provincia di Milano, Lombardia, Italy",
+																																																							birthDate: "April 773",
+																																																							deathDate: "8 July 810",
+																																																							parents: [
+																																																								hildegardVonKraichgauConfig,
+																																																								charlemagneConfig
+																																																							]
+																																																						}
+																																																					]
+																																																				}
+																																																			]
+																																																		}
+																																																	]
+																																																}
+																																															]
+																																														}
+																																													]
+																																												}
+																																											]
 																																										},
 																																										{
 																																											// 958 as GEOFFROY I "Grisegonelle" Comte d'Anjou
@@ -1061,7 +1734,136 @@ export const francoisDupontConfig = {
 																																											deathPlace: "Marcon, Departement de la Sarthe, Pays de la Loire, France",
 																																											birthDate: "938/940",
 																																											deathDate: "21 July 987",
-																																											parents: []
+																																											parents: [
+																																												{
+																																													name: "Gerberge du Maine",
+																																													sex: "Female",
+																																													birthPlace: "Maine-de-Boixe, Departement de Maine-et-Loire, Pays de la Loire, France",
+																																													deathPlace: "Tours, Departement de Maine-et-Loire, Pays de la Loire, France",
+																																													birthDate: "UNKNOWN",
+																																													deathDate: "UNKNOWN"
+																																												},
+																																												{
+																																													name: "Fulques II d'Anjou",
+																																													sex: "Male",
+																																													birthPlace: "Departement de Maine-et-Loire, Pays de la Loire, France",
+																																													deathPlace: "Tours, Departement de Maine-et-Loire, Pays de la Loire, France",
+																																													birthDate: "905",
+																																													deathDate: "11 November 958",
+																																													parents: [
+																																														{
+																																															name: "Roscille de Loches",
+																																															sex: "Female",
+																																															birthPlace: "Loches, Departement d'Indre-et-Loire, Centre, France",
+																																															deathPlace: "Angers, Departement de Maine-et-Loire, Pays de la Loire, France",
+																																															birthDate: "UNKNOWN",
+																																															deathDate: "UNKNOWN",
+																																															parents: [
+																																																{
+																																																	name: "Tescenda N.",
+																																																	sex: "Female",
+																																																	birthPlace: "France",
+																																																	deathPlace: "UNKNOWN",
+																																																	birthDate: "UNKNOWN",
+																																																	deathDate: "UNKNOWN"
+																																																},
+																																																{
+																																																	name: "Garnier de Loches",
+																																																	sex: "Male",
+																																																	birthPlace: "France",
+																																																	deathPlace: "UNKNOWN",
+																																																	birthDate: "UNKNOWN",
+																																																	deathDate: "UNKNOWN",
+																																																	parents: [
+																																																		{
+																																																			name: "Adalhard de Loches",
+																																																			sex: "Male",
+																																																			birthPlace: "France",
+																																																			deathPlace: "UNKNOWN",
+																																																			birthDate: "UNKNOWN",
+																																																			deathDate: "UNKNOWN"
+																																																		}
+																																																	]
+																																																}
+																																															]
+																																														},
+																																														{
+																																															name: "Foulques I de Anjou",
+																																															sex: "Male",
+																																															birthPlace: "France",
+																																															deathPlace: "UNKNOWN",
+																																															birthDate: "870",
+																																															deathDate: "August 941/942",
+																																															parents: [
+																																																{
+																																																	name: "Adelais of Amboise",
+																																																	sex: "Female",
+																																																	birthPlace: "France",
+																																																	deathPlace: "UNKNOWN",
+																																																	birthDate: "UNKNOWN",
+																																																	deathDate: "UNKNOWN"
+																																																},
+																																																{
+																																																	name: "Ingelger D'Anjou",
+																																																	sex: "Male",
+																																																	birthPlace: "Rennes, Ille Et Vilaine, Bretagne, France",
+																																																	deathPlace: "UNKNOWN",
+																																																	birthDate: "845",
+																																																	deathDate: "888",
+																																																	parents: [
+																																																		{
+																																																			name: "Petronilla de Bourgogne",
+																																																			sex: "Female",
+																																																			birthPlace: "France",
+																																																			deathPlace: "UNKNOWN",
+																																																			birthDate: "UNKNOWN",
+																																																			deathDate: "UNKNOWN",
+																																																			parents: [
+																																																				{
+																																																					name: "Hugues de Bourgogne",
+																																																					sex: "Male",
+																																																					birthPlace: "France",
+																																																					deathPlace: "UNKNOWN",
+																																																					birthDate: "UNKNOWN",
+																																																					deathDate: "UNKNOWN"
+																																																				}
+																																																			]
+																																																		},
+																																																		{
+																																																			name: "Tertullus d'Anjou",
+																																																			sex: "Male",
+																																																			birthPlace: "France",
+																																																			deathPlace: "UNKNOWN",
+																																																			birthDate: "821",
+																																																			deathDate: "UNKNOWN",
+																																																			parents: [
+																																																				{
+																																																					name: "Torcato de Anjou",
+																																																					sex: "Male",
+																																																					birthPlace: "France",
+																																																					deathPlace: "Rennes, Ille-et-Vilaine, Bretagne, Franc",
+																																																					birthDate: "800",
+																																																					deathDate: "853",
+																																																					parents: [
+																																																						{
+																																																							name: "Lucius Torquatius",
+																																																							sex: "Male",
+																																																							birthPlace: "Anjou, France",
+																																																							deathPlace: "UNKNOWN",
+																																																							birthDate: "UNKNOWN",
+																																																							deathDate: "UNKNOWN"
+																																																						}
+																																																					]
+																																																				}
+																																																			]
+																																																		}
+																																																	]
+																																																}
+																																															]
+																																														}
+																																													]
+																																												}
+																																											]
 																																										}
 																																									]
 																																								},
