@@ -104,7 +104,7 @@ export const margarethaZeiligerConfig = {
                                     parents: [
                                         {
                                             name: "Anna Catharina Lenz Zeilinger",
-                                            sex: "Male",
+                                            sex: "Female",
                                             birthPlace: "Austria",
                                             deathPlace: "Hörleinsdorf, Bürglein, Ansbach, Bavaria, Germany",
                                             birthDate: "~1611",

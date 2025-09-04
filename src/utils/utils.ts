@@ -95,3 +95,18 @@ export function getInitials(name?: string) {
     .slice(0, 2)
     .join("");
 }
+
+export function getOrdinalFromNumber(num: number): string {
+  const numAsString = num.toString(); 
+  const lastDigit = numAsString.length === 1 ? numAsString : numAsString[-1];
+  switch(parseInt(lastDigit)) {
+    case 1:
+      return numAsString + "st";
+    case 2:
+      return numAsString + "nd";
+    case 3:
+      return numAsString + "rd";
+    default:
+      return numAsString + "th";
+  }
+}

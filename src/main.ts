@@ -4,11 +4,11 @@ import "./style.css";
 import * as d3 from "d3";
 import { maxArseneaultConfig } from "./data/configs/max-arseneault.config";
 import { Person } from "./interfaces/person";
-import { buildHierarchy, getGenerations, tracePatrilineal, traceMatrilineal, getCountry, calculateAge, countryColors, getInitials } from "./utils/utils";
-// import { format } from "date-fns";  // Uncomment if needed
+import { buildHierarchy, getGenerations, tracePatrilineal, traceMatrilineal, getCountry, calculateAge, countryColors, getInitials, getOrdinalFromNumber  } from "./utils/utils";
+// import { format } from "date-fns"; 
 
 /** Standardized modal image + placeholder; relation is optional */
-function showPersonModal(d: Person, relation: string = "") {
+function showPersonModal(d: Person, depth: number) {
   const modal = document.getElementById("detail-modal")!;
   const content = document.getElementById("modal-content")!;
   if (!modal || !content) return;
@@ -35,6 +35,20 @@ function showPersonModal(d: Person, relation: string = "") {
          style="width: min(80vw, 320px); height: min(80vw, 320px); max-width:320px; max-height:320px; border-radius:12px; background:#f2f2f2; display:${imgSrc ? "none" : "flex"}; align-items:center; justify-content:center; font-size:48px; color:#666;">
       ${initials}
     </div>`;
+
+  let relation = "";
+  if (depth === 0) {
+    relation = "You";
+  } else if (depth === 1) {
+    relation = d.sex === "Female" ? "Mother" : "Father";
+  } else if (depth === 2) {
+    relation = d.sex === "Female" ? "Grandmother" : "Grandfather";
+  } else {
+    const ordinal = getOrdinalFromNumber(depth - 2);
+    const greats = `${depth === 3 ? "" : ordinal + " "}Great-`;
+    relation = `${greats}Grand${d.sex === "Female" ? "mother" : "father"}`;
+  }
+  if (depth !== 0) relation += ` (${depth} generation${depth > 1 ? "s" : ""} back)`;
 
   content.innerHTML = `
     <div style="display:flex; flex-direction:column; align-items:center; gap:12px; text-align:center; padding:8px;">
@@ -361,6 +375,14 @@ document.addEventListener("DOMContentLoaded", () => {
       d.y = height - d.y!;  // Invert y: root now at bottom
     });
 
+    const horizontalCenter = width / 2;
+    const rootXShift = horizontalCenter - (root.x ?? 0);
+    root.descendants().forEach(d => {
+      d.x = (d.x ?? 0) + rootXShift;
+    });
+
+    const minX = Math.min(...root.descendants().map(d => d.x ?? 0));
+
     // Links
     const links = g.selectAll(".link")
       .data(root.links(), d => `${(d.source as any).id}-${(d.target as any).id}`);
@@ -386,10 +408,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .attr("opacity", 0)
       .attr("aria-label", d => d.data.name)  // Accessibility
       .on("click", (_, d) => {
-        const relation = d.depth === 0 
-          ? "You"
-          : `${d.depth} generation${d.depth > 1 ? "s" : ""} back`;
-        showPersonModal(d.data, relation);
+        showPersonModal(d.data, d.depth);
       });
 
     nodeEnter.transition().duration(300).attr("opacity", 1);
@@ -491,11 +510,16 @@ document.addEventListener("DOMContentLoaded", () => {
     // Generation Labels (with Total DNA)
     g.selectAll(".gen-label").remove();
     const gens = getGenerations(root);
+    const rootX = root.x;
     gens.forEach((info, depth) => {
+      const nodesAtDepth = root.descendants().filter(d => d.depth === depth);
+      if (nodesAtDepth.length === 0) return;
+      const y = nodesAtDepth[0].y ?? 0;  // All nodes at same y
       g.append("text")
         .attr("class", "gen-label")
-        .attr("x", -250)
-        .attr("y", height - (depth * 200) - 50)  // Adjusted for flip
+        .attr("x", rootX)
+        .attr("y", y + 45)  // Position above the node row; adjust offset as needed (e.g., +30 for below)
+        .attr("text-anchor", "middle")
         .text(`Gen ${depth}: ${info.count} ancestors, ~${info.dnaPercentEach.toFixed(2)}% each (${info.dnaPercentTotal.toFixed(2)}% total DNA), ${info.probOfSharingDna.toFixed(2)}% probability of sharing DNA`);
     });
 

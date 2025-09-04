@@ -13,9 +13,9 @@ export const charlesAndrewDeibelConfig = {
         {
             name: "Crescentia Crenenisa Volk",
             sex: "Female",
-            birthPlace: "Schramberg, Oberndorf, Württemberg, Germany",
+            birthPlace: "Schramberg, Rottweil, Baden-Württemberg, Germany",
             deathPlace: "Columbus, Franklin, Ohio, United States",
-            birthDate: "10 July 1834",
+            birthDate: "10 January 1834",
             deathDate: "8 April 1899",
             parents: [
                 crescentiaHassConfig,
