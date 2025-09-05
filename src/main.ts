@@ -662,12 +662,4 @@ document.addEventListener("DOMContentLoaded", () => {
     a.click();
     URL.revokeObjectURL(url);
   });
-
-  // Resize Handler
-  window.addEventListener("resize", () => {
-    updateDimensions();
-    treeLayout.size([width, height - 100]);
-    updateTree();
-    updateMinimapViewport();
-  });
 });

@@ -1,5 +1,7 @@
 import { danielAloysiusDaceyStory } from "../../stories/daniel-aloysius-dacey";
+import { danielAloysiusDacey1866Story } from "../../stories/daniel-aloysius-dacey-1866";
 import { johnDaceyStory } from "../../stories/john-dacey";
+import { margareteOConnorStory } from "../../stories/margarete-oconnor";
 import { marieAgnesCoxStory } from "../../stories/marie-agnes-cox";
 import { allenCoxConfig } from "./allen-cox/allen-cox.config";
 import { emmaSaintJohnConfig } from "./emma-saint-john/emma-saint-john.config";
@@ -44,6 +46,7 @@ export const margaretDeibelConfig = {
                     birthDate: "5 November 1867",
                     deathDate: "19 February 1928",
                     imageUrl: "./images/margarete-oconnor.jpg",
+                    story: margareteOConnorStory,
                     parents: [
                         {
                             name: "Mary Fitzgerald",
@@ -188,6 +191,7 @@ export const margaretDeibelConfig = {
                     deathPlace: "Detroit, Wayne, Michigan, United States",
                     birthDate: "7 August 1866",
                     deathDate: "13 December 1901",
+                    story: danielAloysiusDacey1866Story,
                     parents: [
                         {   // Referred to as Anna Dacey in newspaper
                             name: "Mary Ann Keenan or Cannane", 

@@ -1,3 +1,6 @@
+import { charlesMartelConfig } from "./charles-martel.config";
+import { chrotrudisDeTrevesConfig } from "./chrotrudis-de-treves.config";
+
 export const charlemagneConfig = {
 	// PAINTING / SCULPTURE https://www.ancestry.com/family-tree/person/tree/44204929/person/430051963468/facts
 	// Holy Roman Emperor
@@ -19,7 +22,28 @@ export const charlemagneConfig = {
 			deathPlace: "Choisy-au-Bac, France",
 			birthDate: "2 April 720",
 			deathDate: "12 July 783",
-			parents: [] // continues
+			parents: [
+				{
+					name: "Bertrada de Prum",
+					sex: "Female",
+					birthPlace: "Laon, Aisne, Picardie, France",
+					deathPlace: "Laon, Aisne, Picardie, France",
+					birthDate: "~695",
+					deathDate: "12 July 721",
+					parents: []
+				},
+				{
+					// PAINTING https://www.ancestry.com/family-tree/person/tree/44204929/person/430051967977/facts
+					// Comte de Laon.
+					name: "Charibert of Laon",
+					sex: "Male",
+					birthPlace: "Laon, Aisne, Picardie, France",
+					deathPlace: "Laon, Aisne, Picardie, France",
+					birthDate: "690",
+					deathDate: "23 June 720",
+					parents: []
+				}
+			]
 		},
 		{
 			// King of the Franks
@@ -31,7 +55,10 @@ export const charlemagneConfig = {
 			deathPlace: "UNKNOWN",
 			birthDate: "714",
 			deathDate: "24 September 768",
-			parents: [] // continues
+			parents: [
+				chrotrudisDeTrevesConfig,
+				charlesMartelConfig
+			]
 		}
 	]
 };

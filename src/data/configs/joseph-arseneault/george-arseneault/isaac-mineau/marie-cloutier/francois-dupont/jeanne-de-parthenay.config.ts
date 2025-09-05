@@ -93,7 +93,50 @@ export const jeanneDeParthenayConfig = {
                                         	deathPlace: "UNKNOWN",
                                         	birthDate: "1070",
                                         	deathDate: "1121",
-                                            parents: []
+                                            parents: [
+												{
+													name: "Mélisende de Lusignan",
+													sex: "Female",
+													birthPlace: "France",
+													deathPlace: "UNKNOWN",
+													birthDate: "~1050",
+													deathDate: "UNKNOWN",
+													parents: [
+														{
+															// PAINTING https://www.ancestry.com/family-tree/person/tree/44204929/person/430055156788/facts
+															// Husband - While still married to his second wife Blanca, he became involved with the wife of the Count of Toulouse, Almodis de La Marche, countess of Limoges.[3] Both quickly married and were consequently excommunicated by Pope Victor II.
+															name: "Almodis de la Marche",
+															sex: "Female",
+															birthPlace: "Marche, Limousin, Poitou, France",
+															deathPlace: "Barcelona, Spain",
+															birthDate: "1020",
+															deathDate: "16 October 1071",
+															parents: []
+														},
+														{
+															// Duke William VIII of Aquitaine besieged Lusignan and when Hugh tried to sortie for provisions, he was slain at the gate.
+															// Seigneur de Lusignan et de Couhé.
+															name: "Hugues V de Lusignan",
+															sex: "Male",
+															birthPlace: "Lusignan, Poitou-Charentes, France",
+															deathPlace: "Angoulême, Poitou-Charentes, France",
+															birthDate: "1016",
+															deathDate: "8 October 1060",
+															parents: []
+														}
+													]
+												},
+												{
+													// Seigneur de Parthenay
+													name: "Simon de Parthenay",
+													sex: "Male",
+													birthPlace: "France",
+													deathPlace: "UNKNOWN",
+													birthDate: "1047",
+													deathDate: "1075",
+													parents: []
+												}
+											]
                                         }
                                     ]
                                 }

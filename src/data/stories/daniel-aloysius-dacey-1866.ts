@@ -1,0 +1,4 @@
+/*
+DACEY - At his residence, No 149 Elmwood avenue, December 13, Daniel, beloved husband of Margaret O'Connor and son of Patrolman John and the late Anna Dacey. Funeral notice later.
+*/
+export const danielAloysiusDacey1866Story = "Daniel Aloysius Dacey, born August 7, 1866, in Detroit to patrolman John Dacey, apprenticed as an engraver at 14 per the 1880 census before shifting to steamfitter by 1894 and sheet metal worker by 1900, renting on Orchard Street amid the city's industrial boom. Married to Margarete Ellen 'Maggie' O'Connor since 1894, he built a blue-collar life until dying young at 35 from la grippe (influenza) on December 13, 1901—leaving a young family in the bustling Motor City.";
