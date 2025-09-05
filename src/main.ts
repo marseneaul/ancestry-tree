@@ -76,8 +76,6 @@ document.addEventListener("DOMContentLoaded", () => {
   header.innerHTML = `
     <h1>Arseneault Family Tree Explorer</h1>
     <input type="text" id="search-input" placeholder="Search by name...">
-    <button id="export-png">Export PNG</button>
-    <button id="export-svg">Export SVG</button>
   `;
   app.appendChild(header);
 
@@ -122,6 +120,9 @@ document.addEventListener("DOMContentLoaded", () => {
     "Austria": "./svgs/austria.svg",
     "Norway": "./svgs/norway.svg",
     "Luxembourg": "./svgs/luxembourg.svg",
+    "Netherlands": "./svgs/netherlands.svg",
+    "Italy": "./svgs/italy.svg",
+    "Hungary": "./svgs/hungary.svg",
     "Unknown": "./svgs/unknown.svg"  // Optional; if no SVG, will fallback to gray in nodes
   };
 
@@ -222,7 +223,7 @@ document.addEventListener("DOMContentLoaded", () => {
     .append("rect")
     .attr("class", "minimap-viewport")
     .attr("fill", "none")
-    .attr("stroke", "#FF0000")
+    .attr("stroke", "#000")
     .attr("stroke-width", 1.5)
     .attr("pointer-events", "all"); // needed for drag
 
@@ -306,7 +307,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     miniNodes.exit().remove();
 
-    // Split join to keep shapes by sex
     const maleNodes = miniNodesG
       .selectAll<SVGRectElement, any>("rect.minimap-male")
       .data(nodes.filter((d) => d.data.sex === "Male"), (d: any) => d.data.id || d.data.name + d.depth);
@@ -320,11 +320,14 @@ document.addEventListener("DOMContentLoaded", () => {
             .attr("height", 3)
             .attr("x", (d) => mx(d.x) - 1.5)
             .attr("y", (d) => my(d.y) - 1.5)
-            .attr("fill", "#444"),
+            .attr("fill", (d) => countryColors[getCountry(d.data.birthPlace)] || "#808080"),
         (update) =>
-          update.attr("x", (d) => mx(d.x) - 1.5).attr("y", (d) => my(d.y) - 1.5)
+          update
+            .attr("x", (d) => mx(d.x) - 1.5)
+            .attr("y", (d) => my(d.y) - 1.5)
+            .attr("fill", (d) => countryColors[getCountry(d.data.birthPlace)] || "#808080")
       );
-
+    
     const femaleNodes = miniNodesG
       .selectAll<SVGCircleElement, any>("circle.minimap-female")
       .data(nodes.filter((d) => d.data.sex !== "Male"), (d: any) => d.data.id || d.data.name + d.depth);
@@ -337,8 +340,11 @@ document.addEventListener("DOMContentLoaded", () => {
             .attr("r", 1.5)
             .attr("cx", (d) => mx(d.x))
             .attr("cy", (d) => my(d.y))
-            .attr("fill", "#222"),
-        (update) => update.attr("cx", (d) => mx(d.x)).attr("cy", (d) => my(d.y))
+            .attr("fill", (d) => countryColors[getCountry(d.data.birthPlace)] || "#808080"),
+        (update) => update
+          .attr("cx", (d) => mx(d.x))
+          .attr("cy", (d) => my(d.y))
+          .attr("fill", (d) => countryColors[getCountry(d.data.birthPlace)] || "#808080")
       );
 
     updateMinimapViewport(); // sync viewport rect
@@ -534,7 +540,7 @@ document.addEventListener("DOMContentLoaded", () => {
         .attr("x", rootX)
         .attr("y", y + 45)  // Position above the node row; adjust offset as needed (e.g., +30 for below)
         .attr("text-anchor", "middle")
-        .text(`Gen ${depth}: ${info.count} ancestors, ~${info.dnaPercentEach.toFixed(2)}% each (${info.dnaPercentTotal.toFixed(2)}% total DNA), ${info.probOfSharingDna.toFixed(2)}% probability of sharing DNA`);
+        .text(`Gen ${depth}: ${info.count}/${(2**depth).toLocaleString()} ancestors, ~${info.dnaPercentEach.toFixed(2)}% each (${info.dnaPercentTotal.toFixed(2)}% total DNA), ${info.probOfSharingDna.toFixed(2)}% probability of sharing DNA`);
     });
 
     // Lineages
@@ -627,39 +633,5 @@ document.addEventListener("DOMContentLoaded", () => {
       const event = new Event("change");
       searchInput.dispatchEvent(event);  // Trigger the change handler
     }
-  });
-
-  // Export PNG
-  document.getElementById("export-png")?.addEventListener("click", () => {
-    const svgElement = svg.node() as SVGSVGElement;
-    const serializer = new XMLSerializer();
-    const svgStr = serializer.serializeToString(svgElement);
-    const canvas = document.createElement("canvas");
-    canvas.width = width + margin.left + margin.right;
-    canvas.height = height + margin.top + margin.bottom;
-    const ctx = canvas.getContext("2d");
-    const img = new Image();
-    img.onload = () => {
-      ctx?.drawImage(img, 0, 0);
-      const a = document.createElement("a");
-      a.href = canvas.toDataURL("image/png");
-      a.download = "family-tree.png";
-      a.click();
-    };
-    img.src = "data:image/svg+xml;base64," + btoa(svgStr);
-  });
-
-  // Export SVG
-  document.getElementById("export-svg")?.addEventListener("click", () => {
-    const svgElement = svg.node() as SVGSVGElement;
-    const serializer = new XMLSerializer();
-    const svgStr = serializer.serializeToString(svgElement);
-    const blob = new Blob([svgStr], { type: "image/svg+xml" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "family-tree.svg";
-    a.click();
-    URL.revokeObjectURL(url);
   });
 });

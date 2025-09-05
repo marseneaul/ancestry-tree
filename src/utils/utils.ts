@@ -55,22 +55,28 @@ export function getCountry(birthPlace?: string): string {
     if (place.includes("austria")) return "Austria";
     if (place.includes("norway")) return "Norway";
     if (place.includes("luxembourg")) return "Luxembourg";
+    if (place.includes("holland") || place.includes("netherlands")) return "Netherlands";
+    if (place.includes("italy")) return "Italy";
+    if (place.includes("hungary")) return "Hungary";
     return place.split(",").pop()?.trim() || "Unknown";  // Fallback
   }
   
 export const countryColors: Record<string, string> = {
-    "Germany": "#FFCC00",         // gold/yellow, already good contrast
-    "Ireland": "#009B3A",         // emerald green, distinct and vivid
-    "France": "#0055A4",          // deep blue, distinct from US navy
-    "United Kingdom": "#CC0000",  // bright red, very different from Canada
-    "Canada": "#FF0000",          // pure red, distinguishable from UK crimson
-    "United States": "#1E90FF",   // dodger blue, brighter than France
-    "Switzerland": "#FF2B2B",     // lighter red to separate from Canada/UK
-    "Belgium": "FFCD00",          // yellow from flag
-    "Austria": "FFFFFF",          // white from flag
-    "Norway": "FFFFFF",          // white from flag
-    "Luxembourg": "FFFFFF",          // white from flag
-    "Unknown": "#808080",         // neutral gray
+  "Germany": "#FFCE00",         // Gold from flag
+  "Ireland": "#009B3A",         // Green from flag
+  "France": "#0055A4",          // Blue from flag
+  "United Kingdom": "#C8102E",  // Red from flag
+  "Canada": "#D80621",          // Red from flag
+  "United States": "#3C3B6E",   // Blue from flag
+  "Switzerland": "#DA291C",     // Red from flag
+  "Belgium": "#FFD100",         // Yellow from flag
+  "Austria": "#ED2939",         // Red from flag
+  "Norway": "#BA0C2F",          // Red from flag
+  "Luxembourg": "#00A3E0",      // Blue from flag
+  "Netherlands": "#AE1C28",     // Red from flag (or #FF4F00 for orange if preferred)
+  "Italy": "#008C45",           // Green from flag
+  "Hungary": "#477050",         // Green from flag
+  "Unknown": "#808080",         // Neutral gray
 };
 
 

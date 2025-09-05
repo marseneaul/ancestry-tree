@@ -1,3 +1,7 @@
+import { poppaOfBayeuxStory } from "../../../../../../stories/poppa-of-bayeux";
+import { rolloOfNormandyStory } from "../../../../../../stories/rollo-of-normandy";
+import { williamLongswordStory } from "../../../../../../stories/william-longsword";
+import { williamTheConquerorStory } from "../../../../../../stories/william-the-conqueror";
 import { adelaOfFranceConfig } from "../adela-of-france.config";
 import { adelaisOfToursConfig } from "./adelais-of-tours.config";
 import { aleixDePlusquellecConfig } from "./alix-de-plusquellec.config";
@@ -1081,13 +1085,14 @@ export const francoisDupontConfig = {
 																																					deathDate: ">1093"
 																																				},
 																																				{
-																																					// Prince of England. He spent most of his life in exile in the Kingdom of Hungary following the defeat of his father by Canute the Great.
 																																					name: "Edward of England",
 																																					sex: "Male",
-																																					birthPlace: "UNKNOWN",
+																																					birthPlace: "England, United Kingdom",
 																																					deathPlace: "London, London, England, United Kingdom",
 																																					birthDate: "UNKNOWN",
 																																					deathDate: "19 April 1057",
+																																					imageUrl: "./images/edward-the-exile.jpg",
+																																					story: "Edward the Exile. He spent most of his life in exile in the Kingdom of Hungary following the defeat of his father by Canute the Great.",
 																																					parents: [
 																																						{
 																																							name: "Aeldgyth N.",
@@ -1178,7 +1183,7 @@ export const francoisDupontConfig = {
 																																					deathPlace: "Burghead, Moray, Scotland, United Kingdom",
 																																					birthDate: "~1001",
 																																					deathDate: "14 August 1040",
-																																					imageUrl: "./iamges/duncan-i-of-scotland.jpg",
+																																					imageUrl: "./images/duncan-i-of-scotland.jpg",
 																																					parents: [
 																																						{
 																																							name: "Bethoc of Scotland",
@@ -1477,6 +1482,7 @@ export const francoisDupontConfig = {
 																																							deathPlace: "Meulan, Aquitaine, France",
 																																							birthDate: "986",
 																																							deathDate: "28 July 1032",
+																																							imageUrl: "./images/constance-of-arles.jpg",
 																																							parents: []
 																																						},
 																																						{
@@ -1838,6 +1844,7 @@ export const francoisDupontConfig = {
 																																			birthDate: "1027",
 																																			deathDate: "9 September 1087",
 																																			imageUrl: "./images/william-the-conqueror.jpg",
+																																			story: williamTheConquerorStory,
 																																			parents: [
 																																				{
 																																					name: "Herleve de Falaise",
@@ -2390,6 +2397,7 @@ export const francoisDupontConfig = {
 																																											birthDate: "893",
 																																											deathDate: "17 December 942",
 																																											imageUrl: "./images/william-longsword.jpg",
+																																											story: williamLongswordStory,
 																																											parents: [
 																																												{
 																																													name: "Poppa of Bayeaux",
@@ -2399,6 +2407,7 @@ export const francoisDupontConfig = {
 																																													birthDate: "UNKNOWN",
 																																													deathDate: "UNKNOWN",
 																																													imageUrl: "./images/poppa-de-bayeux.jpg",
+																																													story: poppaOfBayeuxStory,
 																																													parents: [
 																																														{
 																																															// Comte de Bayeux.
@@ -2421,6 +2430,7 @@ export const francoisDupontConfig = {
 																																													birthDate: "846",
 																																													deathDate: "930",
 																																													imageUrl: "./images/rollo.jpg",
+																																													story: rolloOfNormandyStory,
 																																													parents: [
 																																														{
 																																															name: "Ragnhild N.",

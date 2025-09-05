@@ -1,3 +1,4 @@
+import { charlemagneStory } from "../../../../../../stories/charlemagne";
 import { charlesMartelConfig } from "./charles-martel.config";
 import { chrotrudisDeTrevesConfig } from "./chrotrudis-de-treves.config";
 
@@ -12,6 +13,7 @@ export const charlemagneConfig = {
 	birthDate: "2 April 742/747/748",
 	deathDate: "28 January 814",
     imageUrl: "./images/charlemagne.jpg",
+	story: charlemagneStory,
 	parents: [
 		{
 			// Queen of the Franks the queen with the goose-foot
@@ -55,6 +57,7 @@ export const charlemagneConfig = {
 			deathPlace: "UNKNOWN",
 			birthDate: "714",
 			deathDate: "24 September 768",
+			imageUrl: "./images/pepin-the-short.jpg",
 			parents: [
 				chrotrudisDeTrevesConfig,
 				charlesMartelConfig

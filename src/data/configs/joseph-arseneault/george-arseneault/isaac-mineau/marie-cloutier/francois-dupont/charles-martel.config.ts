@@ -10,6 +10,7 @@ export const charlesMartelConfig = {
     deathPlace: "Querzy-Sur-Oise (Today: Aisne, Picarde, France)",
     birthDate: "23 August 676",
     deathDate: "22 October 741",
+    imageUrl: "./images/charles-martel.jpg",
     parents: [
         {
             name: "Chalpais N.",

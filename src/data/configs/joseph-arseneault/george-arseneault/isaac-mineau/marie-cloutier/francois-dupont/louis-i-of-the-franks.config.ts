@@ -1,3 +1,4 @@
+import { louisIOfTheFranksStory } from "../../../../../../stories/louis-i-of-the-franks";
 import { charlemagneConfig } from "./charlemagne.config";
 import { hildegardVonKraichgauConfig } from "./hildegard-von-kraichgau.config";
 
@@ -11,6 +12,7 @@ export const louisIOfTheFranksConfig = {
 	birthDate: "15 August 778",
 	deathDate: "20 June 840",
 	imageUrl: "./images/louis-the-pious.jpg",
+	story: louisIOfTheFranksStory,
 	parents: [
 		hildegardVonKraichgauConfig,
 		charlemagneConfig
