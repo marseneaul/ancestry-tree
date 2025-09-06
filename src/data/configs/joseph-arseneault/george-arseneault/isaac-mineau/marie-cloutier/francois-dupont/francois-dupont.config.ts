@@ -2441,34 +2441,33 @@ export const francoisDupontConfig = {
 																																															deathDate: "UNKNOWN"
 																																														},
 																																														{
-																																															// jarl of North and South Möre and of Raumsdal in Norway
 																																															name: "Ragnevald of Normandy",
 																																															sex: "Male",
 																																															birthPlace: "Norway",
 																																															deathPlace: "UNKNOWN",
 																																															birthDate: "UNKNOWN",
 																																															deathDate: "894",
+																																															story: "Jarl of North and South Möre and of Raumsdal in Norway.",
 																																															parents: [
 																																																{
-																																																	// Jarl of the Uplanders in Norway
 																																																	name: "Eystein of Normandy",
 																																																	sex: "Male",
 																																																	birthPlace: "Norway",
 																																																	deathPlace: "UNKNOWN",
 																																																	birthDate: "UNKNOWN",
 																																																	deathDate: "UNKNOWN",
+																																																	story: "Jarl of the Uplanders in Norway.",
 																																																	parents: [
 																																																		{
-																																																			// from saga. Jarl of the Uplanders in Norway
 																																																			name: "Ivar of Normandy",
 																																																			sex: "Male",
 																																																			birthPlace: "Norway",
 																																																			deathPlace: "UNKNOWN",
 																																																			birthDate: "UNKNOWN",
 																																																			deathDate: "UNKNOWN",
+																																																			story: "Jarl of the Uplanders in Norway.",
 																																																			parents: [
 																																																				{
-																																																					// from saga
 																																																					name: "Halfdan of Normandy",
 																																																					sex: "Male",
 																																																					birthPlace: "Norway",
