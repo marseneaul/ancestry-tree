@@ -102,6 +102,7 @@ export function getInitials(name?: string) {
     .split(/\s+/)
     .filter(Boolean)
     .map(s => s[0].toUpperCase())
+    .filter(ch => /^[A-Z]$/.test(ch)) // only keep A–Z
     .slice(0, 2)
     .join("");
 }
