@@ -1,5 +1,6 @@
 import { edwardGeorgeArseneaultStory } from "../../stories/edward-george-arseneault";
 import { josephArseneaultStory } from "../../stories/joseph-arseneault";
+import { josephHenneckeStory } from "../../stories/joseph-hennecke";
 import { elizabethVossConfig } from "./elizabeth-voss/elizabeth-voss.config";
 import { georgeArseneaultConfig } from "./george-arseneault/george-arseneault.config";
 import { marieDuboisConfig } from "./marie-dubois/marie-dubois.config";
@@ -29,7 +30,8 @@ export const josephArseneaultConfig = {
                     birthPlace: "Fleckenberg, Schmallenberg, Hochsauerlandkreis, North Rhine-Westphalia, Germany",
                     deathPlace: "Schoolcraft, Houghton, Michigan, United States",
                     birthDate: "8 April 1847",
-                    deathDate: "20 August 1927"
+                    deathDate: "20 August 1927",
+                    story: josephHenneckeStory
                 }
             ]
         },

@@ -111,12 +111,13 @@ export const marieDuboisConfig = {
                                     deathDate: "12 April 1794"
                                 },
                                 {
-                                    name: "Francois Gaudet dit Mar(a)in",
+                                    name: "François Gaudet dit Mar(a)in",
                                     sex: "Male",
                                     birthPlace: "Beaubassin, Acadia, Canada",
                                     deathPlace: "Nicolet County, Quebec, Canada",
                                     birthDate: "11 January 1743",
-                                    deathDate: "2 May 1810"
+                                    deathDate: "2 May 1810",
+                                    parents: [] // MUCH MORE https://www.ancestry.com/family-tree/person/tree/189141936/person/142478503691/facts?usePUBJs=true
                                 }
                             ]
                         },

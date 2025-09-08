@@ -1,3 +1,5 @@
+import { elizabethVossStory } from "../../../stories/elizabeth-voss";
+import { friedrichJohannesVossStory } from "../../../stories/friedrich-johannes-voss";
 import { josephKayserConfig } from "./joseph-kayser.config";
 import { mariaTielmannConfig } from "./maria-tielmann.config";
 
@@ -9,6 +11,7 @@ export const elizabethVossConfig = {
     deathPlace: "Hancock, Houghton County, Michigan, United States",
     birthDate: "6 November 1860",
     deathDate: "30 July 1937",
+    story: elizabethVossStory,
     parents: [
         {
             name: "Maria Theresia 'Tracy' Kaiser",
@@ -29,6 +32,7 @@ export const elizabethVossConfig = {
             deathPlace: "Hancock, Houghton County, Michigan, United States",
             birthDate: "20 December 1829",
             deathDate: "12 July 1903",
+            story: friedrichJohannesVossStory,
             parents: [
                 {
                     name: "Anna Maria Spies",

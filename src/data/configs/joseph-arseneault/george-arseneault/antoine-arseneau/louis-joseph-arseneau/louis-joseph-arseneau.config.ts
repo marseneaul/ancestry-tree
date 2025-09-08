@@ -32,7 +32,7 @@ export const louisJosephArsenaultConfig = {
                 }
             ]
         },
-        {   // ?? The founders of Tignish were Joseph DesRoches, Joseph Richard, Jacques Chiasson, Pierre Arsenault, Pierre Poirier, Basile Poirier, Germain DesRoches and Grégoire Bernard
+        { 
             name: "Pierre Paul Arsenault",
             sex: "Male",
             birthPlace: "Quebec, Canada",
