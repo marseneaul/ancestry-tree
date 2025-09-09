@@ -135,3 +135,226 @@ body {
     stroke: orange !important;
     stroke-width: 3px;
   }
+
+  /* Enhanced Modal Styles */
+  #detail-modal {
+    backdrop-filter: blur(4px);
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+
+  #detail-modal.hidden {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  #detail-modal:not(.hidden) {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .modal-content {
+    transform: scale(0.9) translateY(20px);
+    transition: transform 0.3s ease;
+  }
+
+  #detail-modal:not(.hidden) .modal-content {
+    transform: scale(1) translateY(0);
+  }
+
+  .modal-close-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+  }
+
+  .modal-close-btn:hover {
+    background: #f0f0f0;
+    color: #333;
+  }
+
+  .modal-header {
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  .modal-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  .modal-relation {
+    font-size: 14px;
+    color: #666;
+    margin-top: 4px;
+    font-weight: 500;
+  }
+
+  .modal-details {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 16px 0;
+  }
+
+  .modal-detail-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #444;
+  }
+
+  .modal-detail-label {
+    font-weight: 600;
+    min-width: 60px;
+    color: #666;
+  }
+
+  .modal-story {
+    margin-top: 16px;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    font-style: italic;
+    color: #555;
+    line-height: 1.5;
+    border-left: 3px solid #007bff;
+  }
+
+  /* Enhanced Search Styles */
+  .search-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .search-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 12px;
+    color: #666;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  #search-input {
+    padding: 12px 40px 12px 40px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    width: 280px;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    background: white;
+  }
+
+  #search-input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+  }
+
+  .search-clear-btn {
+    position: absolute;
+    right: 8px;
+    background: none;
+    border: none;
+    color: #999;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+  }
+
+  .search-clear-btn:hover {
+    background: #f0f0f0;
+    color: #666;
+  }
+
+  .search-clear-btn.visible {
+    display: flex;
+  }
+
+  /* Ensure dropdown doesn't overlap with clear button */
+  #search-input::-webkit-calendar-picker-indicator {
+    display: none;
+  }
+
+  /* Style the custom dropdown */
+  .custom-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .dropdown-option {
+    padding: 8px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background-color 0.2s ease;
+  }
+
+  .dropdown-option:hover {
+    background: #f8f9fa;
+  }
+
+  .dropdown-option:last-child {
+    border-bottom: none;
+  }
+
+  .search-results-count {
+    font-size: 12px;
+    color: #666;
+    background: #f0f0f0;
+    padding: 4px 8px;
+    border-radius: 12px;
+    white-space: nowrap;
+  }
+
+  .search-results-count.highlighted {
+    background: #007bff;
+    color: white;
+  }
+
+  /* Keyboard shortcut hint */
+  .search-shortcut {
+    font-size: 11px;
+    color: #999;
+    background: #f8f9fa;
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid #e0e0e0;
+  }

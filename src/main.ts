@@ -58,10 +58,10 @@ function extendWithNeanderthal(ancient: Person) {
   }
 }
 
-/** Standardized modal image + placeholder; relation is optional */
+/** Enhanced modal with better design and close functionality */
 function showPersonModal(d: Person, depth: number) {
   const modal = document.getElementById("detail-modal")!;
-  const content = document.getElementById("modal-content")!;
+  const content = document.getElementById("modal-inner-content")!;
   if (!modal || !content) return;
 
   const initials = getInitials(d?.name);
@@ -105,7 +105,8 @@ function showPersonModal(d: Person, depth: number) {
   if (depth !== 0) relation += ` (${depth} generation${depth > 1 ? "s" : ""} back)`;
 
   content.innerHTML = `
-    <div style="display:flex; flex-direction:column; align-items:center; gap:12px; text-align:center; padding:8px;">
+    <button class="modal-close-btn" onclick="closeModal()" aria-label="Close modal">×</button>
+    <div style="display:flex; flex-direction:column; align-items:center; gap:16px; text-align:center; padding:8px;">
       ${imageHtml}
       ${placeholderHtml}
       <h2 style="margin:0; font-size:20px; font-weight:700;">${d.name || "Unknown"}</h2>
@@ -120,6 +121,17 @@ function showPersonModal(d: Person, depth: number) {
   modal.classList.remove("hidden");
 }
 
+/** Close modal function */
+function closeModal() {
+  const modal = document.getElementById("detail-modal");
+  if (modal) {
+    modal.classList.add("hidden");
+  }
+}
+
+// Make closeModal globally available
+(window as any).closeModal = closeModal;
+
 
 document.addEventListener("DOMContentLoaded", () => {
   const app = document.querySelector("#app");
@@ -129,11 +141,45 @@ document.addEventListener("DOMContentLoaded", () => {
   const header = document.createElement("header");
   header.innerHTML = `
     <h1>Arseneault Family Tree Explorer</h1>
-    <input type="text" id="search-input" placeholder="Search by name...">
+    <div class="search-container">
+      <div class="search-input-wrapper">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.35-4.35"></path>
+        </svg>
+        <input type="text" id="search-input" placeholder="Search by name...">
+        <button class="search-clear-btn" id="search-clear-btn" onclick="clearSearch()" aria-label="Clear search">×</button>
+      </div>
+      <div class="search-results-count" id="search-results-count"></div>
+    </div>
   `;
   app.appendChild(header);
 
   const searchInput = document.getElementById("search-input") as HTMLInputElement;
+  const searchClearBtn = document.getElementById("search-clear-btn") as HTMLButtonElement;
+  const searchResultsCount = document.getElementById("search-results-count") as HTMLDivElement;
+
+  // Clear search function
+  (window as any).clearSearch = function() {
+    searchInput.value = "";
+    searchClearBtn.classList.remove("visible");
+    searchResultsCount.textContent = "";
+    searchResultsCount.classList.remove("highlighted");
+    dropdown.style.display = "none";
+    g.selectAll(".node").classed("highlighted", false);
+  };
+
+  // Keyboard shortcut for search (Ctrl+K or Cmd+K)
+  document.addEventListener("keydown", (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+      e.preventDefault();
+      searchInput.focus();
+    }
+    // ESC to clear search
+    if (e.key === "Escape" && document.activeElement === searchInput) {
+      (window as any).clearSearch();
+    }
+  });
 
   const container = document.createElement("div");
   container.id = "tree-container";
@@ -626,28 +672,62 @@ document.addEventListener("DOMContentLoaded", () => {
     // Collect unique names from the tree (run once after updateTree)
   const allNames = [...new Set(root.descendants().map(d => d.data.name || "Unknown"))];
 
-  // After app.appendChild(header); add this to create the datalist:
-  const datalist = document.createElement("datalist");
-  datalist.id = "name-suggestions";
-  app.appendChild(datalist);  // Or append to header if preferred
-  searchInput.setAttribute("list", "name-suggestions");
+  // Create custom dropdown instead of datalist for better control
+  const dropdown = document.createElement("div");
+  dropdown.id = "name-suggestions";
+  dropdown.className = "custom-dropdown";
+  dropdown.style.display = "none";
+  searchInput.parentElement?.appendChild(dropdown);
 
-  // Search Functionality with Autocomplete and Zoom
+  // Enhanced Search Functionality with Autocomplete, Results Count, and Zoom
   searchInput.addEventListener("input", (e) => {
     const query = (e.target as HTMLInputElement).value.toLowerCase();
 
+    // Show/hide clear button
+    if (query.length > 0) {
+      searchClearBtn.classList.add("visible");
+    } else {
+      searchClearBtn.classList.remove("visible");
+    }
+
     // Clear existing suggestions
-    datalist.innerHTML = "";
+    dropdown.innerHTML = "";
 
     // Filter names containing the substring (case-insensitive)
     const suggestions = allNames.filter(name => name.toLowerCase().includes(query));
+    const matchingNodes = root.descendants().filter(d => 
+      query && (d.data.name?.toLowerCase().includes(query) ?? false)
+    );
 
-    // Add up to 10 suggestions (adjust limit as needed)
-    suggestions.slice(0, 10).forEach(name => {
-      const option = document.createElement("option");
-      option.value = name;
-      datalist.appendChild(option);
-    });
+    // Update results count
+    if (query.length > 0) {
+      searchResultsCount.textContent = `${matchingNodes.length} result${matchingNodes.length !== 1 ? 's' : ''}`;
+      searchResultsCount.classList.add("highlighted");
+    } else {
+      searchResultsCount.textContent = "";
+      searchResultsCount.classList.remove("highlighted");
+    }
+
+    // Show/hide dropdown
+    if (query.length > 0 && suggestions.length > 0) {
+      dropdown.style.display = "block";
+      // Add up to 10 suggestions
+      suggestions.slice(0, 10).forEach(name => {
+        const option = document.createElement("div");
+        option.className = "dropdown-option";
+        option.textContent = name;
+        option.addEventListener("click", () => {
+          searchInput.value = name;
+          dropdown.style.display = "none";
+          // Trigger the change event to zoom to the person
+          const event = new Event("change");
+          searchInput.dispatchEvent(event);
+        });
+        dropdown.appendChild(option);
+      });
+    } else {
+      dropdown.style.display = "none";
+    }
 
     // Highlight matching nodes (keep current behavior)
     g.selectAll(".node")
@@ -686,6 +766,33 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.key === "Enter") {
       const event = new Event("change");
       searchInput.dispatchEvent(event);  // Trigger the change handler
+    }
+  });
+
+  // Modal click-outside-to-close functionality
+  const modal = document.getElementById("detail-modal");
+  if (modal) {
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) {
+        closeModal();
+      }
+    });
+  }
+
+  // ESC key to close modal
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      const modal = document.getElementById("detail-modal");
+      if (modal && !modal.classList.contains("hidden")) {
+        closeModal();
+      }
+    }
+  });
+
+  // Click outside to close dropdown
+  document.addEventListener("click", (e) => {
+    if (!searchInput.contains(e.target as Node) && !dropdown.contains(e.target as Node)) {
+      dropdown.style.display = "none";
     }
   });
 });
