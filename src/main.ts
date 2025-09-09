@@ -1160,7 +1160,7 @@ document.addEventListener("DOMContentLoaded", () => {
   statsToggleBtn.addEventListener("click", () => {
     isStatsDashboardVisible = !isStatsDashboardVisible;
     statsDashboard.classList.toggle("hidden", !isStatsDashboardVisible);
-    statsToggleBtn.textContent = isStatsDashboardVisible ? "✕" : "📊";
+    statsToggleBtn.textContent = isStatsDashboardVisible ? " " : "📊";
     
     console.log('Stats button clicked, visible:', isStatsDashboardVisible, 'button text:', statsToggleBtn.textContent);
     
@@ -1260,7 +1260,7 @@ document.addEventListener("DOMContentLoaded", () => {
   timelineToggleBtn.addEventListener("click", () => {
     isTimelinePanelVisible = !isTimelinePanelVisible;
     timelinePanel.classList.toggle("hidden", !isTimelinePanelVisible);
-    timelineToggleBtn.textContent = isTimelinePanelVisible ? "✕" : "📅";
+    timelineToggleBtn.textContent = isTimelinePanelVisible ? " " : "📅";
     
     if (isTimelinePanelVisible) {
       initializeTimelinePanel();
@@ -1271,7 +1271,7 @@ document.addEventListener("DOMContentLoaded", () => {
   filterToggleBtn.addEventListener("click", () => {
     isFilterPanelVisible = !isFilterPanelVisible;
     filterPanel.classList.toggle("hidden", !isFilterPanelVisible);
-    filterToggleBtn.textContent = isFilterPanelVisible ? "✕" : "⚙";
+    filterToggleBtn.textContent = isFilterPanelVisible ? " " : "⚙";
   });
 
   // Toggle section functionality
@@ -1307,8 +1307,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Center the tree horizontally within the viewport
-    const viewportWidth = window.innerWidth;
-    const horizontalCenter = viewportWidth / 2;
+    const horizontalCenter = width / 2;
     const rootXShift = horizontalCenter - (root.x ?? 0);
     
     root.descendants().forEach(d => {
