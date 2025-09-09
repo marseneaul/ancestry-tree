@@ -596,7 +596,7 @@ body {
   .filter-toggle-btn {
     position: fixed;
     top: 80px;
-    left: 80px;
+    left: 120px;
     width: 40px;
     height: 40px;
     border: 1px solid #ddd;
@@ -659,6 +659,31 @@ body {
     font-weight: 600;
     color: #555;
     margin-bottom: 8px;
+  }
+
+  .stats-section-title.collapsible {
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+  }
+
+  .stats-section-title.collapsible:hover {
+    background-color: #f0f0f0;
+  }
+
+  .collapse-icon {
+    font-size: 12px;
+    color: #888;
+    transition: transform 0.2s ease;
+  }
+
+  .stats-section-content {
+    display: block;
   }
 
   .stats-grid {
@@ -757,6 +782,138 @@ body {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   }
 
+  .timeline-toggle-btn {
+    position: fixed;
+    top: 80px;
+    left: 70px;
+    width: 40px;
+    height: 40px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: all 0.2s ease;
+  }
+
+  .timeline-toggle-btn:hover {
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
   .filter-panel.hidden {
     display: none;
+  }
+
+  /* Timeline Panel */
+  .timeline-panel {
+    position: fixed;
+    bottom: 200px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    z-index: 300;
+    max-width: 400px;
+    max-height: calc(100vh - 240px);
+    overflow-y: auto;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .timeline-panel.hidden {
+    display: none;
+  }
+
+  .timeline-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #333;
+    border-bottom: 2px solid #4a90e2;
+    padding-bottom: 8px;
+  }
+
+  .timeline-content {
+    max-height: calc(100vh - 220px);
+    overflow-y: auto;
+  }
+
+  .timeline-decade {
+    margin-bottom: 20px;
+    border-left: 3px solid #4a90e2;
+    padding-left: 15px;
+  }
+
+  .decade-header {
+    font-size: 16px;
+    font-weight: 600;
+    color: #4a90e2;
+    margin-bottom: 10px;
+    background: #f0f8ff;
+    padding: 5px 10px;
+    border-radius: 4px;
+    display: inline-block;
+  }
+
+  .decade-people {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .timeline-person {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .timeline-person:hover {
+    background: #e3f2fd;
+    border-color: #4a90e2;
+    transform: translateX(5px);
+  }
+
+  .person-year {
+    font-size: 12px;
+    font-weight: bold;
+    color: #4a90e2;
+  }
+
+  .person-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    margin: 2px 0;
+  }
+
+  .person-place {
+    font-size: 11px;
+    color: #666;
+  }
+
+  .person-country {
+    font-size: 10px;
+    color: #888;
+    font-style: italic;
+  }
+
+  .more-people {
+    font-size: 12px;
+    color: #666;
+    font-style: italic;
+    text-align: center;
+    padding: 5px;
+    background: #f0f0f0;
+    border-radius: 4px;
   }

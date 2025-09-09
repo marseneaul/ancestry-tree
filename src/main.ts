@@ -162,6 +162,13 @@ document.addEventListener("DOMContentLoaded", () => {
   statsToggleBtn.title = "Toggle Statistics";
   app.appendChild(statsToggleBtn);
 
+  // Add Timeline Toggle Button
+  const timelineToggleBtn = document.createElement("button");
+  timelineToggleBtn.className = "timeline-toggle-btn";
+  timelineToggleBtn.textContent = "📅";
+  timelineToggleBtn.title = "Toggle Timeline View";
+  app.appendChild(timelineToggleBtn);
+
   // Add Filter Toggle Button
   const filterToggleBtn = document.createElement("button");
   filterToggleBtn.className = "filter-toggle-btn";
@@ -221,6 +228,12 @@ document.addEventListener("DOMContentLoaded", () => {
   filterPanel.className = "filter-panel hidden";
   filterPanel.id = "filter-panel";
   app.appendChild(filterPanel);
+
+  // Create Timeline Panel
+  const timelinePanel = document.createElement("div");
+  timelinePanel.className = "timeline-panel hidden";
+  timelinePanel.id = "timeline-panel";
+  app.appendChild(timelinePanel);
 
   // Legend
   const legend = document.createElement("div");
@@ -641,6 +654,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Statistics dashboard state
   let isStatsDashboardVisible = false;
+  let isTimelinePanelVisible = false;
 
   // Initialize statistics dashboard
   function initializeStatsDashboard() {
@@ -739,22 +753,22 @@ document.addEventListener("DOMContentLoaded", () => {
       dataCompleteness.total++;
       
       // Data completeness tracking
-      if (node.data.birthDate && node.data.birthDate !== "Unknown") dataCompleteness.hasBirthDate++;
-      if (node.data.deathDate && node.data.deathDate !== "N/A" && node.data.deathDate !== "Unknown") dataCompleteness.hasDeathDate++;
-      if (node.data.birthPlace && node.data.birthPlace !== "Unknown") dataCompleteness.hasBirthPlace++;
-      if (node.data.deathPlace && node.data.deathPlace !== "Unknown") dataCompleteness.hasDeathPlace++;
+      if (node.data.birthDate && node.data.birthDate !== "Unknown" && node.data.birthDate !== "UNKNOWN") dataCompleteness.hasBirthDate++;
+      if (node.data.deathDate && node.data.deathDate !== "N/A" && node.data.deathDate !== "Unknown" && node.data.deathDate !== "UNKNOWN") dataCompleteness.hasDeathDate++;
+      if (node.data.birthPlace && node.data.birthPlace !== "Unknown" && node.data.birthPlace !== "UNKNOWN") dataCompleteness.hasBirthPlace++;
+      if (node.data.deathPlace && node.data.deathPlace !== "Unknown" && node.data.deathPlace !== "UNKNOWN") dataCompleteness.hasDeathPlace++;
       if (node.data.imageUrl) dataCompleteness.hasPhoto++;
       if (node.data.story && node.data.story !== "Stories coming soon...") dataCompleteness.hasStory++;
       if (node.data.parents && node.data.parents.length > 0) dataCompleteness.hasParents++;
       
       // Research gaps identification
-      if (!node.data.birthDate || node.data.birthDate === "Unknown") {
+      if (!node.data.birthDate || node.data.birthDate === "Unknown" || node.data.birthDate === "UNKNOWN") {
         researchGaps.missingBirthDate.push(node);
       }
-      if (!node.data.deathDate || node.data.deathDate === "N/A" || node.data.deathDate === "Unknown") {
+      if (!node.data.deathDate || node.data.deathDate === "N/A" || node.data.deathDate === "Unknown" || node.data.deathDate === "UNKNOWN") {
         researchGaps.missingDeathDate.push(node);
       }
-      if (!node.data.birthPlace || node.data.birthPlace === "Unknown") {
+      if (!node.data.birthPlace || node.data.birthPlace === "Unknown" || node.data.birthPlace === "UNKNOWN") {
         researchGaps.missingBirthPlace.push(node);
       }
       if (!node.data.parents || node.data.parents.length === 0) {
@@ -803,7 +817,10 @@ document.addEventListener("DOMContentLoaded", () => {
       <div class="stats-title">📊 Family Tree Statistics</div>
       
       <div class="stats-section">
-        <div class="stats-section-title">Overview</div>
+        <div class="stats-section-title collapsible" onclick="toggleSection('overview')">
+          📈 Overview <span class="collapse-icon" onclick="event.stopPropagation(); toggleSection('overview');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
+        </div>
+        <div class="stats-section-content" id="overview">
         <div class="stats-grid">
           <div class="stat-item">
             <div class="stat-value">${totalPeople}</div>
@@ -820,88 +837,194 @@ document.addEventListener("DOMContentLoaded", () => {
           <div class="stat-item">
             <div class="stat-value">${birthYears.length > 0 ? Math.min(...birthYears) : 'N/A'}</div>
             <div class="stat-label">Earliest Birth</div>
+            </div>
           </div>
         </div>
       </div>
 
       <div class="stats-section">
-        <div class="stats-section-title">Gender Distribution</div>
-        <div class="dna-breakdown">
-          <div class="dna-item">
-            <span class="dna-label">👨 Male</span>
-            <div class="dna-bar">
-              <div class="dna-fill" style="width: ${(genderStats.male / totalPeople) * 100}%"></div>
-            </div>
-            <span class="dna-percent">${genderStats.male}</span>
-          </div>
-          <div class="dna-item">
-            <span class="dna-label">👩 Female</span>
-            <div class="dna-bar">
-              <div class="dna-fill" style="width: ${(genderStats.female / totalPeople) * 100}%"></div>
-            </div>
-            <span class="dna-percent">${genderStats.female}</span>
-          </div>
-          ${genderStats.unknown > 0 ? `
-          <div class="dna-item">
-            <span class="dna-label">❓ Unknown</span>
-            <div class="dna-bar">
-              <div class="dna-fill" style="width: ${(genderStats.unknown / totalPeople) * 100}%"></div>
-            </div>
-            <span class="dna-percent">${genderStats.unknown}</span>
-          </div>
-          ` : ''}
+        <div class="stats-section-title collapsible" onclick="toggleSection('data-completeness')">
+          📋 Data Completeness <span class="collapse-icon" onclick="event.stopPropagation(); toggleSection('data-completeness');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
         </div>
-      </div>
-
-      <div class="stats-section">
-        <div class="stats-section-title">Average Lifespan by Generation</div>
-        <div class="dna-breakdown">
-          ${Array.from(lifespanByGeneration.entries())
-            .sort((a, b) => a[0] - b[0])
-            .map(([generation, ages]) => {
-              const avgAge = ages.reduce((sum, age) => sum + age, 0) / ages.length;
-              const maxAge = Math.max(...ages);
-              const minAge = Math.min(...ages);
-              return `
-                <div class="dna-item">
-                  <span class="dna-label">Gen ${generation}: ${ages.length} people</span>
-                  <div class="dna-bar">
-                    <div class="dna-fill" style="width: ${Math.min((avgAge / 100) * 100, 100)}%"></div>
-                  </div>
-                  <span class="dna-percent">${avgAge.toFixed(1)}</span>
-                </div>
-                <div style="font-size: 10px; color: #888; margin-left: 8px; margin-bottom: 4px;">
-                  Range: ${minAge}-${maxAge} years
-                </div>
-              `;
-            }).join('')}
-        </div>
-      </div>
-
-      <div class="stats-section">
-        <div class="stats-section-title">Migration Patterns</div>
-        <div class="dna-breakdown">
-          ${(() => {
-            const migrationEntries = Array.from(migrationPatterns.entries())
-              .sort((a, b) => b[1] - a[1])
-              .slice(0, 6);
-            const maxCount = migrationEntries.length > 0 ? Math.max(...migrationEntries.map(([, count]) => count)) : 1;
-            
-            return migrationEntries.map(([migration, count]) => `
-              <div class="dna-item">
-                <span class="dna-label">${migration}</span>
-                <div class="dna-bar">
-                  <div class="dna-fill" style="width: ${(count / maxCount) * 100}%"></div>
-                </div>
-                <span class="dna-percent">${count}</span>
+        <div class="stats-section-content" id="data-completeness">
+          <div class="dna-breakdown">
+            <div class="dna-item">
+              <span class="dna-label">📅 Birth Dates</span>
+              <div class="dna-bar">
+                <div class="dna-fill" style="width: ${(dataCompleteness.hasBirthDate / dataCompleteness.total) * 100}%"></div>
               </div>
-            `).join('');
-          })()}
+              <span class="dna-percent">${((dataCompleteness.hasBirthDate / dataCompleteness.total) * 100).toFixed(1)}%</span>
+            </div>
+            <div class="dna-item">
+              <span class="dna-label">💀 Death Dates</span>
+              <div class="dna-bar">
+                <div class="dna-fill" style="width: ${(dataCompleteness.hasDeathDate / dataCompleteness.total) * 100}%"></div>
+              </div>
+              <span class="dna-percent">${((dataCompleteness.hasDeathDate / dataCompleteness.total) * 100).toFixed(1)}%</span>
+            </div>
+            <div class="dna-item">
+              <span class="dna-label">📍 Birth Places</span>
+              <div class="dna-bar">
+                <div class="dna-fill" style="width: ${(dataCompleteness.hasBirthPlace / dataCompleteness.total) * 100}%"></div>
+              </div>
+              <span class="dna-percent">${((dataCompleteness.hasBirthPlace / dataCompleteness.total) * 100).toFixed(1)}%</span>
+            </div>
+            <div class="dna-item">
+              <span class="dna-label">📸 Photos</span>
+              <div class="dna-bar">
+                <div class="dna-fill" style="width: ${(dataCompleteness.hasPhoto / dataCompleteness.total) * 100}%"></div>
+              </div>
+              <span class="dna-percent">${((dataCompleteness.hasPhoto / dataCompleteness.total) * 100).toFixed(1)}%</span>
+            </div>
+            <div class="dna-item">
+              <span class="dna-label">👨‍👩‍👧‍👦 Parents</span>
+              <div class="dna-bar">
+                <div class="dna-fill" style="width: ${(dataCompleteness.hasParents / dataCompleteness.total) * 100}%"></div>
+              </div>
+              <span class="dna-percent">${((dataCompleteness.hasParents / dataCompleteness.total) * 100).toFixed(1)}%</span>
+            </div>
+          </div>
         </div>
       </div>
 
       <div class="stats-section">
-        <div class="stats-section-title">DNA Inheritance by Generation</div>
+        <div class="stats-section-title collapsible" onclick="toggleSection('research-gaps')">
+          🔍 Research Gaps <span class="collapse-icon" onclick="event.stopPropagation(); toggleSection('research-gaps');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
+        </div>
+        <div class="stats-section-content" id="research-gaps">
+          <div class="dna-breakdown">
+            <div class="dna-item">
+              <span class="dna-label">❓ Missing Birth Dates</span>
+              <div class="dna-bar">
+                <div class="dna-fill" style="width: ${Math.min((researchGaps.missingBirthDate.length / dataCompleteness.total) * 100, 100)}%"></div>
+              </div>
+              <span class="dna-percent">${researchGaps.missingBirthDate.length}</span>
+            </div>
+            <div class="dna-item">
+              <span class="dna-label">❓ Missing Death Dates</span>
+              <div class="dna-bar">
+                <div class="dna-fill" style="width: ${Math.min((researchGaps.missingDeathDate.length / dataCompleteness.total) * 100, 100)}%"></div>
+              </div>
+              <span class="dna-percent">${researchGaps.missingDeathDate.length}</span>
+            </div>
+            <div class="dna-item">
+              <span class="dna-label">❓ Missing Birth Places</span>
+              <div class="dna-bar">
+                <div class="dna-fill" style="width: ${Math.min((researchGaps.missingBirthPlace.length / dataCompleteness.total) * 100, 100)}%"></div>
+              </div>
+              <span class="dna-percent">${researchGaps.missingBirthPlace.length}</span>
+            </div>
+            <div class="dna-item">
+              <span class="dna-label">❓ Missing Parents</span>
+              <div class="dna-bar">
+                <div class="dna-fill" style="width: ${Math.min((researchGaps.missingParents.length / dataCompleteness.total) * 100, 100)}%"></div>
+              </div>
+              <span class="dna-percent">${researchGaps.missingParents.length}</span>
+            </div>
+            <div class="dna-item">
+              <span class="dna-label">📷 No Photos</span>
+              <div class="dna-bar">
+                <div class="dna-fill" style="width: ${Math.min((researchGaps.noPhoto.length / dataCompleteness.total) * 100, 100)}%"></div>
+              </div>
+              <span class="dna-percent">${researchGaps.noPhoto.length}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stats-section">
+        <div class="stats-section-title collapsible" onclick="toggleSection('gender-distribution')">
+          👥 Gender Distribution <span class="collapse-icon" onclick="event.stopPropagation(); toggleSection('gender-distribution');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
+        </div>
+        <div class="stats-section-content" id="gender-distribution">
+          <div class="dna-breakdown">
+            <div class="dna-item">
+              <span class="dna-label">👨 Male</span>
+              <div class="dna-bar">
+                <div class="dna-fill" style="width: ${(genderStats.male / totalPeople) * 100}%"></div>
+              </div>
+              <span class="dna-percent">${genderStats.male}</span>
+            </div>
+            <div class="dna-item">
+              <span class="dna-label">👩 Female</span>
+              <div class="dna-bar">
+                <div class="dna-fill" style="width: ${(genderStats.female / totalPeople) * 100}%"></div>
+              </div>
+              <span class="dna-percent">${genderStats.female}</span>
+            </div>
+            ${genderStats.unknown > 0 ? `
+            <div class="dna-item">
+              <span class="dna-label">❓ Unknown</span>
+              <div class="dna-bar">
+                <div class="dna-fill" style="width: ${(genderStats.unknown / totalPeople) * 100}%"></div>
+              </div>
+              <span class="dna-percent">${genderStats.unknown}</span>
+            </div>
+            ` : ''}
+          </div>
+        </div>
+      </div>
+
+      <div class="stats-section">
+        <div class="stats-section-title collapsible" onclick="toggleSection('lifespan')">
+          ⏰ Average Lifespan by Generation <span class="collapse-icon" onclick="event.stopPropagation(); toggleSection('lifespan');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
+        </div>
+        <div class="stats-section-content" id="lifespan">
+          <div class="dna-breakdown">
+            ${Array.from(lifespanByGeneration.entries())
+              .sort((a, b) => a[0] - b[0])
+              .map(([generation, ages]) => {
+                const avgAge = ages.reduce((sum, age) => sum + age, 0) / ages.length;
+                const maxAge = Math.max(...ages);
+                const minAge = Math.min(...ages);
+                return `
+                  <div class="dna-item">
+                    <span class="dna-label">Gen ${generation}: ${ages.length} people</span>
+                    <div class="dna-bar">
+                      <div class="dna-fill" style="width: ${Math.min((avgAge / 100) * 100, 100)}%"></div>
+                    </div>
+                    <span class="dna-percent">${avgAge.toFixed(1)}</span>
+                  </div>
+                  <div style="font-size: 10px; color: #888; margin-left: 8px; margin-bottom: 4px;">
+                    Range: ${minAge}-${maxAge} years
+                  </div>
+                `;
+              }).join('')}
+          </div>
+        </div>
+      </div>
+
+      <div class="stats-section">
+        <div class="stats-section-title collapsible" onclick="toggleSection('migration')">
+          🌍 Migration Patterns <span class="collapse-icon" onclick="event.stopPropagation(); toggleSection('migration');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
+        </div>
+        <div class="stats-section-content" id="migration">
+          <div class="dna-breakdown">
+            ${(() => {
+              const migrationEntries = Array.from(migrationPatterns.entries())
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 6);
+              const maxCount = migrationEntries.length > 0 ? Math.max(...migrationEntries.map(([, count]) => count)) : 1;
+              
+              return migrationEntries.map(([migration, count]) => `
+                <div class="dna-item">
+                  <span class="dna-label">${migration}</span>
+                  <div class="dna-bar">
+                    <div class="dna-fill" style="width: ${(count / maxCount) * 100}%"></div>
+                  </div>
+                  <span class="dna-percent">${count}</span>
+                </div>
+              `).join('');
+            })()}
+          </div>
+        </div>
+      </div>
+
+      <div class="stats-section">
+        <div class="stats-section-title collapsible" onclick="toggleSection('dna-inheritance')">
+          🧬 DNA Inheritance by Generation <span class="collapse-icon" onclick="event.stopPropagation(); toggleSection('dna-inheritance');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
+        </div>
+        <div class="stats-section-content" id="dna-inheritance">
         <div class="dna-breakdown">
           ${dnaBreakdown.map(item => `
             <div class="dna-item">
@@ -912,11 +1035,15 @@ document.addEventListener("DOMContentLoaded", () => {
               <span class="dna-percent">${item.dnaPercent}%</span>
             </div>
           `).join('')}
+          </div>
         </div>
       </div>
 
       <div class="stats-section">
-        <div class="stats-section-title">Countries of Origin</div>
+        <div class="stats-section-title collapsible" onclick="toggleSection('countries-origin')">
+          🌎 Countries of Origin <span class="collapse-icon" onclick="event.stopPropagation(); toggleSection('countries-origin');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
+        </div>
+        <div class="stats-section-content" id="countries-origin">
         <div class="dna-breakdown">
           ${Array.from(countries.entries())
             .sort((a, b) => b[1] - a[1])
@@ -930,11 +1057,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 <span class="dna-percent">${count}</span>
               </div>
             `).join('')}
+          </div>
         </div>
       </div>
 
       <div class="stats-section">
-        <div class="stats-section-title">DNA Contribution by Ethnicity</div>
+        <div class="stats-section-title collapsible" onclick="toggleSection('dna-ethnicity')">
+          🧬 DNA Contribution by Ethnicity <span class="collapse-icon" onclick="event.stopPropagation(); toggleSection('dna-ethnicity');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
+        </div>
+        <div class="stats-section-content" id="dna-ethnicity">
         <div class="dna-breakdown">
           ${(() => {
             // Calculate DNA contribution by tracing ancestry properly
@@ -1012,6 +1143,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 `;
               }).join('');
           })()}
+          </div>
         </div>
       </div>
     `;
@@ -1037,12 +1169,101 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  // Initialize timeline panel
+  function initializeTimelinePanel() {
+    const allNodes = root.descendants();
+    
+    // Extract birth years and create timeline data
+    const timelineData = allNodes
+      .map(node => {
+        if (!node.data.birthDate || node.data.birthDate === "Unknown" || node.data.birthDate === "UNKNOWN") return null;
+        
+        // Extract year from birth date
+        const yearMatch = node.data.birthDate.match(/\b(19|20)\d{2}\b/) || node.data.birthDate.match(/\b\d{4}\b/);
+        if (!yearMatch) return null;
+        
+        const year = parseInt(yearMatch[0]);
+        if (year < 1000 || year > 2100) return null; // Filter out unreasonable years
+        
+        return {
+          year,
+          name: node.data.name,
+          birthDate: node.data.birthDate,
+          deathDate: node.data.deathDate,
+          birthPlace: node.data.birthPlace,
+          sex: node.data.sex,
+          depth: node.depth,
+          country: getCountry(node.data.birthPlace)
+        };
+      })
+      .filter(item => item !== null)
+      .sort((a, b) => a!.year - b!.year);
+
+    // Group by decade for better visualization
+    const decadeGroups = new Map<number, any[]>();
+    timelineData.forEach(item => {
+      const decade = Math.floor(item!.year / 10) * 10;
+      if (!decadeGroups.has(decade)) {
+        decadeGroups.set(decade, []);
+      }
+      decadeGroups.get(decade)!.push(item);
+    });
+
+    // Create timeline HTML
+    timelinePanel.innerHTML = `
+      <div class="timeline-title">📅 Family Timeline</div>
+      <div class="timeline-content">
+        ${Array.from(decadeGroups.entries())
+          .sort((a, b) => a[0] - b[0])
+          .map(([decade, people]) => `
+            <div class="timeline-decade">
+              <div class="decade-header">${decade}s</div>
+              <div class="decade-people">
+                ${people.slice(0, 10).map(person => `
+                  <div class="timeline-person" onclick="showPersonModal(${JSON.stringify(person).replace(/"/g, '&quot;')}, ${person.depth})">
+                    <div class="person-year">${person.year}</div>
+                    <div class="person-name">${person.name}</div>
+                    <div class="person-place">${person.birthPlace}</div>
+                    <div class="person-country">${person.country}</div>
+                  </div>
+                `).join('')}
+                ${people.length > 10 ? `<div class="more-people">+${people.length - 10} more</div>` : ''}
+              </div>
+            </div>
+          `).join('')}
+      </div>
+    `;
+  }
+
   // Close statistics dashboard when clicking outside
   document.addEventListener("click", (event) => {
     if (isStatsDashboardVisible && 
         !statsDashboard.contains(event.target as Node) && 
         !statsToggleBtn.contains(event.target as Node)) {
       closeStatsDashboard();
+    }
+    if (isTimelinePanelVisible && 
+        !timelinePanel.contains(event.target as Node) && 
+        !timelineToggleBtn.contains(event.target as Node)) {
+      closeTimelinePanel();
+    }
+  });
+
+  // Close timeline panel function
+  function closeTimelinePanel() {
+    isTimelinePanelVisible = false;
+    timelinePanel.classList.add("hidden");
+    timelineToggleBtn.textContent = "📅";
+  }
+
+  // Toggle timeline panel visibility
+  timelineToggleBtn.addEventListener("click", () => {
+    isTimelinePanelVisible = !isTimelinePanelVisible;
+    timelinePanel.classList.toggle("hidden", !isTimelinePanelVisible);
+    timelineToggleBtn.textContent = isTimelinePanelVisible ? "✕" : "📅";
+    
+    if (isTimelinePanelVisible) {
+      initializeTimelinePanel();
     }
   });
 
@@ -1052,6 +1273,23 @@ document.addEventListener("DOMContentLoaded", () => {
     filterPanel.classList.toggle("hidden", !isFilterPanelVisible);
     filterToggleBtn.textContent = isFilterPanelVisible ? "✕" : "⚙";
   });
+
+  // Toggle section functionality
+  (window as any).toggleSection = function(sectionId: string) {
+    const content = document.getElementById(sectionId);
+    const title = document.querySelector(`[onclick="toggleSection('${sectionId}')"]`);
+    const icon = title?.querySelector('.collapse-icon');
+    
+    if (content && icon) {
+      if (content.style.display === 'none') {
+        content.style.display = 'block';
+        icon.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg>';
+      } else {
+        content.style.display = 'none';
+        icon.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9,18 15,12 9,6"></polyline></svg>';
+      }
+    }
+  };
 
   // Make functions globally available
   (window as any).updateGenerationFilter = updateGenerationFilter;
