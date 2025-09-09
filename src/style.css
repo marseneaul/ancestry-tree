@@ -76,6 +76,22 @@ body {
     transition: transform 0.3s;
   }
 
+  .node.root-node {
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0% {
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+    }
+    50% {
+      filter: drop-shadow(0 4px 12px rgba(74, 144, 226, 0.4));
+    }
+    100% {
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+    }
+  }
+
   .node.highlighted circle, .node.highlighted rect {
     stroke: orange;
     stroke-width: 3;
@@ -135,6 +151,29 @@ body {
   .node.highlighted rect {
     stroke: orange !important;
     stroke-width: 3px;
+  }
+
+  /* Animated transitions for nodes */
+  .node-enter {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+
+  .node-enter-active {
+    opacity: 1;
+    transform: scale(1);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .node-exit {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .node-exit-active {
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.3s ease, transform 0.3s ease;
   }
 
   /* Enhanced Modal Styles */
@@ -556,8 +595,8 @@ body {
   /* Filter panel toggle button */
   .filter-toggle-btn {
     position: fixed;
-    top: 84px;
-    left: 20px;
+    top: 80px;
+    left: 80px;
     width: 40px;
     height: 40px;
     border: 1px solid #ddd;
@@ -578,6 +617,141 @@ body {
     background: #f8f9fa;
     border-color: #007bff;
     color: #007bff;
+  }
+
+  /* Statistics Dashboard */
+  .stats-dashboard {
+    position: fixed;
+    top: 130px;
+    left: 20px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    z-index: 300;
+    max-width: 300px;
+    max-height: calc(100vh - 160px);
+    overflow-y: auto;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .stats-dashboard.hidden {
+    display: none;
+  }
+
+  .stats-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #333;
+    border-bottom: 2px solid #4a90e2;
+    padding-bottom: 8px;
+  }
+
+  .stats-section {
+    margin-bottom: 15px;
+  }
+
+  .stats-section-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 8px;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .stat-item {
+    background: #f8f9fa;
+    padding: 8px;
+    border-radius: 6px;
+    text-align: center;
+    border: 1px solid #e9ecef;
+  }
+
+  .stat-value {
+    font-size: 16px;
+    font-weight: bold;
+    color: #4a90e2;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: #666;
+    margin-top: 2px;
+  }
+
+  .dna-breakdown {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 10px;
+    margin-top: 10px;
+  }
+
+  .dna-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 12px;
+    gap: 8px;
+  }
+
+  .dna-label {
+    min-width: 120px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .dna-bar {
+    flex: 1;
+    height: 8px;
+    background: #e9ecef;
+    border-radius: 4px;
+    overflow: hidden;
+    min-width: 60px;
+  }
+
+  .dna-percent {
+    min-width: 40px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .dna-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4a90e2, #7bb3f0);
+    transition: width 0.5s ease;
+  }
+
+  .stats-toggle-btn {
+    position: fixed;
+    top: 80px;
+    left: 20px;
+    width: 40px;
+    height: 40px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: all 0.2s ease;
+  }
+
+  .stats-toggle-btn:hover {
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   }
 
   .filter-panel.hidden {

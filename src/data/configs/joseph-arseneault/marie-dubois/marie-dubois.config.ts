@@ -5,7 +5,7 @@ import { thomasTherrienConfig } from "./thomas-therrien.config";
 export const marieDuboisConfig = {
     name: "Marie Leonie Dubois",
     sex: "Female",
-    birthPlace: "Nicolet, Canada East, British North America",
+    birthPlace: "Nicolet, Canada East, Canada",
     deathPlace: "Flint, Genesee County, Michigan, United States",
     birthDate: "31 March 1861",
     deathDate: "27 November 1934",

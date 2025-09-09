@@ -155,10 +155,17 @@ document.addEventListener("DOMContentLoaded", () => {
   `;
   app.appendChild(header);
 
+  // Add Statistics Toggle Button
+  const statsToggleBtn = document.createElement("button");
+  statsToggleBtn.className = "stats-toggle-btn";
+  statsToggleBtn.textContent = "📊";
+  statsToggleBtn.title = "Toggle Statistics";
+  app.appendChild(statsToggleBtn);
+
   // Add Filter Toggle Button
   const filterToggleBtn = document.createElement("button");
   filterToggleBtn.className = "filter-toggle-btn";
-  filterToggleBtn.innerHTML = "⚙";
+  filterToggleBtn.textContent = "⚙";
   filterToggleBtn.title = "Toggle Filters";
   app.appendChild(filterToggleBtn);
 
@@ -204,8 +211,14 @@ document.addEventListener("DOMContentLoaded", () => {
   app.appendChild(container);
 
   // Create Filter Panel
+  // Create and append the statistics dashboard
+  const statsDashboard = document.createElement("div");
+  statsDashboard.className = "stats-dashboard hidden";
+  statsDashboard.id = "stats-dashboard";
+  app.appendChild(statsDashboard);
+
   const filterPanel = document.createElement("div");
-  filterPanel.className = "filter-panel";
+  filterPanel.className = "filter-panel hidden";
   filterPanel.id = "filter-panel";
   app.appendChild(filterPanel);
 
@@ -626,11 +639,263 @@ document.addEventListener("DOMContentLoaded", () => {
       });
   }
 
+  // Statistics dashboard state
+  let isStatsDashboardVisible = false;
+
+  // Initialize statistics dashboard
+  function initializeStatsDashboard() {
+    // Use the same root data that's used in the tree (after updateTree has been called)
+    const allNodes = root.descendants();
+    
+    // Debug: Log the number of nodes found and data structure
+    console.log('Total nodes found:', allNodes.length);
+    console.log('Root data:', root.data);
+    console.log('Root children:', root.children?.length || 0);
+    console.log('All nodes sample:', allNodes.slice(0, 5).map(n => ({ name: n.data.name, depth: n.depth })));
+    
+    // Calculate statistics
+    const totalPeople = allNodes.length;
+    const maxDepth = d3.max(allNodes, d => d.depth) || 0;
+    const countries = new Map<string, number>();
+    const birthYears = allNodes
+      .map(d => d.data.birthDate)
+      .filter(date => date && date !== "Unknown")
+      .map(date => {
+        // Handle different date formats: "13 August 1997", "1997-08-13", "circa 1850", "542", etc.
+        // First try: match 4-digit years starting with 19 or 20 (modern dates)
+        const modernYearMatch = date.match(/\b(19|20)\d{2}\b/);
+        if (modernYearMatch) {
+          return parseInt(modernYearMatch[0]);
+        }
+        // Second try: match any 4-digit number (including older dates like 542, 1200, etc.)
+        const anyYearMatch = date.match(/\b\d{4}\b/);
+        if (anyYearMatch) {
+          const year = parseInt(anyYearMatch[0]);
+          // Include reasonable years (500-2100) to cover ancient to modern dates
+          if (year >= 500 && year <= 2100) {
+            return year;
+          }
+        }
+        // Third try: match 3-digit years (like 542)
+        const threeDigitMatch = date.match(/\b\d{3}\b/);
+        if (threeDigitMatch) {
+          const year = parseInt(threeDigitMatch[0]);
+          // Include 3-digit years (500-999)
+          if (year >= 500 && year <= 999) {
+            return year;
+          }
+        }
+        return null;
+      })
+      .filter(year => year !== null) as number[];
+
+    // Count countries
+    allNodes.forEach(node => {
+      const country = getCountry(node.data.birthPlace);
+      countries.set(country, (countries.get(country) || 0) + 1);
+    });
+    
+    // Debug: Log some sample data
+    console.log('Sample nodes:', allNodes.slice(0, 3).map(n => ({ name: n.data.name, depth: n.depth })));
+    console.log('Countries found:', Array.from(countries.entries()));
+
+    // Calculate DNA breakdown by generation
+    const dnaBreakdown = [];
+    for (let depth = 0; depth <= maxDepth; depth++) {
+      const nodesAtDepth = allNodes.filter(d => d.depth === depth);
+      if (nodesAtDepth.length > 0) {
+        const dnaPercent = (100 / Math.pow(2, depth)).toFixed(1);
+        dnaBreakdown.push({
+          generation: depth,
+          count: nodesAtDepth.length,
+          dnaPercent: parseFloat(dnaPercent)
+        });
+      }
+    }
+
+    // Create dashboard HTML
+    statsDashboard.innerHTML = `
+      <div class="stats-title">📊 Family Tree Statistics</div>
+      
+      <div class="stats-section">
+        <div class="stats-section-title">Overview</div>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-value">${totalPeople}</div>
+            <div class="stat-label">Total People</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">${maxDepth + 1}</div>
+            <div class="stat-label">Generations</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">${countries.size}</div>
+            <div class="stat-label">Countries</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">${birthYears.length > 0 ? Math.min(...birthYears) : 'N/A'}</div>
+            <div class="stat-label">Earliest Birth</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stats-section">
+        <div class="stats-section-title">DNA Inheritance by Generation</div>
+        <div class="dna-breakdown">
+          ${dnaBreakdown.map(item => `
+            <div class="dna-item">
+              <span class="dna-label">Gen ${item.generation}: ${item.count} people</span>
+              <div class="dna-bar">
+                <div class="dna-fill" style="width: ${Math.min(item.dnaPercent * 2, 100)}%"></div>
+              </div>
+              <span class="dna-percent">${item.dnaPercent}%</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      <div class="stats-section">
+        <div class="stats-section-title">Countries of Origin</div>
+        <div class="dna-breakdown">
+          ${Array.from(countries.entries())
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 8)
+            .map(([country, count]) => `
+              <div class="dna-item">
+                <span class="dna-label">${country}</span>
+                <div class="dna-bar">
+                  <div class="dna-fill" style="width: ${(count / totalPeople) * 100}%"></div>
+                </div>
+                <span class="dna-percent">${count}</span>
+              </div>
+            `).join('')}
+        </div>
+      </div>
+
+      <div class="stats-section">
+        <div class="stats-section-title">DNA Contribution by Ethnicity</div>
+        <div class="dna-breakdown">
+          ${(() => {
+            // Calculate DNA contribution by tracing ancestry properly
+            const countryDnaContribution = new Map<string, number>();
+            const visitedNodes = new Set<string>(); // Prevent infinite recursion
+            
+            // Function to trace ancestry and assign DNA contribution
+            function traceAncestry(node: any, depth: number) {
+              // Prevent infinite recursion
+              if (visitedNodes.has(node.data.name) || depth > 20) {
+                return;
+              }
+              visitedNodes.add(node.data.name);
+              
+              const country = getCountry(node.data.birthPlace);
+              console.log(`Tracing ${node.data.name} (depth ${depth}): ${node.data.birthPlace} -> ${country}`);
+              
+              if (country !== "United States" && country !== "Canada") {
+                // Found a non-US/Canada ancestor - assign DNA contribution and stop
+                const dnaPercent = 100 / Math.pow(2, depth);
+                console.log(`  -> Adding ${dnaPercent}% to ${country}`);
+                countryDnaContribution.set(country, (countryDnaContribution.get(country) || 0) + dnaPercent);
+              } else {
+                // US/Canada ancestor - recurse to parents
+                console.log(`  -> Recursing to parents (US/Canada)`);
+                let hasParents = false;
+                if (node.data.parents) {
+                  node.data.parents.forEach((parent: any) => {
+                    if (parent) {
+                      // Find the parent node in the tree by matching the data
+                      const parentNode = allNodes.find(n => 
+                        n.data.name === parent.name && 
+                        n.data.birthDate === parent.birthDate &&
+                        n.data.birthPlace === parent.birthPlace
+                      );
+                      if (parentNode && !visitedNodes.has(parentNode.data.name)) {
+                        hasParents = true;
+                        traceAncestry(parentNode, depth + 1);
+                      }
+                    }
+                  });
+                }
+                
+                // If no parents found (dead end), count appropriately
+                if (!hasParents) {
+                  const dnaPercent = 100 / Math.pow(2, depth);
+                  // TODO: UNDO THIS CHANGE - Treating dead-end Canada as French for DNA calculation
+                  const deadEndCountry = country === "Canada" ? "France" : "Unknown";
+                  console.log(`  -> Dead end: Adding ${dnaPercent}% to ${deadEndCountry}`);
+                  countryDnaContribution.set(deadEndCountry, (countryDnaContribution.get(deadEndCountry) || 0) + dnaPercent);
+                }
+              }
+              
+              visitedNodes.delete(node.data.name); // Clean up for other branches
+            }
+            
+            // Start tracing from the root (you)
+            const rootNode = allNodes.find(n => n.depth === 0);
+            if (rootNode) {
+              traceAncestry(rootNode, 0);
+            }
+            
+            console.log('Final DNA contributions:', Array.from(countryDnaContribution.entries()));
+            
+            return Array.from(countryDnaContribution.entries())
+              .sort((a, b) => b[1] - a[1])
+              .slice(0, 8)
+              .map(([country, dnaPercent]) => {
+                const svgSrc = countrySvgs[country];
+                const flagHtml = svgSrc 
+                  ? `<img src="${svgSrc}" style="width: 16px; height: 16px; display: inline-block; margin-right: 6px; object-fit: contain;">`
+                  : '';
+                return `
+                  <div class="dna-item">
+                    <span class="dna-label">${flagHtml}${country}</span>
+                    <div class="dna-bar">
+                      <div class="dna-fill" style="width: ${Math.min(dnaPercent * 2, 100)}%"></div>
+                    </div>
+                    <span class="dna-percent">${dnaPercent.toFixed(1)}%</span>
+                  </div>
+                `;
+              }).join('');
+          })()}
+        </div>
+      </div>
+    `;
+  }
+
+  // Close statistics dashboard function
+  function closeStatsDashboard() {
+    isStatsDashboardVisible = false;
+    statsDashboard.classList.add("hidden");
+    statsToggleBtn.textContent = "📊";
+  }
+
+  // Toggle statistics dashboard visibility
+  statsToggleBtn.addEventListener("click", () => {
+    isStatsDashboardVisible = !isStatsDashboardVisible;
+    statsDashboard.classList.toggle("hidden", !isStatsDashboardVisible);
+    statsToggleBtn.textContent = isStatsDashboardVisible ? "✕" : "📊";
+    
+    console.log('Stats button clicked, visible:', isStatsDashboardVisible, 'button text:', statsToggleBtn.textContent);
+    
+    if (isStatsDashboardVisible) {
+      initializeStatsDashboard();
+    }
+  });
+
+  // Close statistics dashboard when clicking outside
+  document.addEventListener("click", (event) => {
+    if (isStatsDashboardVisible && 
+        !statsDashboard.contains(event.target as Node) && 
+        !statsToggleBtn.contains(event.target as Node)) {
+      closeStatsDashboard();
+    }
+  });
+
   // Toggle filter panel visibility
   filterToggleBtn.addEventListener("click", () => {
     isFilterPanelVisible = !isFilterPanelVisible;
     filterPanel.classList.toggle("hidden", !isFilterPanelVisible);
-    filterToggleBtn.innerHTML = isFilterPanelVisible ? "✕" : "⚙";
+    filterToggleBtn.textContent = isFilterPanelVisible ? "✕" : "⚙";
   });
 
   // Make functions globally available
@@ -638,6 +903,7 @@ document.addEventListener("DOMContentLoaded", () => {
   (window as any).updateCountryFilter = updateCountryFilter;
   (window as any).selectAllCountries = selectAllCountries;
   (window as any).selectNoCountries = selectNoCountries;
+  (window as any).closeStatsDashboard = closeStatsDashboard;
 
   function updateTree() {
     treeLayout(root);
@@ -647,15 +913,14 @@ document.addEventListener("DOMContentLoaded", () => {
       d.y = height - d.y!;  // Invert y: root now at bottom
     });
 
-    // Center the tree horizontally within the container
-    const containerWidth = document.getElementById("tree-container")?.clientWidth || width;
-    const horizontalCenter = containerWidth / 2;
+    // Center the tree horizontally within the viewport
+    const viewportWidth = window.innerWidth;
+    const horizontalCenter = viewportWidth / 2;
     const rootXShift = horizontalCenter - (root.x ?? 0);
+    
     root.descendants().forEach(d => {
       d.x = (d.x ?? 0) + rootXShift;
     });
-
-    const minX = Math.min(...root.descendants().map(d => d.x ?? 0));
 
     // Links
     const links = g.selectAll(".link")
@@ -677,7 +942,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .data(root.descendants(), d => (d as any).id || d.data.name);
 
     const nodeEnter = nodes.enter().append("g")
-      .attr("class", "node")
+      .attr("class", d => d.depth === 0 ? "node root-node" : "node")
       .attr("transform", d => `translate(${d.x ?? 0},${d.y ?? 0})`)
       .attr("opacity", 0)
       .attr("aria-label", d => d.data.name)  // Accessibility
