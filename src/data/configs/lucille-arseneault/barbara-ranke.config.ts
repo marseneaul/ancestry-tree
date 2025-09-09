@@ -223,6 +223,7 @@ export const barbaraRankeConfig = {
                                                             parents: [
                                                                 {
                                                                     name: "Samuel Bollinger",
+                                                                    sex: "Male",
                                                                     birthPlace: "Rued, Aargau, Switzerland",
                                                                     deathPlace: "Switzerland",
                                                                     birthDate: "1603",

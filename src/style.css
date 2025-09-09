@@ -705,8 +705,11 @@ body {
 
   .dna-label {
     min-width: 120px;
+    width: 120px;
     white-space: nowrap;
     flex-shrink: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .dna-bar {

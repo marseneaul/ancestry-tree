@@ -713,6 +713,91 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
+    // Calculate additional statistics
+    const genderStats = { male: 0, female: 0, unknown: 0 };
+    const lifespanByGeneration = new Map<number, number[]>();
+    const migrationPatterns = new Map<string, number>();
+    const dataCompleteness = {
+      total: 0,
+      hasBirthDate: 0,
+      hasDeathDate: 0,
+      hasBirthPlace: 0,
+      hasDeathPlace: 0,
+      hasPhoto: 0,
+      hasStory: 0,
+      hasParents: 0
+    };
+    const researchGaps = {
+      missingBirthDate: [] as any[],
+      missingDeathDate: [] as any[],
+      missingBirthPlace: [] as any[],
+      missingParents: [] as any[],
+      noPhoto: [] as any[]
+    };
+    
+    allNodes.forEach(node => {
+      dataCompleteness.total++;
+      
+      // Data completeness tracking
+      if (node.data.birthDate && node.data.birthDate !== "Unknown") dataCompleteness.hasBirthDate++;
+      if (node.data.deathDate && node.data.deathDate !== "N/A" && node.data.deathDate !== "Unknown") dataCompleteness.hasDeathDate++;
+      if (node.data.birthPlace && node.data.birthPlace !== "Unknown") dataCompleteness.hasBirthPlace++;
+      if (node.data.deathPlace && node.data.deathPlace !== "Unknown") dataCompleteness.hasDeathPlace++;
+      if (node.data.imageUrl) dataCompleteness.hasPhoto++;
+      if (node.data.story && node.data.story !== "Stories coming soon...") dataCompleteness.hasStory++;
+      if (node.data.parents && node.data.parents.length > 0) dataCompleteness.hasParents++;
+      
+      // Research gaps identification
+      if (!node.data.birthDate || node.data.birthDate === "Unknown") {
+        researchGaps.missingBirthDate.push(node);
+      }
+      if (!node.data.deathDate || node.data.deathDate === "N/A" || node.data.deathDate === "Unknown") {
+        researchGaps.missingDeathDate.push(node);
+      }
+      if (!node.data.birthPlace || node.data.birthPlace === "Unknown") {
+        researchGaps.missingBirthPlace.push(node);
+      }
+      if (!node.data.parents || node.data.parents.length === 0) {
+        researchGaps.missingParents.push(node);
+      }
+      if (!node.data.imageUrl) {
+        researchGaps.noPhoto.push(node);
+      }
+      
+      // Gender distribution
+      if (node.data.sex === "Male") genderStats.male++;
+      else if (node.data.sex === "Female") genderStats.female++;
+      else {
+        console.log(node.data);
+        genderStats.unknown++;
+      }
+      
+      // Lifespan by generation
+      if (node.data.birthDate && node.data.deathDate && node.data.deathDate !== "N/A") {
+        const age = calculateAgeAtDate(node.data.birthDate, node.data.deathDate);
+        if (age !== null && age > 0) {
+          if (!lifespanByGeneration.has(node.depth)) {
+            lifespanByGeneration.set(node.depth, []);
+          }
+          lifespanByGeneration.get(node.depth)!.push(age);
+        }
+      }
+      
+      // Migration patterns (parent-child country changes) - only for first 15 generations
+      if (node.data.parents && node.depth <= 15) {
+        const currentCountry = getCountry(node.data.birthPlace);
+        node.data.parents.forEach(parent => {
+          if (parent) {
+            const parentCountry = getCountry(parent.birthPlace);
+            if (currentCountry !== parentCountry) {
+              const migrationKey = `${parentCountry} → ${currentCountry}`;
+              migrationPatterns.set(migrationKey, (migrationPatterns.get(migrationKey) || 0) + 1);
+            }
+          }
+        });
+      }
+    });
+
     // Create dashboard HTML
     statsDashboard.innerHTML = `
       <div class="stats-title">📊 Family Tree Statistics</div>
@@ -736,6 +821,82 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="stat-value">${birthYears.length > 0 ? Math.min(...birthYears) : 'N/A'}</div>
             <div class="stat-label">Earliest Birth</div>
           </div>
+        </div>
+      </div>
+
+      <div class="stats-section">
+        <div class="stats-section-title">Gender Distribution</div>
+        <div class="dna-breakdown">
+          <div class="dna-item">
+            <span class="dna-label">👨 Male</span>
+            <div class="dna-bar">
+              <div class="dna-fill" style="width: ${(genderStats.male / totalPeople) * 100}%"></div>
+            </div>
+            <span class="dna-percent">${genderStats.male}</span>
+          </div>
+          <div class="dna-item">
+            <span class="dna-label">👩 Female</span>
+            <div class="dna-bar">
+              <div class="dna-fill" style="width: ${(genderStats.female / totalPeople) * 100}%"></div>
+            </div>
+            <span class="dna-percent">${genderStats.female}</span>
+          </div>
+          ${genderStats.unknown > 0 ? `
+          <div class="dna-item">
+            <span class="dna-label">❓ Unknown</span>
+            <div class="dna-bar">
+              <div class="dna-fill" style="width: ${(genderStats.unknown / totalPeople) * 100}%"></div>
+            </div>
+            <span class="dna-percent">${genderStats.unknown}</span>
+          </div>
+          ` : ''}
+        </div>
+      </div>
+
+      <div class="stats-section">
+        <div class="stats-section-title">Average Lifespan by Generation</div>
+        <div class="dna-breakdown">
+          ${Array.from(lifespanByGeneration.entries())
+            .sort((a, b) => a[0] - b[0])
+            .map(([generation, ages]) => {
+              const avgAge = ages.reduce((sum, age) => sum + age, 0) / ages.length;
+              const maxAge = Math.max(...ages);
+              const minAge = Math.min(...ages);
+              return `
+                <div class="dna-item">
+                  <span class="dna-label">Gen ${generation}: ${ages.length} people</span>
+                  <div class="dna-bar">
+                    <div class="dna-fill" style="width: ${Math.min((avgAge / 100) * 100, 100)}%"></div>
+                  </div>
+                  <span class="dna-percent">${avgAge.toFixed(1)}</span>
+                </div>
+                <div style="font-size: 10px; color: #888; margin-left: 8px; margin-bottom: 4px;">
+                  Range: ${minAge}-${maxAge} years
+                </div>
+              `;
+            }).join('')}
+        </div>
+      </div>
+
+      <div class="stats-section">
+        <div class="stats-section-title">Migration Patterns</div>
+        <div class="dna-breakdown">
+          ${(() => {
+            const migrationEntries = Array.from(migrationPatterns.entries())
+              .sort((a, b) => b[1] - a[1])
+              .slice(0, 6);
+            const maxCount = migrationEntries.length > 0 ? Math.max(...migrationEntries.map(([, count]) => count)) : 1;
+            
+            return migrationEntries.map(([migration, count]) => `
+              <div class="dna-item">
+                <span class="dna-label">${migration}</span>
+                <div class="dna-bar">
+                  <div class="dna-fill" style="width: ${(count / maxCount) * 100}%"></div>
+                </div>
+                <span class="dna-percent">${count}</span>
+              </div>
+            `).join('');
+          })()}
         </div>
       </div>
 
@@ -789,16 +950,13 @@ document.addEventListener("DOMContentLoaded", () => {
               visitedNodes.add(node.data.name);
               
               const country = getCountry(node.data.birthPlace);
-              console.log(`Tracing ${node.data.name} (depth ${depth}): ${node.data.birthPlace} -> ${country}`);
               
               if (country !== "United States" && country !== "Canada") {
                 // Found a non-US/Canada ancestor - assign DNA contribution and stop
                 const dnaPercent = 100 / Math.pow(2, depth);
-                console.log(`  -> Adding ${dnaPercent}% to ${country}`);
                 countryDnaContribution.set(country, (countryDnaContribution.get(country) || 0) + dnaPercent);
               } else {
                 // US/Canada ancestor - recurse to parents
-                console.log(`  -> Recursing to parents (US/Canada)`);
                 let hasParents = false;
                 if (node.data.parents) {
                   node.data.parents.forEach((parent: any) => {
@@ -822,7 +980,6 @@ document.addEventListener("DOMContentLoaded", () => {
                   const dnaPercent = 100 / Math.pow(2, depth);
                   // TODO: UNDO THIS CHANGE - Treating dead-end Canada as French for DNA calculation
                   const deadEndCountry = country === "Canada" ? "France" : "Unknown";
-                  console.log(`  -> Dead end: Adding ${dnaPercent}% to ${deadEndCountry}`);
                   countryDnaContribution.set(deadEndCountry, (countryDnaContribution.get(deadEndCountry) || 0) + dnaPercent);
                 }
               }
@@ -835,8 +992,6 @@ document.addEventListener("DOMContentLoaded", () => {
             if (rootNode) {
               traceAncestry(rootNode, 0);
             }
-            
-            console.log('Final DNA contributions:', Array.from(countryDnaContribution.entries()));
             
             return Array.from(countryDnaContribution.entries())
               .sort((a, b) => b[1] - a[1])

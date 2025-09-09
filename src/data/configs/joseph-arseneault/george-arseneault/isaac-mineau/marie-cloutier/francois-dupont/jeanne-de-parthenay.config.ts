@@ -33,7 +33,7 @@ export const jeanneDeParthenayConfig = {
                     parents: [
                         {
                             name: "Pierre Maingot de Chausseroye",
-                	        sex: "Man",
+                	        sex: "Male",
                 	        birthPlace: "France",
                 	        deathPlace: "UNKNOWN",
                 	        birthDate: "UNKNOWN",
