@@ -35,6 +35,7 @@ export function traceMatrilineal(root: Person): string[] {  // Mitochondrial: mo
 
 export function calculateAgeAtDate(birthDate: string, atDateStr: string = "", currentDate: Date = new Date("2025-09-08")): number | null {
   if (!birthDate) return null;
+  if (birthDate[0] === '~' || birthDate[0] === '<' || birthDate[0] === '>') birthDate = birthDate.substring(1);
   const birth = new Date(birthDate);
   if (isNaN(birth.getTime())) return null;
   

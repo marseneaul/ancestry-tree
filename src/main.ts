@@ -5,7 +5,6 @@ import * as d3 from "d3";
 import { maxArseneaultConfig } from "./data/configs/max-arseneault.config";
 import { Person } from "./interfaces/person";
 import { buildHierarchy, getGenerations, tracePatrilineal, traceMatrilineal, getCountry, calculateAgeAtDate, countryColors, getInitials, getOrdinalFromNumber, estimateAncientBirthDate, getLeaves } from "./utils/utils";
-// import { format } from "date-fns"; 
 
 // Add this new function to extend a random chain with Neanderthal
 function extendWithNeanderthal(ancient: Person) {
