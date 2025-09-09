@@ -109,12 +109,12 @@ function showPersonModal(d: Person, depth: number) {
     <div style="display:flex; flex-direction:column; align-items:center; gap:16px; text-align:center; padding:8px;">
       ${imageHtml}
       ${placeholderHtml}
-      <h2 style="margin:0; font-size:20px; font-weight:700;">${d.name || "Unknown"}</h2>
-      ${relation ? `<div style="color:#444"><strong>Relation:</strong> ${relation}</div>` : ""}
-      <div style="color:#444">${d.birthDate ? `<strong>Born:</strong> ${d.birthDate}` : ""} ${d.birthPlace ? `(${d.birthPlace})` : ""}</div>
-      <div style="color:#444"><strong>Died:</strong> ${d.deathDate || "—"} ${age !== null && isDeceased ? `(age ${age})` : ""}</div>
-      ${age !== null && !isDeceased ? `<div style="color:#444"><strong>Age:</strong> ${age}</div>` : ""}
-      <div style="margin-top:8px; color:#666; font-style:italic; max-width:70vw">${(d as Person).story || "Stories coming soon..."}</div>
+      <h2 style="margin:0; font-size:20px; font-weight:700; color: var(--text-primary);">${d.name || "Unknown"}</h2>
+      ${relation ? `<div style="color: var(--text-secondary);"><strong>Relation:</strong> ${relation}</div>` : ""}
+      <div style="color: var(--text-secondary);">${d.birthDate ? `<strong>Born:</strong> ${d.birthDate}` : ""} ${d.birthPlace ? `(${d.birthPlace})` : ""}</div>
+      <div style="color: var(--text-secondary);"><strong>Died:</strong> ${d.deathDate || "—"} ${age !== null && isDeceased ? `(age ${age})` : ""}</div>
+      ${age !== null && !isDeceased ? `<div style="color: var(--text-secondary);"><strong>Age:</strong> ${age}</div>` : ""}
+      <div style="margin-top:8px; color: var(--text-tertiary); font-style:italic; max-width:70vw">${(d as Person).story || "Stories coming soon..."}</div>
     </div>
   `;
 
@@ -175,6 +175,12 @@ document.addEventListener("DOMContentLoaded", () => {
   filterToggleBtn.textContent = "⚙";
   filterToggleBtn.title = "Toggle Filters";
   app.appendChild(filterToggleBtn);
+
+  // Add Theme Toggle Button
+  const themeToggleBtn = document.createElement("button");
+  themeToggleBtn.className = "theme-toggle-btn";
+  themeToggleBtn.title = "Toggle Dark Mode";
+  app.appendChild(themeToggleBtn);
 
   // Add View Controls
   const viewControls = document.createElement("div");
@@ -337,18 +343,20 @@ document.addEventListener("DOMContentLoaded", () => {
   // Container (fixed, bottom-right). Style here so you don't need to touch CSS.
   const miniWrap = document.createElement("div");
   miniWrap.id = "minimap";
+  miniWrap.className = "minimap-container";
   Object.assign(miniWrap.style, {
     position: "fixed",
     right: "16px",
     bottom: "16px",
     width: `${miniW + 2 * miniPad}px`,
     height: `${miniH + 2 * miniPad}px`,
-    border: "1px solid #ccc",
-    background: "rgba(255,255,255,0.95)",
+    border: "1px solid var(--border-secondary)",
+    background: "var(--bg-secondary)",
     borderRadius: "8px",
-    boxShadow: "0 4px 8px rgba(0,0,0,0.15)",
+    boxShadow: "0 4px 8px var(--shadow-light)",
     zIndex: "1000",
     userSelect: "none",
+    transition: "background-color 0.3s ease, border-color 0.3s ease",
   });
   app.appendChild(miniWrap);
 
@@ -365,7 +373,7 @@ document.addEventListener("DOMContentLoaded", () => {
     .append("rect")
     .attr("class", "minimap-viewport")
     .attr("fill", "none")
-    .attr("stroke", "#000")
+    .attr("stroke", "var(--text-primary)")
     .attr("stroke-width", 1.5)
     .attr("pointer-events", "all"); // needed for drag
 
@@ -431,7 +439,7 @@ document.addEventListener("DOMContentLoaded", () => {
             .attr("y1", (d) => my(d.source.y))
             .attr("x2", (d) => mx(d.target.x))
             .attr("y2", (d) => my(d.target.y))
-            .attr("stroke", "#bbb")
+            .attr("stroke", "var(--text-tertiary)")
             .attr("stroke-width", 1),
         (update) =>
           update
@@ -1273,6 +1281,64 @@ document.addEventListener("DOMContentLoaded", () => {
     filterPanel.classList.toggle("hidden", !isFilterPanelVisible);
     filterToggleBtn.textContent = isFilterPanelVisible ? " " : "⚙";
   });
+
+  // Theme management
+  let currentTheme = localStorage.getItem('theme') || 'light';
+  
+  // Initialize theme
+  function initializeTheme() {
+    // Check for system preference if no saved theme
+    if (!localStorage.getItem('theme')) {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      currentTheme = prefersDark ? 'dark' : 'light';
+    }
+    
+    applyTheme(currentTheme);
+    updateThemeButton();
+  }
+  
+  function applyTheme(theme: string) {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+    currentTheme = theme;
+    
+    // Update minimap colors when theme changes
+    updateMinimapTheme();
+  }
+  
+  function updateMinimapTheme() {
+    // Update minimap viewport stroke color
+    if (miniViewport) {
+      miniViewport.attr("stroke", "var(--text-primary)");
+    }
+    
+    // Update minimap links stroke color
+    miniLinksG.selectAll("line")
+      .attr("stroke", "var(--text-tertiary)");
+  }
+  
+  function updateThemeButton() {
+    themeToggleBtn.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+  }
+  
+  // Toggle theme
+  themeToggleBtn.addEventListener("click", () => {
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    applyTheme(newTheme);
+    updateThemeButton();
+  });
+  
+  // Listen for system theme changes
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+    if (!localStorage.getItem('theme')) {
+      const newTheme = e.matches ? 'dark' : 'light';
+      applyTheme(newTheme);
+      updateThemeButton();
+    }
+  });
+  
+  // Initialize theme on load
+  initializeTheme();
 
   // Toggle section functionality
   (window as any).toggleSection = function(sectionId: string) {
