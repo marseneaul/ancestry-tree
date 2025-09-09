@@ -24,7 +24,7 @@ export const josephArseneaultConfig = {
             deathDate: "27 January 1969",
             parents: [
                 elizabethVossConfig,
-                {   // Farmer as occupation
+                {
                     name: "Joseph Hennecke",
                     sex: "Male",
                     birthPlace: "Fleckenberg, Schmallenberg, Hochsauerlandkreis, North Rhine-Westphalia, Germany",

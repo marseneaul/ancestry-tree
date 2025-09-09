@@ -7,7 +7,7 @@ export function buildHierarchy(root: Person): HierarchyNode<Person> {
   return hierarchy(root, d => {
     // Sort parents: mother (female/left) first, father (male/right) second
     if (d.parents) {
-      return d.parents.sort((a, b) => (a.sex === "Female" ? -1 : 1));
+      return d.parents.filter(p => p).sort((a, b) => (a.sex === "Female" ? -1 : 1));
     }
     return [];
   });
@@ -33,12 +33,30 @@ export function traceMatrilineal(root: Person): string[] {  // Mitochondrial: mo
   return path;
 }
 
-export function calculateAge(birthDate: string, deathDate: string, currentDate: Date = new Date(2025, 7, 24)): number | null {  // Aug 24, 2025 (month 7=Aug, 0-indexed)
-  if (deathDate !== "N/A") return null;  // Deceased, no age
+export function calculateAgeAtDate(birthDate: string, atDateStr: string = "", currentDate: Date = new Date("2025-09-08")): number | null {
+  if (!birthDate) return null;
   const birth = new Date(birthDate);
   if (isNaN(birth.getTime())) return null;
-  const age = currentDate.getFullYear() - birth.getFullYear();
-  return (currentDate.getMonth() > birth.getMonth() || (currentDate.getMonth() === birth.getMonth() && currentDate.getDate() >= birth.getDate())) ? age : age - 1;
+  
+  const atDate = atDateStr ? new Date(atDateStr) : currentDate;
+  if (isNaN(atDate.getTime())) return null;
+  
+  let age = atDate.getFullYear() - birth.getFullYear();
+  const monthDiff = atDate.getMonth() - birth.getMonth();
+  if (monthDiff < 0 || (monthDiff === 0 && atDate.getDate() < birth.getDate())) {
+    age--;
+  }
+  return age >= 0 ? age : null; // Avoid negative ages
+}
+
+// Helper for estimating ancient dates in BCE (returns string like "circa 50000 BCE")
+export function estimateAncientBirthDate(baseYear: number, generationsBack: number, genLength: number = 25): string {
+  const estimatedYear = baseYear - (generationsBack * genLength);
+  if (estimatedYear > 0) {
+    return `Circa ${estimatedYear}`;
+  } else {
+    return `Circa ${Math.abs(estimatedYear)} BCE`;
+  }
 }
 
 export function getCountry(birthPlace?: string): string {
@@ -108,16 +126,22 @@ export function getInitials(name?: string) {
 }
 
 export function getOrdinalFromNumber(num: number): string {
-  const numAsString = num.toString(); 
-  const lastDigit = numAsString.length === 1 ? numAsString : numAsString[-1];
-  switch(parseInt(lastDigit)) {
-    case 1:
-      return numAsString + "st";
-    case 2:
-      return numAsString + "nd";
-    case 3:
-      return numAsString + "rd";
-    default:
-      return numAsString + "th";
+  if (num % 100 >= 11 && num % 100 <= 13) {
+    return num + "th";
   }
+  switch (num % 10) {
+    case 1: return num + "st";
+    case 2: return num + "nd";
+    case 3: return num + "rd";
+    default: return num + "th";
+  }
+}
+
+export function getLeaves(person: Person): Person[] {
+  if (!person.parents || person.parents.length === 0) return [person];
+  let leaves = [];
+  for (let p of person.parents) {
+    if (p) leaves = leaves.concat(getLeaves(p));
+  }
+  return leaves;
 }

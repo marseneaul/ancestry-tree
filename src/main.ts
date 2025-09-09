@@ -4,8 +4,60 @@ import "./style.css";
 import * as d3 from "d3";
 import { maxArseneaultConfig } from "./data/configs/max-arseneault.config";
 import { Person } from "./interfaces/person";
-import { buildHierarchy, getGenerations, tracePatrilineal, traceMatrilineal, getCountry, calculateAge, countryColors, getInitials, getOrdinalFromNumber  } from "./utils/utils";
+import { buildHierarchy, getGenerations, tracePatrilineal, traceMatrilineal, getCountry, calculateAgeAtDate, countryColors, getInitials, getOrdinalFromNumber, estimateAncientBirthDate, getLeaves } from "./utils/utils";
 // import { format } from "date-fns"; 
+
+// Add this new function to extend a random chain with Neanderthal
+function extendWithNeanderthal(ancient: Person) {
+  // Parse ancient's birth year if available (fallback to 1800 for estimation)
+  let baseYear = 1800;
+  if (ancient.birthDate) {
+    const match = ancient.birthDate.match(/\d{4}/);
+    if (match) baseYear = parseInt(match[0]);
+  }
+
+  // Create Neanderthal node
+  const neanderthal: Person = {
+    name: "Neanderthal Woman",
+    sex: "Female",
+    birthPlace: "Eurasia",
+    birthDate: "circa 40000 BCE",
+    deathDate: "N/A",
+    parents: [],
+    story: "Symbolic representation of Neanderthal admixture in modern humans, from interbreeding ~40,000 years ago."
+  };
+
+  // Number of unknown ancestors in the trail (adjust for longer/shorter trail)
+  const numUnknowns = 1747;
+  let last: Person = neanderthal;
+
+  for (let i = numUnknowns; i > 0; i--) {
+    const sex = Math.random() > 0.5 ? "Male" : "Female";
+    const unk: Person = {
+      name: "Unknown Ancestor",
+      sex: sex,
+      birthPlace: "Unknown",
+      birthDate: estimateAncientBirthDate(baseYear, numUnknowns - i + 20), // Offset to go deeper
+      deathDate: "N/A",
+      parents: []
+    };
+    const isMotherLine = Math.random() > 0.5;
+    if (isMotherLine) {
+      unk.parents = [last];
+    } else {
+      unk.parents = [undefined, last];
+    }
+    last = unk;
+  }
+
+  // Attach the chain to the ancient ancestor
+  const isMotherAttach = Math.random() > 0.5;
+  if (isMotherAttach) {
+    ancient.parents = [last, ...(ancient.parents || [])];
+  } else {
+    ancient.parents = [...(ancient.parents || []), last];
+  }
+}
 
 /** Standardized modal image + placeholder; relation is optional */
 function showPersonModal(d: Person, depth: number) {
@@ -14,7 +66,10 @@ function showPersonModal(d: Person, depth: number) {
   if (!modal || !content) return;
 
   const initials = getInitials(d?.name);
-  const age = calculateAge(d.birthDate, d.deathDate);
+  const isDeceased = d.deathDate !== "N/A";
+  const age = isDeceased 
+    ? calculateAgeAtDate(d.birthDate ?? "", d.deathDate ?? "") 
+    : calculateAgeAtDate(d.birthDate ?? "");
 
   // Prefer a large image if available, fall back to avatar
   const imgSrc = (d as any)?.largeImageUrl || d.imageUrl || null;
@@ -57,8 +112,8 @@ function showPersonModal(d: Person, depth: number) {
       <h2 style="margin:0; font-size:20px; font-weight:700;">${d.name || "Unknown"}</h2>
       ${relation ? `<div style="color:#444"><strong>Relation:</strong> ${relation}</div>` : ""}
       <div style="color:#444">${d.birthDate ? `<strong>Born:</strong> ${d.birthDate}` : ""} ${d.birthPlace ? `(${d.birthPlace})` : ""}</div>
-      <div style="color:#444"><strong>Died:</strong> ${d.deathDate || "—"}</div>
-      ${age !== null ? `<div style="color:#444"><strong>Age:</strong> ${age}</div>` : ""}
+      <div style="color:#444"><strong>Died:</strong> ${d.deathDate || "—"} ${age !== null && isDeceased ? `(age ${age})` : ""}</div>
+      ${age !== null && !isDeceased ? `<div style="color:#444"><strong>Age:</strong> ${age}</div>` : ""}
       <div style="margin-top:8px; color:#666; font-style:italic; max-width:70vw">${(d as Person).story || "Stories coming soon..."}</div>
     </div>
   `;
@@ -142,14 +197,6 @@ document.addEventListener("DOMContentLoaded", () => {
   let width = window.innerWidth * 0.8;
   let height = window.innerHeight * 0.55;
   const margin = { top: 50, right: 150, bottom: 50, left: 150 };
-
-  function updateDimensions() {
-    width = window.innerWidth * 0.8;
-    height = window.innerHeight * 0.55;
-    svg
-      .attr("height", height)
-      .attr("viewBox", `${-margin.left} ${-margin.top} ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`);
-  }
 
   const svg = d3.select("#tree-container").append("svg")
     .attr("width", "100%")
@@ -372,9 +419,14 @@ document.addEventListener("DOMContentLoaded", () => {
       .attr("height", Math.max(10, rh));
   }
 
+  const rootPerson = maxArseneaultConfig;
+  // const leaves = getLeaves(rootPerson);
+  // if (leaves.length > 0) {
+  //   const randomLeaf = leaves[Math.floor(Math.random() * leaves.length)];
+  //   extendWithNeanderthal(randomLeaf);
+  // }
+  const root = buildHierarchy(rootPerson);
 
-
-  const root = buildHierarchy(maxArseneaultConfig);
   const treeLayout = d3.tree<Person>().size([width, height - 100]).nodeSize([120, 200]);  // Adjusted for flipped layout
 
   function updateTree() {
@@ -523,8 +575,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // Tooltips (Enhanced)
     nodeEnter.append("title")
       .text(d => {
-        const age = calculateAge(d.data.birthDate ?? "", d.data.deathDate ?? "N/A");
-        return `${d.data.name || "Unknown"}\nBorn: ${d.data.birthDate || "Unknown"} in ${d.data.birthPlace || "Unknown"}\nDied: ${d.data.deathDate || "N/A"} in ${d.data.deathPlace || "Unknown"}\nAge: ${age ?? "Deceased"}\nCountry: ${getCountry(d.data.birthPlace)}\nDNA Contribution: ~${(100 / Math.pow(2, d.depth)).toFixed(2)}%`;
+        const isDeceased = d.data.deathDate !== "N/A";
+        const age = isDeceased 
+          ? calculateAgeAtDate(d.data.birthDate ?? "", d.data.deathDate ?? "") 
+          : calculateAgeAtDate(d.data.birthDate ?? "");
+        return `${d.data.name || "Unknown"}\nBorn: ${d.data.birthDate || "Unknown"} in ${d.data.birthPlace || "Unknown"}\nDied: ${d.data.deathDate || "N/A"} in ${d.data.deathPlace || "Unknown"}\n${isDeceased ? "Died at age" : "Age"}: ${age ?? "Unknown"}\nCountry: ${getCountry(d.data.birthPlace)}\nDNA Contribution: ~${(100 / Math.pow(2, d.depth)).toFixed(2)}%`;
       });
 
     // Generation Labels (with Total DNA)
