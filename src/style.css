@@ -48,8 +48,8 @@ body {
   }
   
   #legend {
-    position: absolute;
-    top: 80px;
+    position: fixed;
+    top: 84px;
     right: 20px;
     background: white;
     padding: 10px;
@@ -57,6 +57,7 @@ body {
     border-radius: 4px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     max-width: 200px;
+    z-index: 200;
   }
   
   #legend ul {
@@ -357,4 +358,228 @@ body {
     padding: 2px 6px;
     border-radius: 4px;
     border: 1px solid #e0e0e0;
+  }
+
+  /* Filter Panel Styles */
+  .filter-panel {
+    position: fixed;
+    top: 130px;
+    left: 20px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    padding: 16px;
+    min-width: 250px;
+    max-width: 300px;
+    z-index: 100;
+    max-height: calc(100vh - 170px);
+    overflow-y: auto;
+  }
+
+  .filter-section {
+    margin-bottom: 20px;
+  }
+
+  .filter-section:last-child {
+    margin-bottom: 0;
+  }
+
+  .filter-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+
+  .generation-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .generation-slider-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .generation-slider {
+    flex: 1;
+    height: 4px;
+    border-radius: 2px;
+    background: #e0e0e0;
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .generation-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #007bff;
+    cursor: pointer;
+  }
+
+  .generation-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #007bff;
+    cursor: pointer;
+    border: none;
+  }
+
+  .generation-value {
+    font-size: 12px;
+    color: #666;
+    min-width: 30px;
+    text-align: center;
+  }
+
+  .country-filters {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  .country-filter-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+  }
+
+  .country-filter-checkbox {
+    width: 16px;
+    height: 16px;
+    accent-color: #007bff;
+  }
+
+  .country-filter-label {
+    font-size: 13px;
+    color: #444;
+    cursor: pointer;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .country-count {
+    font-size: 11px;
+    color: #999;
+    background: #f0f0f0;
+    padding: 2px 6px;
+    border-radius: 10px;
+  }
+
+  .filter-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #e0e0e0;
+  }
+
+  .filter-btn {
+    flex: 1;
+    padding: 6px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: white;
+    color: #666;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .filter-btn:hover {
+    background: #f8f9fa;
+    border-color: #007bff;
+  }
+
+  .filter-btn.primary {
+    background: #007bff;
+    color: white;
+    border-color: #007bff;
+  }
+
+  .filter-btn.primary:hover {
+    background: #0056b3;
+  }
+
+  /* View Controls */
+  .view-controls {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 8px;
+    z-index: 100;
+  }
+
+  .view-control-btn {
+    width: 40px;
+    height: 40px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: white;
+    color: #666;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  .view-control-btn:hover {
+    background: #f8f9fa;
+    border-color: #007bff;
+    color: #007bff;
+  }
+
+  .view-control-btn:active {
+    transform: translateY(1px);
+  }
+
+  /* Filter panel toggle button */
+  .filter-toggle-btn {
+    position: fixed;
+    top: 84px;
+    left: 20px;
+    width: 40px;
+    height: 40px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: white;
+    color: #666;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    z-index: 101;
+    font-size: 18px;
+  }
+
+  .filter-toggle-btn:hover {
+    background: #f8f9fa;
+    border-color: #007bff;
+    color: #007bff;
+  }
+
+  .filter-panel.hidden {
+    display: none;
   }

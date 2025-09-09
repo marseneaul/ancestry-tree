@@ -155,6 +155,24 @@ document.addEventListener("DOMContentLoaded", () => {
   `;
   app.appendChild(header);
 
+  // Add Filter Toggle Button
+  const filterToggleBtn = document.createElement("button");
+  filterToggleBtn.className = "filter-toggle-btn";
+  filterToggleBtn.innerHTML = "⚙";
+  filterToggleBtn.title = "Toggle Filters";
+  app.appendChild(filterToggleBtn);
+
+  // Add View Controls
+  const viewControls = document.createElement("div");
+  viewControls.className = "view-controls";
+  viewControls.innerHTML = `
+    <button class="view-control-btn" id="zoom-in-btn" title="Zoom In">+</button>
+    <button class="view-control-btn" id="zoom-out-btn" title="Zoom Out">−</button>
+    <button class="view-control-btn" id="fit-screen-btn" title="Fit to Screen">⌂</button>
+    <button class="view-control-btn" id="reset-view-btn" title="Reset View">↺</button>
+  `;
+  app.appendChild(viewControls);
+
   const searchInput = document.getElementById("search-input") as HTMLInputElement;
   const searchClearBtn = document.getElementById("search-clear-btn") as HTMLButtonElement;
   const searchResultsCount = document.getElementById("search-results-count") as HTMLDivElement;
@@ -185,6 +203,12 @@ document.addEventListener("DOMContentLoaded", () => {
   container.id = "tree-container";
   app.appendChild(container);
 
+  // Create Filter Panel
+  const filterPanel = document.createElement("div");
+  filterPanel.className = "filter-panel";
+  filterPanel.id = "filter-panel";
+  app.appendChild(filterPanel);
+
   // Legend
   const legend = document.createElement("div");
   legend.id = "legend";
@@ -210,11 +234,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const countrySvgs: Record<string, string> = {
     "France": "./svgs/france.svg",
-    "United Kingdom": "./svgs/uk.svg",
+    "United Kingdom": "./svgs/united-kingdom.svg",
     "Ireland": "./svgs/ireland.svg",
     "Germany": "./svgs/germany.svg",
     "Canada": "./svgs/canada.svg",
-    "United States": "./svgs/us.svg",
+    "United States": "./svgs/united-states.svg",
     "Switzerland": "./svgs/switzerland.svg",
     "Belgium": "./svgs/belgium.svg",
     "Austria": "./svgs/austria.svg",
@@ -294,10 +318,10 @@ document.addEventListener("DOMContentLoaded", () => {
     width: `${miniW + 2 * miniPad}px`,
     height: `${miniH + 2 * miniPad}px`,
     border: "1px solid #ccc",
-    background: "rgba(255,255,255,0.9)",
+    background: "rgba(255,255,255,0.95)",
     borderRadius: "8px",
     boxShadow: "0 4px 8px rgba(0,0,0,0.15)",
-    zIndex: "999",
+    zIndex: "1000",
     userSelect: "none",
   });
   app.appendChild(miniWrap);
@@ -474,6 +498,147 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const treeLayout = d3.tree<Person>().size([width, height - 100]).nodeSize([120, 200]);  // Adjusted for flipped layout
 
+  // Filter state
+  let maxGeneration = 0;
+  let selectedCountries = new Set<string>();
+  let isFilterPanelVisible = false;
+
+  // Initialize Filter Panel
+  function initializeFilterPanel() {
+    // Calculate max generation
+    maxGeneration = Math.max(...root.descendants().map(d => d.depth));
+    
+    // Get all countries and their counts
+    const countryCounts = new Map<string, number>();
+    root.descendants().forEach(d => {
+      const country = getCountry(d.data.birthPlace);
+      countryCounts.set(country, (countryCounts.get(country) || 0) + 1);
+    });
+
+    // Create filter panel HTML
+    filterPanel.innerHTML = `
+      <div class="filter-section">
+        <div class="filter-title">Generations</div>
+        <div class="generation-controls">
+          <div class="generation-slider-container">
+            <span style="font-size: 12px; color: #666;">Show up to:</span>
+            <input type="range" class="generation-slider" id="generation-slider" 
+                   min="0" max="${maxGeneration}" value="${maxGeneration}" 
+                   oninput="updateGenerationFilter(this.value)">
+            <span class="generation-value" id="generation-value">${maxGeneration}</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="filter-section">
+        <div class="filter-title">Countries</div>
+        <div class="country-filters">
+          ${Array.from(countryCounts.entries())
+            .sort((a, b) => b[1] - a[1])
+            .map(([country, count]) => `
+              <div class="country-filter-item">
+                <input type="checkbox" class="country-filter-checkbox" 
+                       id="country-${country.replace(/\s+/g, '-').toLowerCase()}" 
+                       checked onchange="updateCountryFilter()">
+                <label class="country-filter-label" for="country-${country.replace(/\s+/g, '-').toLowerCase()}">
+                  <img src="./svgs/${country.toLowerCase().replace(/\s+/g, '-')}.svg" 
+                       style="width: 16px; height: 16px; object-fit: contain;" 
+                       onerror="this.style.display='none'">
+                  ${country}
+                  <span class="country-count">${count}</span>
+                </label>
+              </div>
+            `).join('')}
+        </div>
+      </div>
+      
+      <div class="filter-actions">
+        <button class="filter-btn" onclick="selectAllCountries()">All</button>
+        <button class="filter-btn" onclick="selectNoCountries()">None</button>
+      </div>
+    `;
+
+    // Initialize all countries as selected
+    selectedCountries = new Set(countryCounts.keys());
+  }
+
+  // Filter functions
+  function updateGenerationFilter(value: string) {
+    const generationValue = document.getElementById("generation-value") as HTMLSpanElement;
+    generationValue.textContent = value;
+    applyFilters();
+  }
+
+  function updateCountryFilter() {
+    const checkboxes = filterPanel.querySelectorAll('.country-filter-checkbox') as NodeListOf<HTMLInputElement>;
+    selectedCountries.clear();
+    checkboxes.forEach(checkbox => {
+      if (checkbox.checked) {
+        const country = checkbox.id.replace('country-', '').replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        selectedCountries.add(country);
+      }
+    });
+    applyFilters();
+  }
+
+  function selectAllCountries() {
+    const checkboxes = filterPanel.querySelectorAll('.country-filter-checkbox') as NodeListOf<HTMLInputElement>;
+    checkboxes.forEach(checkbox => {
+      checkbox.checked = true;
+    });
+    selectedCountries = new Set(Array.from(checkboxes).map(cb => 
+      cb.id.replace('country-', '').replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
+    ));
+    applyFilters();
+  }
+
+  function selectNoCountries() {
+    const checkboxes = filterPanel.querySelectorAll('.country-filter-checkbox') as NodeListOf<HTMLInputElement>;
+    checkboxes.forEach(checkbox => {
+      checkbox.checked = false;
+    });
+    selectedCountries.clear();
+    applyFilters();
+  }
+
+  function applyFilters() {
+    const maxGen = parseInt((document.getElementById("generation-slider") as HTMLInputElement)?.value || maxGeneration.toString());
+    
+    // Filter nodes based on generation and country
+    g.selectAll(".node")
+      .style("opacity", d => {
+        const node = d as any;
+        const country = getCountry(node.data.birthPlace);
+        const isGenerationVisible = node.depth <= maxGen;
+        const isCountryVisible = selectedCountries.has(country);
+        return (isGenerationVisible && isCountryVisible) ? 1 : 0.1;
+      });
+
+    // Filter links based on visible nodes
+    g.selectAll(".link")
+      .style("opacity", d => {
+        const link = d as any;
+        const sourceCountry = getCountry(link.source.data.birthPlace);
+        const targetCountry = getCountry(link.target.data.birthPlace);
+        const sourceVisible = link.source.depth <= maxGen && selectedCountries.has(sourceCountry);
+        const targetVisible = link.target.depth <= maxGen && selectedCountries.has(targetCountry);
+        return (sourceVisible && targetVisible) ? 1 : 0.1;
+      });
+  }
+
+  // Toggle filter panel visibility
+  filterToggleBtn.addEventListener("click", () => {
+    isFilterPanelVisible = !isFilterPanelVisible;
+    filterPanel.classList.toggle("hidden", !isFilterPanelVisible);
+    filterToggleBtn.innerHTML = isFilterPanelVisible ? "✕" : "⚙";
+  });
+
+  // Make functions globally available
+  (window as any).updateGenerationFilter = updateGenerationFilter;
+  (window as any).updateCountryFilter = updateCountryFilter;
+  (window as any).selectAllCountries = selectAllCountries;
+  (window as any).selectNoCountries = selectNoCountries;
+
   function updateTree() {
     treeLayout(root);
 
@@ -482,7 +647,9 @@ document.addEventListener("DOMContentLoaded", () => {
       d.y = height - d.y!;  // Invert y: root now at bottom
     });
 
-    const horizontalCenter = width / 2;
+    // Center the tree horizontally within the container
+    const containerWidth = document.getElementById("tree-container")?.clientWidth || width;
+    const horizontalCenter = containerWidth / 2;
     const rootXShift = horizontalCenter - (root.x ?? 0);
     root.descendants().forEach(d => {
       d.x = (d.x ?? 0) + rootXShift;
@@ -630,14 +797,13 @@ document.addEventListener("DOMContentLoaded", () => {
     // Generation Labels (with Total DNA)
     g.selectAll(".gen-label").remove();
     const gens = getGenerations(root);
-    const rootX = root.x;
     gens.forEach((info, depth) => {
       const nodesAtDepth = root.descendants().filter(d => d.depth === depth);
       if (nodesAtDepth.length === 0) return;
       const y = nodesAtDepth[0].y ?? 0;  // All nodes at same y
       g.append("text")
         .attr("class", "gen-label")
-        .attr("x", rootX)
+        .attr("x", horizontalCenter)
         .attr("y", y + 45)  // Position above the node row; adjust offset as needed (e.g., +30 for below)
         .attr("text-anchor", "middle")
         .text(`Gen ${depth}: ${info.count}/${(2**depth).toLocaleString()} ancestors, ~${info.dnaPercentEach.toFixed(2)}% each (${info.dnaPercentTotal.toFixed(2)}% total DNA), ${info.probOfSharingDna.toFixed(2)}% probability of sharing DNA`);
@@ -669,8 +835,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   updateTree();
 
-    // Collect unique names from the tree (run once after updateTree)
+  // Collect unique names from the tree (run once after updateTree)
   const allNames = [...new Set(root.descendants().map(d => d.data.name || "Unknown"))];
+
+  // Initialize Filter Panel
+  initializeFilterPanel();
 
   // Create custom dropdown instead of datalist for better control
   const dropdown = document.createElement("div");
@@ -794,5 +963,60 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!searchInput.contains(e.target as Node) && !dropdown.contains(e.target as Node)) {
       dropdown.style.display = "none";
     }
+  });
+
+  // View Controls functionality
+  const zoomInBtn = document.getElementById("zoom-in-btn");
+  const zoomOutBtn = document.getElementById("zoom-out-btn");
+  const fitScreenBtn = document.getElementById("fit-screen-btn");
+  const resetViewBtn = document.getElementById("reset-view-btn");
+
+  zoomInBtn?.addEventListener("click", () => {
+    const currentTransform = d3.zoomTransform(svg.node()!);
+    const newScale = Math.min(currentTransform.k * 1.5, 5); // Max zoom 5x
+    svg.transition().duration(300).call(
+      zoom.transform,
+      d3.zoomIdentity.translate(currentTransform.x, currentTransform.y).scale(newScale)
+    );
+  });
+
+  zoomOutBtn?.addEventListener("click", () => {
+    const currentTransform = d3.zoomTransform(svg.node()!);
+    const newScale = Math.max(currentTransform.k / 1.5, 0.1); // Min zoom 0.1x
+    svg.transition().duration(300).call(
+      zoom.transform,
+      d3.zoomIdentity.translate(currentTransform.x, currentTransform.y).scale(newScale)
+    );
+  });
+
+  fitScreenBtn?.addEventListener("click", () => {
+    // Calculate bounds of all visible nodes
+    const nodes = root.descendants();
+    const xs = nodes.map(d => d.x ?? 0);
+    const ys = nodes.map(d => d.y ?? 0);
+    
+    const x0 = Math.min(...xs);
+    const x1 = Math.max(...xs);
+    const y0 = Math.min(...ys);
+    const y1 = Math.max(...ys);
+    
+    const boundsWidth = x1 - x0;
+    const boundsHeight = y1 - y0;
+    
+    const scale = Math.min(width / boundsWidth, height / boundsHeight) * 0.8;
+    const tx = (width - (x0 + x1) * scale) / 2;
+    const ty = (height - (y0 + y1) * scale) / 2;
+    
+    svg.transition().duration(750).call(
+      zoom.transform,
+      d3.zoomIdentity.translate(tx, ty).scale(scale)
+    );
+  });
+
+  resetViewBtn?.addEventListener("click", () => {
+    svg.transition().duration(750).call(
+      zoom.transform,
+      d3.zoomIdentity
+    );
   });
 });

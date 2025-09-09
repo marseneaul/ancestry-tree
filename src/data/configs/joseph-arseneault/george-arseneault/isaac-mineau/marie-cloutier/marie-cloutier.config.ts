@@ -31,10 +31,10 @@ export const marieCloutierConfig = {
         {   // https://en.wikipedia.org/wiki/Zacharie_Cloutier
             name: "Zacharie Cloutier",
             sex: "Male",
-            birthPlace: "18 July 1590",
-            deathPlace: "17 September 1677",
-            birthDate: "Mortagne-au-Perche, Departement de l'Orne, Basse-Normandie, France",
-            deathDate: "Château-Richer, Montmorency, Québec, Canada",
+            birthPlace: "Mortagne-au-Perche, Departement de l'Orne, Basse-Normandie, France",
+            deathPlace: "Château-Richer, Montmorency, Québec, Canada",
+            birthDate: "18 July 1590",
+            deathDate: "17 September 1677",
             imageUrl: "./images/zacharie-cloutier.jpg",
             story: zacharieClourierStory,
             parents: [] // Goes for a bit more
