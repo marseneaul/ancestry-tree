@@ -536,6 +536,16 @@ document.addEventListener("DOMContentLoaded", () => {
   let maxGeneration = 0;
   let selectedCountries = new Set<string>();
   let isFilterPanelVisible = false;
+  
+  // Advanced filter states
+  let birthYearRange = { min: 0, max: 2100 };
+  let originalBirthYearRange = { min: 0, max: 2100 };
+  let lifespanFilter = { min: 0, max: 120 };
+  let selectedDataCompleteness = new Set<string>();
+  let selectedRelationshipFilters = new Set<string>();
+  let selectedResearchFilters = new Set<string>();
+  let minDnaContribution = 0;
+  let showDirectLineOnly = false;
 
   // Initialize Filter Panel
   function initializeFilterPanel() {
@@ -549,51 +559,371 @@ document.addEventListener("DOMContentLoaded", () => {
       countryCounts.set(country, (countryCounts.get(country) || 0) + 1);
     });
 
-    // Create filter panel HTML
+    // Calculate birth year range from data
+    const birthYears = root.descendants()
+      .map(d => d.data.birthDate)
+      .filter(date => date && date !== "Unknown")
+      .map(date => {
+        const yearMatch = date.match(/\b(19|20)\d{2}\b/) || date.match(/\b\d{4}\b/);
+        return yearMatch ? parseInt(yearMatch[0]) : null;
+      })
+      .filter(year => year !== null && year >= 1000 && year <= 2100) as number[];
+    
+    const minBirthYear = birthYears.length > 0 ? Math.min(...birthYears) : 1800;
+    const maxBirthYear = birthYears.length > 0 ? Math.max(...birthYears) : 2024;
+    birthYearRange = { min: minBirthYear, max: maxBirthYear };
+    originalBirthYearRange = { min: minBirthYear, max: maxBirthYear };
+
+    // Create filter panel HTML with improved design
     filterPanel.innerHTML = `
-      <div class="filter-section">
-        <div class="filter-title">Generations</div>
-        <div class="generation-controls">
-          <div class="generation-slider-container">
-            <span style="font-size: 12px; color: #666;">Show up to:</span>
-            <input type="range" class="generation-slider" id="generation-slider" 
-                   min="0" max="${maxGeneration}" value="${maxGeneration}" 
-                   oninput="updateGenerationFilter(this.value)">
-            <span class="generation-value" id="generation-value">${maxGeneration}</span>
+      <div class="filter-header">
+        <h3 class="filter-main-title">🔍 Advanced Filters</h3>
+        <div class="filter-summary" id="filter-summary">All filters active</div>
+      </div>
+      
+      <div class="filter-tabs" role="tablist" aria-label="Filter categories">
+        <button class="filter-tab active" data-tab="basic" onclick="switchFilterTab('basic')" 
+                role="tab" aria-selected="true" aria-controls="tab-basic" tabindex="0">
+          <span class="tab-icon" aria-hidden="true">📊</span>
+          <span class="tab-label">Basic</span>
+        </button>
+        <button class="filter-tab" data-tab="time" onclick="switchFilterTab('time')" 
+                role="tab" aria-selected="false" aria-controls="tab-time" tabindex="-1">
+          <span class="tab-icon" aria-hidden="true">📅</span>
+          <span class="tab-label">Time</span>
+        </button>
+        <button class="filter-tab" data-tab="data" onclick="switchFilterTab('data')" 
+                role="tab" aria-selected="false" aria-controls="tab-data" tabindex="-1">
+          <span class="tab-icon" aria-hidden="true">📋</span>
+          <span class="tab-label">Data</span>
+        </button>
+        <button class="filter-tab" data-tab="lineage" onclick="switchFilterTab('lineage')" 
+                role="tab" aria-selected="false" aria-controls="tab-lineage" tabindex="-1">
+          <span class="tab-icon" aria-hidden="true">🧬</span>
+          <span class="tab-label">Lineage</span>
+        </button>
+      </div>
+      
+      <div class="filter-content">
+        <!-- Basic Filters Tab -->
+        <div class="filter-tab-content active" id="tab-basic" role="tabpanel" aria-labelledby="tab-basic" aria-hidden="false">
+          <div class="filter-group">
+            <div class="filter-group-header">
+              <h4 class="filter-group-title">Generation Depth</h4>
+              <div class="filter-group-description">Show ancestors up to generation</div>
+            </div>
+            <div class="slider-container">
+              <input type="range" class="modern-slider" id="generation-slider" 
+                     min="0" max="${maxGeneration}" value="${maxGeneration}" 
+                     oninput="updateGenerationFilter(this.value)"
+                     aria-label="Generation depth slider" aria-valuemin="0" aria-valuemax="${maxGeneration}" aria-valuenow="${maxGeneration}">
+              <div class="slider-value">
+                <span class="slider-value-number" id="generation-value">${maxGeneration}</span>
+                <span class="slider-value-label">generations</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="filter-group">
+            <div class="filter-group-header">
+              <h4 class="filter-group-title">Countries of Origin</h4>
+              <div class="filter-group-description">Filter by birth countries</div>
+            </div>
+            <div class="country-grid">
+              ${Array.from(countryCounts.entries())
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 8)
+                .map(([country, count]) => `
+                  <div class="country-card">
+                    <input type="checkbox" class="country-checkbox" 
+                           id="country-${country.replace(/\s+/g, '-').toLowerCase()}" 
+                           checked onchange="updateCountryFilter()">
+                    <label class="country-card-label" for="country-${country.replace(/\s+/g, '-').toLowerCase()}">
+                      <div class="country-flag">
+                        <img src="./svgs/${country.toLowerCase().replace(/\s+/g, '-')}.svg" 
+                             alt="${country}" onerror="this.style.display='none'">
+                      </div>
+                      <div class="country-info">
+                        <div class="country-name">${country}</div>
+                        <div class="country-count">${count} people</div>
+                      </div>
+                    </label>
+                  </div>
+                `).join('')}
+            </div>
+            <div class="country-actions">
+              <button class="action-btn secondary" onclick="selectAllCountries()">
+                <span class="btn-icon">✓</span>
+                Select All
+              </button>
+              <button class="action-btn secondary" onclick="selectNoCountries()">
+                <span class="btn-icon">✗</span>
+                Clear All
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Time-Based Filters Tab -->
+        <div class="filter-tab-content" id="tab-time" role="tabpanel" aria-labelledby="tab-time" aria-hidden="true">
+          <div class="filter-group">
+            <div class="filter-group-header">
+              <h4 class="filter-group-title">Birth Year Range</h4>
+              <div class="filter-group-description">Filter by birth year period</div>
+            </div>
+            <div class="range-container">
+              <div class="range-inputs">
+                <div class="range-input">
+                  <label class="range-label">From</label>
+                  <input type="number" class="modern-input" id="birth-year-min" 
+                         value="${minBirthYear}" min="${minBirthYear}" max="${maxBirthYear}" 
+                         onchange="updateBirthYearRange()">
+                </div>
+                <div class="range-separator">to</div>
+                <div class="range-input">
+                  <label class="range-label">To</label>
+                  <input type="number" class="modern-input" id="birth-year-max" 
+                         value="${maxBirthYear}" min="${minBirthYear}" max="${maxBirthYear}" 
+                         onchange="updateBirthYearRange()">
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="filter-group">
+            <div class="filter-group-header">
+              <h4 class="filter-group-title">Lifespan Range</h4>
+              <div class="filter-group-description">Filter by age at death</div>
+            </div>
+            <div class="range-container">
+              <div class="range-inputs">
+                <div class="range-input">
+                  <label class="range-label">Min Age</label>
+                  <input type="number" class="modern-input" id="lifespan-min" 
+                         value="0" min="0" max="120" onchange="updateLifespanFilter()">
+                </div>
+                <div class="range-separator">to</div>
+                <div class="range-input">
+                  <label class="range-label">Max Age</label>
+                  <input type="number" class="modern-input" id="lifespan-max" 
+                         value="120" min="0" max="120" onchange="updateLifespanFilter()">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Data Completeness Tab -->
+        <div class="filter-tab-content" id="tab-data" role="tabpanel" aria-labelledby="tab-data" aria-hidden="true">
+          <div class="filter-group">
+            <div class="filter-group-header">
+              <h4 class="filter-group-title">Data Completeness</h4>
+              <div class="filter-group-description">Filter by available information</div>
+            </div>
+            <div class="checkbox-grid">
+              <div class="checkbox-card">
+                <input type="checkbox" class="modern-checkbox" id="has-photo" onchange="updateDataCompletenessFilter()">
+                <label class="checkbox-label" for="has-photo">
+                  <div class="checkbox-icon">📸</div>
+                  <div class="checkbox-text">
+                    <div class="checkbox-title">Has Photo</div>
+                    <div class="checkbox-description">Profile image available</div>
+                  </div>
+                </label>
+              </div>
+              <div class="checkbox-card">
+                <input type="checkbox" class="modern-checkbox" id="has-story" onchange="updateDataCompletenessFilter()">
+                <label class="checkbox-label" for="has-story">
+                  <div class="checkbox-icon">📖</div>
+                  <div class="checkbox-text">
+                    <div class="checkbox-title">Has Story</div>
+                    <div class="checkbox-description">Biographical information</div>
+                  </div>
+                </label>
+              </div>
+              <div class="checkbox-card">
+                <input type="checkbox" class="modern-checkbox" id="has-birth-date" onchange="updateDataCompletenessFilter()">
+                <label class="checkbox-label" for="has-birth-date">
+                  <div class="checkbox-icon">📅</div>
+                  <div class="checkbox-text">
+                    <div class="checkbox-title">Birth Date</div>
+                    <div class="checkbox-description">Known birth date</div>
+                  </div>
+                </label>
+              </div>
+              <div class="checkbox-card">
+                <input type="checkbox" class="modern-checkbox" id="has-death-date" onchange="updateDataCompletenessFilter()">
+                <label class="checkbox-label" for="has-death-date">
+                  <div class="checkbox-icon">💀</div>
+                  <div class="checkbox-text">
+                    <div class="checkbox-title">Death Date</div>
+                    <div class="checkbox-description">Known death date</div>
+                  </div>
+                </label>
+              </div>
+              <div class="checkbox-card">
+                <input type="checkbox" class="modern-checkbox" id="has-birth-place" onchange="updateDataCompletenessFilter()">
+                <label class="checkbox-label" for="has-birth-place">
+                  <div class="checkbox-icon">📍</div>
+                  <div class="checkbox-text">
+                    <div class="checkbox-title">Birth Place</div>
+                    <div class="checkbox-description">Known birth location</div>
+                  </div>
+                </label>
+              </div>
+              <div class="checkbox-card">
+                <input type="checkbox" class="modern-checkbox" id="has-parents" onchange="updateDataCompletenessFilter()">
+                <label class="checkbox-label" for="has-parents">
+                  <div class="checkbox-icon">👨‍👩‍👧‍👦</div>
+                  <div class="checkbox-text">
+                    <div class="checkbox-title">Has Parents</div>
+                    <div class="checkbox-description">Parent information available</div>
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Lineage & Research Tab -->
+        <div class="filter-tab-content" id="tab-lineage" role="tabpanel" aria-labelledby="tab-lineage" aria-hidden="true">
+          <div class="filter-group">
+            <div class="filter-group-header">
+              <h4 class="filter-group-title">Relationship Types</h4>
+              <div class="filter-group-description">Filter by family relationships</div>
+            </div>
+            <div class="checkbox-grid">
+              <div class="checkbox-card">
+                <input type="checkbox" class="modern-checkbox" id="direct-line-only" onchange="updateRelationshipFilter()">
+                <label class="checkbox-label" for="direct-line-only">
+                  <div class="checkbox-icon">👤</div>
+                  <div class="checkbox-text">
+                    <div class="checkbox-title">Direct Line Only</div>
+                    <div class="checkbox-description">Direct ancestors only</div>
+                  </div>
+                </label>
+              </div>
+              <div class="checkbox-card">
+                <input type="checkbox" class="modern-checkbox" id="patrilineal-line" onchange="updateRelationshipFilter()">
+                <label class="checkbox-label" for="patrilineal-line">
+                  <div class="checkbox-icon">👨</div>
+                  <div class="checkbox-text">
+                    <div class="checkbox-title">Patrilineal Line</div>
+                    <div class="checkbox-description">Father's line only</div>
+                  </div>
+                </label>
+              </div>
+              <div class="checkbox-card">
+                <input type="checkbox" class="modern-checkbox" id="matrilineal-line" onchange="updateRelationshipFilter()">
+                <label class="checkbox-label" for="matrilineal-line">
+                  <div class="checkbox-icon">👩</div>
+                  <div class="checkbox-text">
+                    <div class="checkbox-title">Matrilineal Line</div>
+                    <div class="checkbox-description">Mother's line only</div>
+                  </div>
+                </label>
+              </div>
+              <div class="checkbox-card">
+                <input type="checkbox" class="modern-checkbox" id="migration-patterns" onchange="updateRelationshipFilter()">
+                <label class="checkbox-label" for="migration-patterns">
+                  <div class="checkbox-icon">🌍</div>
+                  <div class="checkbox-text">
+                    <div class="checkbox-title">Migration Patterns</div>
+                    <div class="checkbox-description">Cross-country movements</div>
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
+          
+          <div class="filter-group">
+            <div class="filter-group-header">
+              <h4 class="filter-group-title">DNA Contribution</h4>
+              <div class="filter-group-description">Minimum DNA contribution percentage</div>
+            </div>
+            <div class="slider-container">
+              <input type="range" class="modern-slider" id="dna-contribution-slider" 
+                     min="0" max="50" value="0" step="0.1" oninput="updateDnaContributionFilter(this.value)"
+                     aria-label="DNA contribution percentage slider">
+              <div class="slider-value">
+                <span class="slider-value-number" id="dna-contribution-value">0%</span>
+                <span class="slider-value-label">minimum</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="filter-group">
+            <div class="filter-group-header">
+              <h4 class="filter-group-title">Research Quality</h4>
+              <div class="filter-group-description">Filter by research completeness</div>
+            </div>
+            <div class="checkbox-grid">
+              <div class="checkbox-card">
+                <input type="checkbox" class="modern-checkbox" id="research-gaps" onchange="updateResearchFilter()">
+                <label class="checkbox-label" for="research-gaps">
+                  <div class="checkbox-icon">❓</div>
+                  <div class="checkbox-text">
+                    <div class="checkbox-title">Research Gaps</div>
+                    <div class="checkbox-description">Missing information</div>
+                  </div>
+                </label>
+              </div>
+              <div class="checkbox-card">
+                <input type="checkbox" class="modern-checkbox" id="missing-data" onchange="updateResearchFilter()">
+                <label class="checkbox-label" for="missing-data">
+                  <div class="checkbox-icon">⚠️</div>
+                  <div class="checkbox-text">
+                    <div class="checkbox-title">Missing Critical Data</div>
+                    <div class="checkbox-description">Essential info missing</div>
+                  </div>
+                </label>
+              </div>
+              <div class="checkbox-card">
+                <input type="checkbox" class="modern-checkbox" id="estimated-dates" onchange="updateResearchFilter()">
+                <label class="checkbox-label" for="estimated-dates">
+                  <div class="checkbox-icon">📊</div>
+                  <div class="checkbox-text">
+                    <div class="checkbox-title">Estimated Dates</div>
+                    <div class="checkbox-description">Approximate dates only</div>
+                  </div>
+                </label>
+              </div>
+              <div class="checkbox-card">
+                <input type="checkbox" class="modern-checkbox" id="well-documented" onchange="updateResearchFilter()">
+                <label class="checkbox-label" for="well-documented">
+                  <div class="checkbox-icon">✅</div>
+                  <div class="checkbox-text">
+                    <div class="checkbox-title">Well Documented</div>
+                    <div class="checkbox-description">Complete information</div>
+                  </div>
+                </label>
+              </div>
+            </div>
           </div>
         </div>
       </div>
       
-      <div class="filter-section">
-        <div class="filter-title">Countries</div>
-        <div class="country-filters">
-          ${Array.from(countryCounts.entries())
-            .sort((a, b) => b[1] - a[1])
-            .map(([country, count]) => `
-              <div class="country-filter-item">
-                <input type="checkbox" class="country-filter-checkbox" 
-                       id="country-${country.replace(/\s+/g, '-').toLowerCase()}" 
-                       checked onchange="updateCountryFilter()">
-                <label class="country-filter-label" for="country-${country.replace(/\s+/g, '-').toLowerCase()}">
-                  <img src="./svgs/${country.toLowerCase().replace(/\s+/g, '-')}.svg" 
-                       style="width: 16px; height: 16px; object-fit: contain;" 
-                       onerror="this.style.display='none'">
-                  ${country}
-                  <span class="country-count">${count}</span>
-                </label>
-              </div>
-            `).join('')}
+      <div class="filter-footer">
+        <div class="filter-actions">
+          <button class="action-btn primary" onclick="resetAllFilters()">
+            <span class="btn-icon">↺</span>
+            Reset All Filters
+          </button>
         </div>
-      </div>
-      
-      <div class="filter-actions">
-        <button class="filter-btn" onclick="selectAllCountries()">All</button>
-        <button class="filter-btn" onclick="selectNoCountries()">None</button>
+        <div class="filter-stats" id="filter-stats">
+          <span class="filter-count">All people visible</span>
+        </div>
       </div>
     `;
 
     // Initialize all countries as selected
     selectedCountries = new Set(countryCounts.keys());
+    
+    // Initialize filter summary and keyboard navigation
+    setTimeout(() => {
+      updateFilterSummary();
+      addFilterKeyboardNavigation();
+    }, 100);
   }
 
   // Filter functions
@@ -601,10 +931,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const generationValue = document.getElementById("generation-value") as HTMLSpanElement;
     generationValue.textContent = value;
     applyFilters();
+    updateFilterSummary();
   }
 
   function updateCountryFilter() {
-    const checkboxes = filterPanel.querySelectorAll('.country-filter-checkbox') as NodeListOf<HTMLInputElement>;
+    const checkboxes = filterPanel.querySelectorAll('.country-checkbox') as NodeListOf<HTMLInputElement>;
     selectedCountries.clear();
     checkboxes.forEach(checkbox => {
       if (checkbox.checked) {
@@ -613,10 +944,11 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
     applyFilters();
+    updateFilterSummary();
   }
 
   function selectAllCountries() {
-    const checkboxes = filterPanel.querySelectorAll('.country-filter-checkbox') as NodeListOf<HTMLInputElement>;
+    const checkboxes = filterPanel.querySelectorAll('.country-checkbox') as NodeListOf<HTMLInputElement>;
     checkboxes.forEach(checkbox => {
       checkbox.checked = true;
     });
@@ -624,28 +956,212 @@ document.addEventListener("DOMContentLoaded", () => {
       cb.id.replace('country-', '').replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
     ));
     applyFilters();
+    updateFilterSummary();
   }
 
   function selectNoCountries() {
-    const checkboxes = filterPanel.querySelectorAll('.country-filter-checkbox') as NodeListOf<HTMLInputElement>;
+    const checkboxes = filterPanel.querySelectorAll('.country-checkbox') as NodeListOf<HTMLInputElement>;
     checkboxes.forEach(checkbox => {
       checkbox.checked = false;
     });
     selectedCountries.clear();
     applyFilters();
+    updateFilterSummary();
   }
+
+  // Advanced filter functions
+  function updateBirthYearRange() {
+    const minInput = document.getElementById("birth-year-min") as HTMLInputElement;
+    const maxInput = document.getElementById("birth-year-max") as HTMLInputElement;
+    birthYearRange.min = parseInt(minInput.value);
+    birthYearRange.max = parseInt(maxInput.value);
+    applyFilters();
+    updateFilterSummary();
+  }
+
+  function updateLifespanFilter() {
+    const minInput = document.getElementById("lifespan-min") as HTMLInputElement;
+    const maxInput = document.getElementById("lifespan-max") as HTMLInputElement;
+    lifespanFilter.min = parseInt(minInput.value);
+    lifespanFilter.max = parseInt(maxInput.value);
+    applyFilters();
+    updateFilterSummary();
+  }
+
+  function updateDataCompletenessFilter() {
+    selectedDataCompleteness.clear();
+    const checkboxes = filterPanel.querySelectorAll('#tab-data .modern-checkbox') as NodeListOf<HTMLInputElement>;
+    checkboxes.forEach(checkbox => {
+      if (checkbox.checked) {
+        selectedDataCompleteness.add(checkbox.id);
+      }
+    });
+    applyFilters();
+    updateFilterSummary();
+  }
+
+  function updateRelationshipFilter() {
+    selectedRelationshipFilters.clear();
+    const relationshipCheckboxes = filterPanel.querySelectorAll('#direct-line-only, #patrilineal-line, #matrilineal-line, #migration-patterns') as NodeListOf<HTMLInputElement>;
+    relationshipCheckboxes.forEach(checkbox => {
+      if (checkbox.checked) {
+        selectedRelationshipFilters.add(checkbox.id);
+      }
+    });
+    showDirectLineOnly = selectedRelationshipFilters.has('direct-line-only');
+    applyFilters();
+    updateFilterSummary();
+  }
+
+  function updateDnaContributionFilter(value: string) {
+    minDnaContribution = parseFloat(value);
+    const valueDisplay = document.getElementById("dna-contribution-value") as HTMLSpanElement;
+    valueDisplay.textContent = `${minDnaContribution}%`;
+    applyFilters();
+    updateFilterSummary();
+  }
+
+  function updateResearchFilter() {
+    selectedResearchFilters.clear();
+    const researchCheckboxes = filterPanel.querySelectorAll('#research-gaps, #missing-data, #estimated-dates, #well-documented') as NodeListOf<HTMLInputElement>;
+    researchCheckboxes.forEach(checkbox => {
+      if (checkbox.checked) {
+        selectedResearchFilters.add(checkbox.id);
+      }
+    });
+    applyFilters();
+    updateFilterSummary();
+  }
+
+  function resetAllFilters() {
+    // Reset all filter states
+    selectedCountries = new Set();
+    selectedDataCompleteness.clear();
+    selectedRelationshipFilters.clear();
+    selectedResearchFilters.clear();
+    minDnaContribution = 0;
+    showDirectLineOnly = false;
+    
+    // Reset UI elements
+    const generationSlider = document.getElementById("generation-slider") as HTMLInputElement;
+    if (generationSlider) generationSlider.value = maxGeneration.toString();
+    
+    const generationValue = document.getElementById("generation-value") as HTMLSpanElement;
+    if (generationValue) generationValue.textContent = maxGeneration.toString();
+    
+    // Reset all checkboxes except countries
+    const checkboxes = filterPanel.querySelectorAll('.modern-checkbox') as NodeListOf<HTMLInputElement>;
+    checkboxes.forEach(checkbox => {
+      checkbox.checked = false;
+    });
+    
+    // Reset country checkboxes to checked
+    const countryCheckboxes = filterPanel.querySelectorAll('.country-checkbox') as NodeListOf<HTMLInputElement>;
+    countryCheckboxes.forEach(checkbox => {
+      checkbox.checked = true;
+      const country = checkbox.id.replace('country-', '').replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+      selectedCountries.add(country);
+    });
+    
+    // Reset range inputs
+    const birthYearMin = document.getElementById("birth-year-min") as HTMLInputElement;
+    const birthYearMax = document.getElementById("birth-year-max") as HTMLInputElement;
+    if (birthYearMin) birthYearMin.value = originalBirthYearRange.min.toString();
+    if (birthYearMax) birthYearMax.value = originalBirthYearRange.max.toString();
+    birthYearRange = { ...originalBirthYearRange };
+    
+    const lifespanMin = document.getElementById("lifespan-min") as HTMLInputElement;
+    const lifespanMax = document.getElementById("lifespan-max") as HTMLInputElement;
+    if (lifespanMin) lifespanMin.value = "0";
+    if (lifespanMax) lifespanMax.value = "120";
+    
+    const dnaSlider = document.getElementById("dna-contribution-slider") as HTMLInputElement;
+    const dnaValue = document.getElementById("dna-contribution-value") as HTMLSpanElement;
+    if (dnaSlider) dnaSlider.value = "0";
+    if (dnaValue) dnaValue.textContent = "0%";
+    
+    applyFilters();
+    updateFilterSummary();
+  }
+
 
   function applyFilters() {
     const maxGen = parseInt((document.getElementById("generation-slider") as HTMLInputElement)?.value || maxGeneration.toString());
     
-    // Filter nodes based on generation and country
+    // Get lineage data for filtering
+    const patrilinealNames = tracePatrilineal(maxArseneaultConfig);
+    const matrilinealNames = traceMatrilineal(maxArseneaultConfig);
+    
+    // Filter nodes based on all criteria
     g.selectAll(".node")
       .style("opacity", d => {
         const node = d as any;
         const country = getCountry(node.data.birthPlace);
+        
+        // Basic filters
         const isGenerationVisible = node.depth <= maxGen;
         const isCountryVisible = selectedCountries.has(country);
-        return (isGenerationVisible && isCountryVisible) ? 1 : 0.1;
+        
+        // Time-based filters
+        const birthYear = extractBirthYear(node.data.birthDate);
+        const isBirthYearVisible = !birthYear || (birthYear >= birthYearRange.min && birthYear <= birthYearRange.max);
+        
+        const age = calculateAgeAtDate(node.data.birthDate ?? "", node.data.deathDate ?? "");
+        const isLifespanVisible = !age || (age >= lifespanFilter.min && age <= lifespanFilter.max);
+        
+        // Data completeness filters
+        let isDataCompletenessVisible = true;
+        if (selectedDataCompleteness.size > 0) {
+          isDataCompletenessVisible = Array.from(selectedDataCompleteness).some(filter => {
+            switch(filter) {
+              case 'has-photo': return !!node.data.imageUrl;
+              case 'has-story': return !!(node.data.story && node.data.story !== "Stories coming soon...");
+              case 'has-birth-date': return !!(node.data.birthDate && node.data.birthDate !== "Unknown");
+              case 'has-death-date': return !!(node.data.deathDate && node.data.deathDate !== "N/A");
+              case 'has-birth-place': return !!(node.data.birthPlace && node.data.birthPlace !== "Unknown");
+              case 'has-parents': return !!(node.data.parents && node.data.parents.length > 0);
+              default: return true;
+            }
+          });
+        }
+        
+        // Relationship & lineage filters
+        let isRelationshipVisible = true;
+        if (selectedRelationshipFilters.size > 0) {
+          isRelationshipVisible = Array.from(selectedRelationshipFilters).some(filter => {
+            switch(filter) {
+              case 'direct-line-only': return node.depth <= 2; // Direct ancestors only
+              case 'patrilineal-line': return patrilinealNames.includes(node.data.name);
+              case 'matrilineal-line': return matrilinealNames.includes(node.data.name);
+              case 'migration-patterns': return hasMigrationPattern(node);
+              default: return true;
+            }
+          });
+        }
+        
+        // DNA contribution filter
+        const dnaContribution = 100 / Math.pow(2, node.depth);
+        const isDnaContributionVisible = dnaContribution >= minDnaContribution;
+        
+        // Research & analysis filters
+        let isResearchVisible = true;
+        if (selectedResearchFilters.size > 0) {
+          isResearchVisible = Array.from(selectedResearchFilters).some(filter => {
+            switch(filter) {
+              case 'research-gaps': return hasResearchGaps(node);
+              case 'missing-data': return hasMissingCriticalData(node);
+              case 'estimated-dates': return hasEstimatedDates(node);
+              case 'well-documented': return isWellDocumented(node);
+              default: return true;
+            }
+          });
+        }
+        
+        const isVisible = isGenerationVisible && isCountryVisible && isBirthYearVisible && 
+                         isLifespanVisible && isDataCompletenessVisible && isRelationshipVisible && 
+                         isDnaContributionVisible && isResearchVisible;
+        
+        return isVisible ? 1 : 0.1;
       });
 
     // Filter links based on visible nodes
@@ -658,6 +1174,51 @@ document.addEventListener("DOMContentLoaded", () => {
         const targetVisible = link.target.depth <= maxGen && selectedCountries.has(targetCountry);
         return (sourceVisible && targetVisible) ? 1 : 0.1;
       });
+  }
+
+  // Helper functions for advanced filtering
+  function extractBirthYear(birthDate?: string): number | null {
+    if (!birthDate || birthDate === "Unknown") return null;
+    const yearMatch = birthDate.match(/\b(19|20)\d{2}\b/) || birthDate.match(/\b\d{4}\b/);
+    return yearMatch ? parseInt(yearMatch[0]) : null;
+  }
+
+  function hasMigrationPattern(node: any): boolean {
+    if (!node.data.parents || node.data.parents.length === 0) return false;
+    const currentCountry = getCountry(node.data.birthPlace);
+    return node.data.parents.some((parent: any) => {
+      if (!parent) return false;
+      const parentCountry = getCountry(parent.birthPlace);
+      return currentCountry !== parentCountry;
+    });
+  }
+
+  function hasResearchGaps(node: any): boolean {
+    return !node.data.birthDate || node.data.birthDate === "Unknown" ||
+           !node.data.deathDate || node.data.deathDate === "N/A" ||
+           !node.data.birthPlace || node.data.birthPlace === "Unknown" ||
+           !node.data.parents || node.data.parents.length === 0 ||
+           !node.data.imageUrl;
+  }
+
+  function hasMissingCriticalData(node: any): boolean {
+    return !node.data.birthDate || node.data.birthDate === "Unknown" ||
+           !node.data.birthPlace || node.data.birthPlace === "Unknown";
+  }
+
+  function hasEstimatedDates(node: any): boolean {
+    return node.data.birthDate?.includes("circa") || 
+           node.data.birthDate?.includes("about") ||
+           node.data.deathDate?.includes("circa") ||
+           node.data.deathDate?.includes("about");
+  }
+
+  function isWellDocumented(node: any): boolean {
+    return !!(node.data.birthDate && node.data.birthDate !== "Unknown" &&
+              node.data.deathDate && node.data.deathDate !== "N/A" &&
+              node.data.birthPlace && node.data.birthPlace !== "Unknown" &&
+              node.data.imageUrl &&
+              node.data.story && node.data.story !== "Stories coming soon...");
   }
 
   // Statistics dashboard state
@@ -1357,12 +1918,142 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
+  // Tab switching functionality
+  function switchFilterTab(tabName: string) {
+    // Remove active class from all tabs and content
+    document.querySelectorAll('.filter-tab').forEach(tab => {
+      tab.classList.remove('active');
+      tab.setAttribute('aria-selected', 'false');
+      tab.setAttribute('tabindex', '-1');
+    });
+    document.querySelectorAll('.filter-tab-content').forEach(content => {
+      content.classList.remove('active');
+      content.setAttribute('aria-hidden', 'true');
+    });
+    
+    // Add active class to selected tab and content
+    const activeTab = document.querySelector(`[data-tab="${tabName}"]`) as HTMLElement;
+    const activeContent = document.getElementById(`tab-${tabName}`);
+    
+    if (activeTab) {
+      activeTab.classList.add('active');
+      activeTab.setAttribute('aria-selected', 'true');
+      activeTab.setAttribute('tabindex', '0');
+    }
+    
+    if (activeContent) {
+      activeContent.classList.add('active');
+      activeContent.setAttribute('aria-hidden', 'false');
+    }
+  }
+
+  // Add keyboard navigation for filter tabs
+  function addFilterKeyboardNavigation() {
+    const filterTabs = document.querySelectorAll('.filter-tab');
+    filterTabs.forEach((tab, index) => {
+      tab.addEventListener('keydown', (e) => {
+        const key = e.key;
+        let targetIndex = index;
+        
+        if (key === 'ArrowLeft' || key === 'ArrowUp') {
+          e.preventDefault();
+          targetIndex = index > 0 ? index - 1 : filterTabs.length - 1;
+        } else if (key === 'ArrowRight' || key === 'ArrowDown') {
+          e.preventDefault();
+          targetIndex = index < filterTabs.length - 1 ? index + 1 : 0;
+        } else if (key === 'Home') {
+          e.preventDefault();
+          targetIndex = 0;
+        } else if (key === 'End') {
+          e.preventDefault();
+          targetIndex = filterTabs.length - 1;
+        } else if (key === 'Enter' || key === ' ') {
+          e.preventDefault();
+          const tabName = (tab as HTMLElement).getAttribute('data-tab');
+          if (tabName) switchFilterTab(tabName);
+          return;
+        }
+        
+        if (targetIndex !== index) {
+          (filterTabs[targetIndex] as HTMLElement).focus();
+        }
+      });
+    });
+  }
+
+  // Update filter summary
+  function updateFilterSummary() {
+    const summary = document.getElementById('filter-summary');
+    const stats = document.getElementById('filter-stats');
+    if (!summary || !stats) return;
+    
+    const activeFilters = [];
+    const maxGen = parseInt((document.getElementById("generation-slider") as HTMLInputElement)?.value || maxGeneration.toString());
+    
+    if (maxGen < maxGeneration) {
+      activeFilters.push(`${maxGen} generations`);
+    }
+    
+    const countryCheckboxes = filterPanel.querySelectorAll('.country-checkbox') as NodeListOf<HTMLInputElement>;
+    const selectedCountryCount = Array.from(countryCheckboxes).filter(cb => cb.checked).length;
+    const totalCountryCount = countryCheckboxes.length;
+    
+    if (selectedCountryCount < totalCountryCount) {
+      activeFilters.push(`${selectedCountryCount}/${totalCountryCount} countries`);
+    }
+    
+    const dataCheckboxes = filterPanel.querySelectorAll('#tab-data .modern-checkbox') as NodeListOf<HTMLInputElement>;
+    const selectedDataCount = Array.from(dataCheckboxes).filter(cb => cb.checked).length;
+    if (selectedDataCount > 0) {
+      activeFilters.push(`${selectedDataCount} data filters`);
+    }
+    
+    const lineageCheckboxes = filterPanel.querySelectorAll('#tab-lineage .modern-checkbox') as NodeListOf<HTMLInputElement>;
+    const selectedLineageCount = Array.from(lineageCheckboxes).filter(cb => cb.checked).length;
+    if (selectedLineageCount > 0) {
+      activeFilters.push(`${selectedLineageCount} lineage filters`);
+    }
+    
+    const minInput = document.getElementById("birth-year-min") as HTMLInputElement;
+    const maxInput = document.getElementById("birth-year-max") as HTMLInputElement;
+    if (minInput && maxInput && (parseInt(minInput.value) !== originalBirthYearRange.min || parseInt(maxInput.value) !== originalBirthYearRange.max)) {
+      activeFilters.push(`Years: ${minInput.value}-${maxInput.value}`);
+    }
+    
+    const lifespanMinInput = document.getElementById("lifespan-min") as HTMLInputElement;
+    const lifespanMaxInput = document.getElementById("lifespan-max") as HTMLInputElement;
+    if (lifespanMinInput && lifespanMaxInput && (parseInt(lifespanMinInput.value) !== 0 || parseInt(lifespanMaxInput.value) !== 120)) {
+      activeFilters.push(`Age: ${lifespanMinInput.value}-${lifespanMaxInput.value}`);
+    }
+    
+    const dnaSlider = document.getElementById("dna-contribution-slider") as HTMLInputElement;
+    if (dnaSlider && parseFloat(dnaSlider.value) > 0) {
+      activeFilters.push(`DNA: ${dnaSlider.value}%+`);
+    }
+    
+    if (activeFilters.length === 0) {
+      summary.textContent = "All filters active";
+      stats.textContent = "All people visible";
+    } else {
+      summary.textContent = `${activeFilters.length} filter${activeFilters.length > 1 ? 's' : ''} active`;
+      stats.textContent = `${activeFilters.join(', ')}`;
+    }
+  }
+
   // Make functions globally available
   (window as any).updateGenerationFilter = updateGenerationFilter;
   (window as any).updateCountryFilter = updateCountryFilter;
   (window as any).selectAllCountries = selectAllCountries;
   (window as any).selectNoCountries = selectNoCountries;
   (window as any).closeStatsDashboard = closeStatsDashboard;
+  (window as any).updateBirthYearRange = updateBirthYearRange;
+  (window as any).updateLifespanFilter = updateLifespanFilter;
+  (window as any).updateDataCompletenessFilter = updateDataCompletenessFilter;
+  (window as any).updateRelationshipFilter = updateRelationshipFilter;
+  (window as any).updateDnaContributionFilter = updateDnaContributionFilter;
+  (window as any).updateResearchFilter = updateResearchFilter;
+  (window as any).resetAllFilters = resetAllFilters;
+  (window as any).switchFilterTab = switchFilterTab;
 
   function updateTree() {
     treeLayout(root);
