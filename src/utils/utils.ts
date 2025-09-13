@@ -67,6 +67,7 @@ export function getCountry(birthPlace?: string): string {
     if (place.includes("united kingdom") || place.includes("england") || place.includes("british")) return "United Kingdom";
     if (place.includes("ireland") || place.includes("irish")) return "Ireland";
     if (place.includes("germany") || place.includes("german") || place.includes("prussia") || place.includes("deutschland")) return "Germany";
+    if (place.includes("mi'kmaq") || place.includes("micmac") || place.includes("mikmaq")) return "Mi'kmaq Nation";
     if (place.includes("canada") || place.includes("canadian")) return "Canada";
     if (place.includes("united states") || place.includes("usa") || place.includes("america")) return "United States";
     if (place.includes("switzerland")) return "Switzerland";
@@ -96,6 +97,7 @@ export const countryColors: Record<string, string> = {
   "Netherlands": "#AE1C28",     // Red from flag (or #FF4F00 for orange if preferred)
   "Italy": "#008C45",           // Green from flag
   "Hungary": "#477050",         // Green from flag
+  "Mi'kmaq Nation": "#D22631",   // Red from flag
   "Unknown": "#808080",         // Neutral gray
 };
 

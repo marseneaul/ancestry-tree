@@ -6,6 +6,14 @@ import { maxArseneaultConfig } from "./data/configs/max-arseneault.config";
 import { Person } from "./interfaces/person";
 import { buildHierarchy, getGenerations, tracePatrilineal, traceMatrilineal, getCountry, calculateAgeAtDate, countryColors, getInitials, getOrdinalFromNumber, estimateAncientBirthDate, getLeaves } from "./utils/utils";
 
+// Helper: make "Mi'kmaq Nation" -> "mikmaq-nation"
+const slugify = (s) =>
+  s.normalize("NFKD")
+   .replace(/['’]/g, "")           // drop apostrophes
+   .replace(/\s+/g, "-")           // spaces -> hyphens
+   .replace(/[^a-zA-Z0-9-]/g, "")  // remove other punctuation
+  .toLowerCase();
+
 // Add this new function to extend a random chain with Neanderthal
 function extendWithNeanderthal(ancient: Person) {
   // Parse ancient's birth year if available (fallback to 1800 for estimation)
@@ -279,6 +287,7 @@ document.addEventListener("DOMContentLoaded", () => {
     "Netherlands": "./svgs/netherlands.svg",
     "Italy": "./svgs/italy.svg",
     "Hungary": "./svgs/hungary.svg",
+    "Mi'kmaq Nation": "./svgs/mikmaq-nation.svg",
     "Unknown": "./svgs/unknown.svg"  // Optional; if no SVG, will fallback to gray in nodes
   };
 
@@ -312,13 +321,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Define country SVG patterns once
   Object.entries(countrySvgs).forEach(([country, url]) => {
+    const patternId = `country-pattern-${slugify(country)}`;
+    const href = url ?? `${assetBase}/${slugify(country)}.svg`;
+
     const pattern = defs.append("pattern")
-      .attr("id", `country-pattern-${country.replace(/\s/g, "").toLowerCase()}`)
+      .attr("id", patternId)
       .attr("width", 1)
       .attr("height", 1)
       .attr("patternContentUnits", "objectBoundingBox");
     pattern.append("image")
-      .attr("xlink:href", url)
+      .attr("xlink:href", href)
       .attr("width", 1)
       .attr("height", 1)
       .attr("preserveAspectRatio", "xMidYMid slice");
@@ -2115,7 +2127,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const halfSize = scaleFactor(d.depth);  // For centering: x/y = -halfSize
       const country = getCountry(d.data.birthPlace);
       const svgUrl = countrySvgs[country];
-      const patternId = `country-pattern-${country.replace(/\s/g, "").toLowerCase()}`;
+      const patternId = `country-pattern-${slugify(country)}`;
       if (d.data.imageUrl) {
         // For rects, use clipPath to clip image to square
         const clipId = `clip-${d.data.name.replace(/[^a-zA-Z0-9-]/g, "")}`;
@@ -2160,7 +2172,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const radius = scaleFactor(d.depth);
       const country = getCountry(d.data.birthPlace);
       const svgUrl = countrySvgs[country];
-      const patternId = `country-pattern-${country.replace(/\s/g, "").toLowerCase()}`;
+      const patternId = `country-pattern-${slugify(country)}`;
       if (d.data.imageUrl) {
         // For circles, use clipPath to clip image to circle
         const clipId = `clip-${d.data.name.replace(/[^a-zA-Z0-9-]/g, "")}`;
