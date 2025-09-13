@@ -137,8 +137,9 @@ function closeModal() {
   }
 }
 
-// Make closeModal globally available
+// Make closeModal and showPersonModal globally available
 (window as any).closeModal = closeModal;
+(window as any).showPersonModal = showPersonModal;
 
 
 document.addEventListener("DOMContentLoaded", () => {
