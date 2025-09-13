@@ -8,6 +8,7 @@ import { emmaSaintJohnConfig } from "./emma-saint-john/emma-saint-john.config";
 
 // COMPLETE
 export const margaretDeibelConfig = {
+    // Per Ancestry.com, David J Dacey’s DNA indicates Ireland and Scotland 58% England, Wales, and NW England 40% France 2%.
     name: "Margaret Mary Deibel",
     sex: "Female",
     birthPlace: "Detroit, Michigan, United States",
@@ -36,6 +37,7 @@ export const margaretDeibelConfig = {
             deathPlace: "Detroit, Wayne, Michigan, United States",
             birthDate: "6 November 1896",
             deathDate: "16 May 1961",
+            imageUrl: "./images/daniel-dacey.jpg",
             story: danielAloysiusDaceyStory,
             parents: [
                 {   // Uremia carcinoma (kidney failure due to bladder carcinoma)
@@ -220,7 +222,8 @@ export const margaretDeibelConfig = {
                             ]
                         },
                         {   // POLICE OFFICER - died of brain clot after car accident (see article)
-                            name: "John Dacey",
+                            // Came on the boat Themis (NEED TO ADD THIS) with brother Patrick Deasy from Liverpool to New York, arriving 22 May, 1851
+                            name: "John Dacey (Deasy)",
                             sex: "Male",
                             birthPlace: "Desertserges, Cork, Ireland",
                             deathPlace: "Detroit, Wayne, Michigan, United States",
@@ -237,13 +240,23 @@ export const margaretDeibelConfig = {
                                     birthDate: "~1815",
                                     deathDate: "UNKNOWN"
                                 },
-                                {
-                                    name: "Danielis 'Daniel' Deasy",
+                                {   // Tullymurrihy, assumed Farmer (from Dacey pdf)
+                                    name: "Danielis \"Daniel\" Deasy",
                                     sex: "Male",
                                     birthPlace: "Southwestern, County Cork, Ireland",
                                     deathPlace: "UNKNOWN",
                                     birthDate: "~1815",
-                                    deathDate: "UNKNOWN"
+                                    deathDate: "UNKNOWN",
+                                    parents: [
+                                        {   // Speculative
+                                            name: "John Deasy Senior",
+                                            sex: "Male",
+                                            birthPlace: "Ireland",
+                                            deathPlace: "UNKNOWN",
+                                            birthDate: "UNKNOWN",
+                                            deathDate: "UNKNOWN"
+                                        }
+                                    ]
                                 }
                             ]
                         } 

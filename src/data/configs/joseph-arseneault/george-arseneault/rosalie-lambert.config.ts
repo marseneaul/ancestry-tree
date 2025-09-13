@@ -1,3 +1,5 @@
+import { jeanNicoletStory } from "../../../stories/jean-nicolet";
+
 // COMPLETE
 export const rosalieLambertConfig = {
     name: "Rosalie Lambert",
@@ -63,7 +65,47 @@ export const rosalieLambertConfig = {
                                             deathPlace: "St-Pierre, Île-d'Orléans, Montmorency, Québec, Canada",
                                             birthDate: "15 July 1652",
                                             deathDate: "28 December 1708",
-                                            parents: []
+                                            parents: [
+                                                {
+                                                	name: "Marie Euphrosine-Madeleine Nicolet",
+                                                	sex: "Female",
+                                                	birthPlace: "Nipissing Lake, Nipissing, Ontario, Canada",
+                                                	deathPlace: "Hotel-Dieu-du-Precieux-Sang-de-Quebec, Quebec, Capital-Nationale, Quebec, Canada",
+                                                	birthDate: "1626",
+                                                	deathDate: "30 September 1689",
+                                                    parents: [
+                                                        {
+                                                        	name: "Jeanne Kweh Anishnabek Bahmahmaadjimowin Giisis Nipissing",
+                                                        	sex: "Female",
+                                                        	birthPlace: "Lac Nipissing, Nouvelle-France (Aujourd'hui en Ontario), Ontario, Canada",
+                                                        	deathPlace: "Québec, Nouvelle-France (Aujourd'hui dans Capitale-Nationale, Québec, Canada",
+                                                        	birthDate: "1612",
+                                                        	deathDate: "1636",
+                                                            parents: []
+                                                        },
+                                                        {
+                                                        	name: "Jean Nicolet Sieur de Belleborne",
+                                                        	sex: "Male",
+                                                        	birthPlace: "Cherbourg-Octeville, Departement de la Manche, Basse-Normandie, France",
+                                                        	deathPlace: "St. Lawrence River, Sillery district near Montréal, Québec, Canada",
+                                                        	birthDate: "1598",
+                                                        	deathDate: "29 October 1642",
+                                                            imageUrl: "./images/jean-nicolet.jpg",
+                                                            story: jeanNicoletStory,
+                                                            parents: []
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                	name: "Jean Leblanc",
+                                                	sex: "Male",
+                                                	birthPlace: "Saint-Lambert, Departement du Calvados, Basse-Normandie, France",
+                                                	deathPlace: "L'Île d'Orléans, Montmorency, Québec, Canada",
+                                                	birthDate: "1623",
+                                                	deathDate: "11 September 1662",
+                                                    parents: []
+                                                }
+                                            ]
                                         },
                                         {
                                             name: "Jean Pichet Pegin Piget",

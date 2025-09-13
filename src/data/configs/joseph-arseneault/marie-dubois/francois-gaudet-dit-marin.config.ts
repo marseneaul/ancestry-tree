@@ -154,12 +154,67 @@ export const francoisGaudetDitMarinConfig = {
                             ]
                         },
                         {
-                        	name: "Jean Baptiste Cyr",
+                        	name: "Jean Jehan Baptiste Cyr I",
                         	sex: "Male",
                         	birthPlace: "Port Royal, Acadie, Nova Scotia, Canada",
                         	deathPlace: "Beaubassin, Cumberland, Nova Scotia, Canada",
-                        	birthDate: "1671",
-                        	deathDate: "12 June 1720"
+                        	birthDate: "16 December 1671",
+                        	deathDate: "12 June 1720",
+                            parents: [
+                                {
+                                	name: "Marie Francoise Bourgeois",
+                                	sex: "Female",
+                                	birthPlace: "Port Royal, Annapolis, New Brunswick, Canada",
+                                	deathPlace: "Port Royal, Nova Scotia, Canada",
+                                	birthDate: "1652",
+                                	deathDate: "2 March 1741",
+                                    parents: [
+                                        {
+                                        	name: "Jeanne Trahan",
+                                        	sex: "Female",
+                                        	birthPlace: "Somsois, France",
+                                        	deathPlace: "Port Royal, Acadia, Canada",
+                                        	birthDate: "30 May 1626",
+                                        	deathDate: "1659"
+                                        },
+                                        {
+                                        	name: "Jacques Jacob Bourgeois",
+                                        	sex: "Male",
+                                        	birthPlace: "La Ferte-Gaucher, Departement de Seine-et-Marne, Île-de-France, France",
+                                        	deathPlace: "Port Royal, Annapolis County, Nova Scotia, Canada",
+                                        	birthDate: "7 January 1621",
+                                        	deathDate: "6 July 1702"
+                                        }
+                                    ]
+                                },
+                                {
+                                	name: "Pierre Miquelon Cyr/Sire",
+                                	sex: "Male",
+                                	birthPlace: "Bourgiel, Anjou, Touraine, France",
+                                	deathPlace: "Beaubassin, Acadia, Amhearst, Nova Scotia, Canada",
+                                	birthDate: "1644",
+                                	deathDate: "1 April 1679",
+                                    parents: [
+                                        {
+                                        	name: "Suzanne Thiebaud",
+                                        	sex: "Female",
+                                        	birthPlace: "Blamont, Doubs, Franche-Comté, France",
+                                        	deathPlace: "Laval, Quebec, Canada",
+                                        	birthDate: "22 June 1628",
+                                        	deathDate: "18 February 1738"
+                                        },
+                                        {
+                                        	name: "Jean Christophe Cyr",
+                                        	sex: "Male",
+                                        	birthPlace: "Blamont, Doubs, Franche-Comte, France",
+                                        	deathPlace: "Le Comte, Ardeche, Rhone-Alpes, France",
+                                        	birthDate: "21 July 1624",
+                                        	deathDate: "1683",
+                                            parents: [] // https://www.ancestry.com/family-tree/person/tree/196972082/person/282570322287/facts
+                                        }
+                                    ]
+                                }
+                            ]
                         }
                     ]
                 },
