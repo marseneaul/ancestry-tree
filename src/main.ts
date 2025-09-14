@@ -591,7 +591,7 @@ document.addEventListener("DOMContentLoaded", () => {
     filterPanel.innerHTML = `
       <div class="filter-header">
         <h3 class="filter-main-title">🔍 Advanced Filters</h3>
-        <div class="filter-summary" id="filter-summary">All filters active</div>
+        <div class="filter-summary" id="filter-summary">No filters active</div>
       </div>
       
       <div class="filter-tabs" role="tablist" aria-label="Filter categories">
@@ -1779,7 +1779,7 @@ document.addEventListener("DOMContentLoaded", () => {
         };
       })
       .filter(item => item !== null)
-      .sort((a, b) => a!.year - b!.year);
+      .sort((a, b) => b!.year - a!.year);
 
     // Group by decade for better visualization
     const decadeGroups = new Map<number, any[]>();
@@ -1796,7 +1796,7 @@ document.addEventListener("DOMContentLoaded", () => {
       <div class="timeline-title">📅 Family Timeline</div>
       <div class="timeline-content">
         ${Array.from(decadeGroups.entries())
-          .sort((a, b) => a[0] - b[0])
+          .sort((a, b) => b[0] - a[0])
           .map(([decade, people]) => `
             <div class="timeline-decade">
               <div class="decade-header">${decade}s</div>
@@ -2045,7 +2045,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     
     if (activeFilters.length === 0) {
-      summary.textContent = "All filters active";
+      summary.textContent = "No filters active";
       stats.textContent = "All people visible";
     } else {
       summary.textContent = `${activeFilters.length} filter${activeFilters.length > 1 ? 's' : ''} active`;
