@@ -22,6 +22,7 @@ export const josephArseneaultConfig = {
             deathPlace: "Flint, Genesee County, Michigan, United States",
             birthDate: "29 June 1886",
             deathDate: "27 January 1969",
+            imageUrl: "./images/elizabeth-hennecke.jpg",
             parents: [
                 elizabethVossConfig,
                 {
