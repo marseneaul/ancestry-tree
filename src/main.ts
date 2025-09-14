@@ -329,11 +329,9 @@ document.addEventListener("DOMContentLoaded", () => {
     colorLegend?.appendChild(li);
   });
 
-  // Responsive SVG - use container dimensions instead of window dimensions
-  const treeContainer = document.getElementById('tree-container');
-  const containerRect = treeContainer?.getBoundingClientRect();
-  let width = containerRect ? containerRect.width : 1200; // fallback to 1200px
-  let height = Math.max(600, window.innerHeight * 0.5); // minimum 600px height
+  // Responsive SVG
+  let width = window.innerWidth * 0.8;
+  let height = window.innerHeight * 0.55;
   const margin = { top: 50, right: 150, bottom: 50, left: 150 };
 
   const svg = d3.select("#tree-container").append("svg")
@@ -2472,28 +2470,5 @@ document.addEventListener("DOMContentLoaded", () => {
       zoom.transform,
       d3.zoomIdentity
     );
-  });
-
-  // Handle window resize to maintain consistent sizing
-  window.addEventListener('resize', () => {
-    const newContainerRect = treeContainer?.getBoundingClientRect();
-    if (newContainerRect) {
-      const newWidth = newContainerRect.width;
-      const newHeight = Math.max(600, window.innerHeight * 0.5);
-      
-      // Update SVG dimensions
-      svg.attr("width", "100%")
-         .attr("height", newHeight)
-         .attr("viewBox", `${-margin.left} ${-margin.top} ${newWidth + margin.left + margin.right} ${newHeight + margin.top + margin.bottom}`);
-      
-      // Update tree layout
-      const newTreeLayout = d3.tree<Person>().size([newWidth, newHeight - 100]).nodeSize([120, 200]);
-      
-      // Re-render the tree with new dimensions
-      if (root) {
-        const newRoot = newTreeLayout(root);
-        updateTree(newRoot);
-      }
-    }
   });
 });
