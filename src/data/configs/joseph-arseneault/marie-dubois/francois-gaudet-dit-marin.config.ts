@@ -233,7 +233,61 @@ export const francoisGaudetDitMarinConfig = {
                         	deathPlace: "Beaubassin, Acadia, Cumberland, Nova Scotia, Canada",
                         	birthDate: "1676",
                         	deathDate: "21 November 1740",
-                            parents: []
+                            parents: [
+								{
+									name: "Catherine-Genevieve Hébert LeBlanc",
+									sex: "Female",
+									birthPlace: "Port Royal, Richmond County, Nova Scotia, Canada",
+									deathPlace: "Saint-Charles-des-Mines, Grand-Pré, Kings, Nova Scotia, Canada",
+									birthDate: "1656",
+									deathDate: "26 May 1731"
+								},
+								{
+									name: "Jean Jacques Daniel Leblanc",
+									sex: "Male",
+									birthPlace: "Port Royal, Annapolis County, Nova Scotia, Canada",
+									deathPlace: "Grand Pré, Kings County, Nova Scotia, Canada",
+									birthDate: "1651",
+									deathDate: "26 May 1731",
+									parents: [
+										{
+											name: "Marie Françoise Gaudet",
+											sex: "Female",
+											birthPlace: "Loudun, Vienne, Poitou-Charentes, France",
+											deathPlace: "Port Royal, Annapolis County, Nova Scotia, Canada",
+											birthDate: "1623",
+											deathDate: "1699"
+										},
+										{
+											name: "Daniel Leblanc",
+											sex: "Male",
+											birthPlace: "Martaizé, Vienne, Poitou-Charentes, France",
+											deathPlace: "Port Royal, Annapolis County, Nova Scotia, Canada",
+											birthDate: "1626",
+											deathDate: "1696",
+											parents: [
+												{
+													name: "Jeanne/Jean Chenière/Lavaut/Gaudet",
+													sex: "Female",
+													birthPlace: "Martaize, Vienne, Dauphine, Isère, Rhône-Alpes, France",
+													deathPlace: "Marne, Champagne-Ardenne, France",
+													birthDate: "9 July 1603",
+													deathDate: "25 February 1673"
+												},
+												{
+													name: "René Alphonse Le Blanc Baron de Grandmaison",
+													sex: "Male",
+													birthPlace: "Martaize, Loudun, Vienne, Poitou-Charentes, France",
+													deathPlace: "Omines, Richmond, Nova Scotia, Canada",
+													birthDate: "1600",
+													deathDate: "3 January 1626",
+													parents: [] // Baron lineage: https://www.ancestry.com/family-tree/person/tree/171245879/person/272676399088/facts 
+												}
+											]
+										}
+									]
+								}
+							]
                         },
                         {
                         	name: "Alexis François Cormier",

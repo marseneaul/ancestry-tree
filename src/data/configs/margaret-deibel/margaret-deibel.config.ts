@@ -187,7 +187,7 @@ export const margaretDeibelConfig = {
                     ]
                 },
                 {   // Cause of death = "La Grippe", or influenza (the flu)
-                    name: "Daniel Aloysius Dacy",
+                    name: "Daniel Aloysius Dacey",
                     sex: "Male",
                     birthPlace: "Detroit, Wayne, Michigan, United States",
                     deathPlace: "Detroit, Wayne, Michigan, United States",
@@ -229,7 +229,7 @@ export const margaretDeibelConfig = {
                             deathPlace: "Detroit, Wayne, Michigan, United States",
                             birthDate: "29 June 1832",
                             deathDate: "27 October 1908",
-                            imageUrl: "./images/john-dacy.jpg",
+                            imageUrl: "./images/john-dacey.jpg",
                             story: johnDaceyStory,
                             parents: [
                                 {

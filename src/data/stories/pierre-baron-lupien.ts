@@ -1,0 +1,2 @@
+// Our French-Canadian ancestors; Vol. 8 
+export const pierreBaronLupienStory = "Pierre Barron Lupien was baptized at Montréal on 10 October 1683 and died in 1744. He was married at Montréal on 18 November 1705 to Angélique Courault dit Lacoste, daughter of Cybar and of Marie-Françoise Goupil. Pierre became a master carpenter and supplier of timber for the King's Shipyard at Montréal. He had four sons and six daughters.";
