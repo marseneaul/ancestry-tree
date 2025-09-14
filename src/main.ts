@@ -6,6 +6,28 @@ import { maxArseneaultConfig } from "./data/configs/max-arseneault.config";
 import { Person } from "./interfaces/person";
 import { buildHierarchy, getGenerations, tracePatrilineal, traceMatrilineal, getCountry, calculateAgeAtDate, countryColors, getInitials, getOrdinalFromNumber, estimateAncientBirthDate, getLeaves } from "./utils/utils";
 
+// Create modal HTML structure dynamically
+function createModal() {
+  const modal = document.createElement('div');
+  modal.id = 'detail-modal';
+  modal.className = 'hidden fixed inset-0 flex items-center justify-center z-50';
+  modal.style.background = 'var(--overlay)';
+  
+  const modalContent = document.createElement('div');
+  modalContent.className = 'modal-content rounded-lg shadow-lg max-w-lg w-full p-6 relative';
+  modalContent.style.background = 'var(--bg-secondary)';
+  modalContent.style.border = '1px solid var(--border-secondary)';
+  
+  const modalInnerContent = document.createElement('div');
+  modalInnerContent.id = 'modal-inner-content';
+  
+  modalContent.appendChild(modalInnerContent);
+  modal.appendChild(modalContent);
+  document.body.appendChild(modal);
+  
+  return modal;
+}
+
 // Helper: make "Mi'kmaq Nation" -> "mikmaq-nation"
 const slugify = (s) =>
   s.normalize("NFKD")
@@ -145,6 +167,9 @@ function closeModal() {
 document.addEventListener("DOMContentLoaded", () => {
   const app = document.querySelector("#app");
   if (!app) return;
+
+  // Create modal structure
+  createModal();
 
   // Add UI Elements for Professional Look
   const header = document.createElement("header");
