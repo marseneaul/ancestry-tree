@@ -285,7 +285,26 @@ export const georgeArseneaultConfig = {
                                     deathPlace: "Maskinongé, Quebec, Canada",
                                     birthDate: "4 April 1755",
                                     deathDate: "27 April 1826",
-                                    parents: []
+                                    parents: [
+                                        {
+                                            name: "Madeleine Genevieve Lefebvre (Lemay)",
+                                            sex: "Female",
+                                            birthPlace: "Louiseville, Maskinongé, Québec, Canada",
+                                            deathPlace: "Yamachiche, Québec, Canada",
+                                            birthDate: "29 September 1723",
+                                            deathDate: "21 June 1765",
+                                            parents: []
+                                        },
+                                        {
+                                            name: "Joseph Marie Lamy",
+                                            sex: "Male",
+                                            birthPlace: "Berthier En Bas, Quebec, Canada",
+                                            deathPlace: "Yamachiche, Quebec, Canada",
+                                            birthDate: "21 March 1723",
+                                            deathDate: "1 January 1764",
+                                            parents: []
+                                        }
+                                    ]
                                 },
                                 {
                                     name: "François de Sales (Charles) Béland Jr",
@@ -302,7 +321,80 @@ export const georgeArseneaultConfig = {
                                             deathPlace: "Neuville, Québec, Canada",
                                             birthDate: "25 July 1725",
                                             deathDate: "27 January 1795",
-                                            parents: []
+                                            parents: [
+                                                {
+                                                    name: "Marie-Madeleine Angelique Pinel",
+                                                    sex: "Female",
+                                                    birthPlace: "Riviere Ouelle, Québec, Canada",
+                                                    deathPlace: "Les Écureuils, Portneuf, Québec, Canada",
+                                                    birthDate: "28 January 1700",
+                                                    deathDate: "20 June 1769",
+                                                    parents: [
+                                                        {
+                                                            name: "Marie-Louise Constantineau",
+                                                            sex: "Female",
+                                                            birthPlace: "Quebec City, Quebec, Canada",
+                                                            deathPlace: "Neuville, Portneuf County, Quebec, Canada",
+                                                            birthDate: "14 June 1670",
+                                                            deathDate: "October 1736"
+                                                        },
+                                                        {
+                                                            name: "Francois Xavier Pinel",
+                                                            sex: "Male",
+                                                            birthPlace: "Sillery, Quebec, Canada",
+                                                            deathPlace: "Neuville, Portneuf County, Quebec, Canada",
+                                                            birthDate: "<15 January 1664",
+                                                            deathDate: "February 1709"
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    name: "Ignace Aide Crequy",
+                                                    sex: "Male",
+                                                    birthPlace: "Portneuf, Québec, Canada",
+                                                    deathPlace: "Neuville, Quebec, Canada",
+                                                    birthDate: "21 June 1700",
+                                                    deathDate: "9 July 1765",
+                                                    parents: [
+                                                        {
+                                                            name: "Marie Catherine-Angelique de l'Isle",
+                                                            sex: "Female",
+                                                            birthPlace: "Montreal, Québec, Canada",
+                                                            deathPlace: "Neuville, Quebec, Canada",
+                                                            birthDate: "11 June 1674",
+                                                            deathDate: "12 December 1726",
+                                                            parents: [
+                                                                {   // (“ Filles du Roi-The King’s Daughters”)
+                                                                    name: "Louise Desgranges",
+                                                                    sex: "Female",
+                                                                    birthPlace: "Montmorency, val-d’oise, Ile-de-France, France",
+                                                                    deathPlace: "Neuville, Capitale-Nationale Region, Quebec",
+                                                                    birthDate: "5 November 1648",
+                                                                    deathDate: "11 November 1721",
+                                                                    parents: [] // https://www.ancestry.com/family-tree/person/tree/90282466/person/322669828468/facts
+                                                                },
+                                                                {
+                                                                    name: "Louis de L'Isle",
+                                                                    sex: "Male",
+                                                                    birthPlace: "Dampierre-en-Bray, France",
+                                                                    deathPlace: "Quebec, Canada",
+                                                                    birthDate: "11 April 1645",
+                                                                    deathDate: "10 September 1693",
+                                                                    parents: [] // https://www.ancestry.com/family-tree/person/tree/90282466/person/322669828467/facts
+                                                                }
+                                                            ]
+                                                        },
+                                                        {
+                                                            name: "Jean Aide Dit Crequi",
+                                                            sex: "Male",
+                                                            birthPlace: "La Rochelle, Manche, Basse-Normandie, France",
+                                                            deathPlace: "Portneuf, Québec, Canada",
+                                                            birthDate: "9 April 1661",
+                                                            deathDate: "12 December 1726"
+                                                        }
+                                                    ]
+                                                }
+                                            ]
                                         },
                                         {
                                             name: "François-de-Sales Béland Sr",
