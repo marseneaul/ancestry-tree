@@ -142,10 +142,10 @@ export const rosalieLambertConfig = {
                                 {
                                     name: "Marie-Anne Inard",
                                     sex: "Female",
-                                    birthPlace: "1674",
-                                    deathPlace: "9 January 1741",
-                                    birthDate: "Ste-Famille, Ile d'Orléans, Montmorency, Québec, Canada",
-                                    deathDate: "Deschambault, Portneuf, Québec, Canada",
+                                    birthPlace: "Ste-Famille, Ile d'Orléans, Montmorency, Québec, Canada",
+                                    deathPlace: "Deschambault, Portneuf, Québec, Canada",
+                                    birthDate: "1674",
+                                    deathDate: "9 January 1741",
                                     parents: [
                                         {
                                             name: "Marie Bonville",
