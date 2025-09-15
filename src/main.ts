@@ -569,7 +569,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // }
   const root = buildHierarchy(rootPerson);
 
-  const treeLayout = d3.tree<Person>().size([width, height - 100]).nodeSize([120, 200]);  // Adjusted for flipped layout
+  const treeLayout = d3.tree<Person>().size([width, height - 100]).nodeSize([180, 200]);  // Increased horizontal spacing to prevent text overlap
 
   // Filter state
   let maxGeneration = 0;
@@ -2230,12 +2230,36 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    // Text Labels
-    nodeEnter.append("text")
-      .attr("dy", d => scaleFactor(d.depth) + 10)
+    // Text Labels with background and wrapping
+    const textGroups = nodeEnter.append("g")
+      .attr("class", "text-group");
+    
+    // Add background rectangle for text
+    textGroups.append("rect")
+      .attr("class", "text-background")
+      .attr("x", -50) // Half of max text width
+      .attr("y", d => scaleFactor(d.depth) + 7)
+      .attr("width", 100) // Slightly wider to accommodate longer names
+      .attr("height", 16) // Reduced height for more compact look
+      .attr("rx", 8) // Increased border radius for more aesthetic rounded corners
+      .attr("fill", "rgba(255, 255, 255, 0.9)")
+      .attr("stroke", "rgba(0, 0, 0, 0.1)")
+      .style("fill", "var(--bg-secondary)")
+      .style("stroke", "var(--border-secondary)")
+      .attr("stroke-width", 0.5);
+    
+    // Add text with truncation for long names
+    textGroups.append("text")
+      .attr("dy", d => scaleFactor(d.depth) + 15) // Slightly more spacing below nodes
       .attr("x", 0)
       .attr("text-anchor", "middle")
-      .text(d => d.data.name || "Unknown");
+      .attr("dominant-baseline", "middle") // Perfect vertical centering
+      .attr("class", "node-text")
+      .text(d => {
+        const name = d.data.name || "Unknown";
+        // Truncate names that would exceed the 100px box width (roughly 12-14 characters)
+        return name.length > 14 ? name.substring(0, 11) + "..." : name;
+      });
 
     // Tooltips (Enhanced)
     nodeEnter.append("title")
@@ -2257,7 +2281,7 @@ document.addEventListener("DOMContentLoaded", () => {
       g.append("text")
         .attr("class", "gen-label")
         .attr("x", horizontalCenter)
-        .attr("y", y + 45)  // Position above the node row; adjust offset as needed (e.g., +30 for below)
+        .attr("y", y + 65)  // Moved further up to avoid overlap with node text
         .attr("text-anchor", "middle")
         .text(`Gen ${depth}: ${info.count}/${(2**depth).toLocaleString()} ancestors, ~${info.dnaPercentEach.toFixed(2)}% each (${info.dnaPercentTotal.toFixed(2)}% total DNA), ${info.probOfSharingDna.toFixed(2)}% probability of sharing DNA`);
     });

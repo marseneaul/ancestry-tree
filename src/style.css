@@ -158,6 +158,27 @@ body {
     fill: var(--text-primary);
   }
 
+  .node-text {
+    font-size: 10px;
+    font-weight: 600;
+    fill: var(--text-primary);
+    pointer-events: none;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+
+  .text-background {
+    pointer-events: none;
+    transition: all 0.3s ease;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  }
+
+  .node:hover .text-background {
+    fill: var(--bg-primary);
+    stroke: var(--border-primary);
+    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.15));
+    transform: scale(1.05);
+  }
+
   .legend-item {
     display: flex;
     align-items: center;
