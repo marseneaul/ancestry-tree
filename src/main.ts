@@ -2496,4 +2496,255 @@ document.addEventListener("DOMContentLoaded", () => {
       d3.zoomIdentity
     );
   });
+
+  // Mobile-specific enhancements
+  function isMobile() {
+    return window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  }
+
+  // Touch gesture support for mobile
+  let touchStartTime = 0;
+  let touchStartDistance = 0;
+  let lastTouchDistance = 0;
+  let isPinching = false;
+
+  svg.on("touchstart", function(event) {
+    touchStartTime = Date.now();
+    const touches = event.touches;
+    
+    if (touches.length === 2) {
+      // Pinch gesture
+      isPinching = true;
+      const dx = touches[0].clientX - touches[1].clientX;
+      const dy = touches[0].clientY - touches[1].clientY;
+      touchStartDistance = Math.sqrt(dx * dx + dy * dy);
+      lastTouchDistance = touchStartDistance;
+    } else if (touches.length === 1) {
+      // Single touch - prepare for potential double tap
+      isPinching = false;
+    }
+  });
+
+  svg.on("touchmove", function(event) {
+    event.preventDefault(); // Prevent scrolling
+    
+    const touches = event.touches;
+    
+    if (touches.length === 2 && isPinching) {
+      // Handle pinch zoom
+      const dx = touches[0].clientX - touches[1].clientX;
+      const dy = touches[0].clientY - touches[1].clientY;
+      const currentDistance = Math.sqrt(dx * dx + dy * dy);
+      
+      if (lastTouchDistance > 0) {
+        const scale = currentDistance / lastTouchDistance;
+        const currentTransform = d3.zoomTransform(svg.node()!);
+        const newScale = Math.max(0.1, Math.min(5, currentTransform.k * scale));
+        
+        // Center the zoom on the midpoint of the two touches
+        const midX = (touches[0].clientX + touches[1].clientX) / 2;
+        const midY = (touches[0].clientY + touches[1].clientY) / 2;
+        const rect = svg.node()!.getBoundingClientRect();
+        const x = midX - rect.left;
+        const y = midY - rect.top;
+        
+        svg.call(zoom.transform, d3.zoomIdentity
+          .translate(x - (x - currentTransform.x) * (newScale / currentTransform.k), 
+                    y - (y - currentTransform.y) * (newScale / currentTransform.k))
+          .scale(newScale));
+      }
+      
+      lastTouchDistance = currentDistance;
+    }
+  });
+
+  svg.on("touchend", function(event) {
+    const touchDuration = Date.now() - touchStartTime;
+    const touches = event.changedTouches;
+    
+    if (touches.length === 1 && touchDuration < 300 && !isPinching) {
+      // Potential double tap - we'll handle this in the click event
+      setTimeout(() => {
+        // Check if this was a double tap by looking for another touchstart
+        // This is a simplified approach - in production you might want more sophisticated detection
+      }, 300);
+    }
+    
+    isPinching = false;
+    lastTouchDistance = 0;
+  });
+
+  // Enhanced node interactions for mobile
+  let lastTapTime = 0;
+  let tapCount = 0;
+
+  // Override the existing node click behavior for mobile
+  const originalNodeClick = g.selectAll(".node").on("click");
+  
+  g.selectAll(".node")
+    .on("click", function(event, d) {
+      if (isMobile()) {
+        const currentTime = Date.now();
+        const timeDiff = currentTime - lastTapTime;
+        
+        if (timeDiff < 500) {
+          tapCount++;
+        } else {
+          tapCount = 1;
+        }
+        
+        lastTapTime = currentTime;
+        
+        if (tapCount === 1) {
+          // Single tap - show modal after a short delay to allow for double tap
+          setTimeout(() => {
+            if (tapCount === 1) {
+              showPersonModal(d.data, d.depth);
+            }
+          }, 300);
+        } else if (tapCount === 2) {
+          // Double tap - zoom to node
+          tapCount = 0;
+          const currentTransform = d3.zoomTransform(svg.node()!);
+          const scale = Math.min(currentTransform.k * 2, 3);
+          const tx = width / 2 - (d.x ?? 0) * scale;
+          const ty = height / 2 - (d.y ?? 0) * scale;
+          
+          svg.transition().duration(300).call(
+            zoom.transform,
+            d3.zoomIdentity.translate(tx, ty).scale(scale)
+          );
+        }
+      } else {
+        // Desktop behavior
+        showPersonModal(d.data, d.depth);
+      }
+    });
+
+  // Mobile panel management
+  function closeAllPanels() {
+    const panels = [
+      document.querySelector('.filter-panel'),
+      document.querySelector('.stats-dashboard'),
+      document.querySelector('.timeline-panel')
+    ];
+    
+    panels.forEach(panel => {
+      if (panel && !panel.classList.contains('hidden')) {
+        panel.classList.add('hidden');
+      }
+    });
+  }
+
+  // Add swipe gestures for panel navigation
+  let startX = 0;
+  let startY = 0;
+  let isSwipeGesture = false;
+
+  document.addEventListener('touchstart', function(e) {
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    isSwipeGesture = true;
+  });
+
+  document.addEventListener('touchmove', function(e) {
+    if (!isSwipeGesture) return;
+    
+    const currentX = e.touches[0].clientX;
+    const currentY = e.touches[0].clientY;
+    const diffX = startX - currentX;
+    const diffY = startY - currentY;
+    
+    // Check if this is a horizontal swipe (more horizontal than vertical movement)
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+      if (diffX > 0) {
+        // Swipe left - close panels
+        closeAllPanels();
+      }
+      isSwipeGesture = false;
+    }
+  });
+
+  document.addEventListener('touchend', function() {
+    isSwipeGesture = false;
+  });
+
+  // Mobile-specific modal improvements
+  function enhanceModalForMobile() {
+    const modal = document.getElementById('detail-modal');
+    if (modal && isMobile()) {
+      // Add swipe-to-close for modal
+      let modalStartY = 0;
+      
+      modal.addEventListener('touchstart', function(e) {
+        modalStartY = e.touches[0].clientY;
+      });
+      
+      modal.addEventListener('touchmove', function(e) {
+        const currentY = e.touches[0].clientY;
+        const diffY = currentY - modalStartY;
+        
+        if (diffY > 100) {
+          // Swipe down to close
+          closeModal();
+        }
+      });
+    }
+  }
+
+  // Initialize mobile enhancements
+  if (isMobile()) {
+    enhanceModalForMobile();
+    
+    // Add mobile-specific classes
+    document.body.classList.add('mobile-device');
+    
+    // Optimize zoom behavior for mobile
+    zoom.scaleExtent([0.1, 3]); // Reduce max zoom on mobile
+    
+    // Add haptic feedback for supported devices
+    function hapticFeedback() {
+      if ('vibrate' in navigator) {
+        navigator.vibrate(50);
+      }
+    }
+    
+    // Add haptic feedback to button interactions
+    document.querySelectorAll('button').forEach(button => {
+      button.addEventListener('click', hapticFeedback);
+    });
+  }
+
+  // Handle orientation change
+  window.addEventListener('orientationchange', function() {
+    setTimeout(() => {
+      // Recalculate dimensions and update tree
+      const container = document.getElementById('tree-container');
+      if (container) {
+        const rect = container.getBoundingClientRect();
+        width = rect.width;
+        height = Math.max(rect.height, 400);
+        
+        svg.attr('width', width).attr('height', height);
+        updateTree();
+      }
+    }, 100);
+  });
+
+  // Handle window resize for mobile
+  window.addEventListener('resize', function() {
+    if (isMobile()) {
+      setTimeout(() => {
+        const container = document.getElementById('tree-container');
+        if (container) {
+          const rect = container.getBoundingClientRect();
+          width = rect.width;
+          height = Math.max(rect.height, 400);
+          
+          svg.attr('width', width).attr('height', height);
+          updateTree();
+        }
+      }, 100);
+    }
+  });
 });
