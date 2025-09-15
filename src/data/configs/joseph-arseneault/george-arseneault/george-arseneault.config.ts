@@ -2,6 +2,7 @@ import { georgeLouisArseneaultStory } from "../../../stories/george-louis-arsene
 import { louisArseneauStory } from "../../../stories/louis-arseneau";
 import { nicolasBaronIIStory } from "../../../stories/nicolas-barron-ii";
 import { pierreBaronLupienStory } from "../../../stories/pierre-baron-lupien";
+import { pierreBlaisStory } from "../../../stories/pierre-blais";
 import { antoineArseneauConfig } from "./antoine-arseneau/antoine-arseneau.config";
 import { isaacMineauConfig } from "./isaac-mineau/isaac-mineau.config";
 import { rosalieLambertConfig } from "./rosalie-lambert.config";
@@ -240,7 +241,123 @@ export const georgeArseneaultConfig = {
                                                             deathPlace: "Saint-François-de-Sales-de-L'Île-Jèsus, Le Domaine-du-Roy, Quebec, Canada",
                                                             birthDate: "17 January 1636",
                                                             deathDate: "25 February 1714",
-                                                            parents: [] // https://www.ancestry.com/family-tree/person/tree/24629615/person/252580293950/facts
+                                                            parents: [ // https://www.ancestry.com/family-tree/person/tree/24629615/person/252580293950/facts
+                                                                {
+                                                                    name: "Madeleine Genevieve Lefebvre (Lemay)",
+                                                                    sex: "Female",
+                                                                    birthPlace: "Louiseville, Maskinongé, Québec, Canada",
+                                                                    deathPlace: "Yamachiche, Québec, Canada",
+                                                                    birthDate: "29 September 1723",
+                                                                    deathDate: "21 June 1765",
+                                                                    parents: [
+                                                                        {
+                                                                            name: "M Robida",
+                                                                            sex: "Female",
+                                                                            birthPlace: "La Rochelle, Manche, Basse-Normandie, France",
+                                                                            deathPlace: "Maskinongé, Quebec, Canada",
+                                                                            birthDate: "1701",
+                                                                            deathDate: "October 1751 ",
+                                                                            parents: [] // https://www.ancestry.com/family-tree/person/tree/24629615/person/12501168953/facts
+                                                                        },
+                                                                        {
+                                                                            name: "Pierre Lefebvre Descoteaux Sr",
+                                                                            sex: "Male",
+                                                                            birthPlace: "Cap-de-la-Madeleine, Quebec, Canada",
+                                                                            deathPlace: "Québec, Quebec, Canada",
+                                                                            birthDate: "28 July 1685",
+                                                                            deathDate: "26 March 1751",
+                                                                            parents: [
+                                                                                {
+                                                                                    name: "Marie Madeleine Cusson dit Caillou",
+                                                                                    sex: "Female",
+                                                                                    birthPlace: "Trois-Rivières, Québec, Canada",
+                                                                                    deathPlace: "Baie Du Febvre, Quebec, Canada",
+                                                                                    birthDate: "1662",
+                                                                                    deathDate: "19 December 1720",
+                                                                                    parents: []
+                                                                                },
+                                                                                {
+                                                                                    name: "Ange Lefebvre Descoteaux",
+                                                                                    sex: "Male",
+                                                                                    birthPlace: "Trois Rivieres, St Maurice, Canada",
+                                                                                    deathPlace: "Becancour, Centre-du-Quebec Region, Quebec, Canada",
+                                                                                    birthDate: "19 September 1658",
+                                                                                    deathDate: "24 December 1735",
+                                                                                    parents: []
+                                                                                }
+                                                                            ]
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                {
+                                                                    name: "Joseph Marie Lamy",
+                                                                    sex: "Male",
+                                                                    birthPlace: "Berthier En Bas, Quebec, Canada",
+                                                                    deathPlace: "Yamachiche, Quebec, Canada",
+                                                                    birthDate: "21 March 1723",
+                                                                    deathDate: "1 January 1764",
+                                                                    parents: [
+                                                                        {
+                                                                            name: "Marguerite Ursule Blais",
+                                                                            sex: "Female",
+                                                                            birthPlace: "St Jean, Ile, Quebec, Canada",
+                                                                            deathPlace: "Yamachiche, Quebec, Canada",
+                                                                            birthDate: "29 June 1688",
+                                                                            deathDate: "6 May 1765",
+                                                                            parents: [
+                                                                                {
+                                                                                    name: "Anne Perreault",
+                                                                                    sex: "Female",
+                                                                                    birthPlace: "St Sulpice, Paris, Paris, Ile-de-France, France",
+                                                                                    deathPlace: "St Jean, Île d' Orléans, Montmorency, Québec, Canada",
+                                                                                    birthDate: "17 November 1647",
+                                                                                    deathDate: "29 June 1688",
+                                                                                    parents: []
+                                                                                },
+                                                                                {
+                                                                                    name: "Pierre Blais",
+                                                                                    sex: "Male",
+                                                                                    birthPlace: "Hanc, Niort, Deux-Sèvres, France",
+                                                                                    deathPlace: "Saint-Jean-de-l'Île-d'Orléans, Capitale-Nationale Region, Quebec, Canada",
+                                                                                    birthDate: "29 November 1639",
+                                                                                    deathDate: "16 February 1700",
+                                                                                    imageUrl: "./images/pierre-blais.jpg",
+                                                                                    story: pierreBlaisStory,
+                                                                                    parents: [] // https://www.ancestry.com/family-tree/person/tree/24629615/person/252584371837/facts
+                                                                                }
+                                                                            ]
+                                                                        },
+                                                                        {
+                                                                            name: "Étienne Lamy",
+                                                                            sex: "Male",
+                                                                            birthPlace: "Ile Aux Oies, Montmagny, Québec, Canada",
+                                                                            deathPlace: "St-Anne Parish, Yamachiche, Quebec, Canada",
+                                                                            birthDate: "30 June 1689",
+                                                                            deathDate: "23 April 1747",
+                                                                            parents: [
+                                                                                {
+                                                                                    name: "Marie Renee Suard dit Montminy",
+                                                                                    sex: "Female",
+                                                                                    birthPlace: "Trois-Rivières, Quebec, Canada",
+                                                                                    deathPlace: "L'Islet, Chaudiere-Appalaches Region, Quebec, Canada",
+                                                                                    birthDate: "1658",
+                                                                                    deathDate: "25 February 1726",
+                                                                                    parents: []
+                                                                                },
+                                                                                {
+                                                                                    name: "Etienne Gelineau Gelinas",
+                                                                                    sex: "Male",
+                                                                                    birthPlace: "Trois-Rivières, Quebec, Canada",
+                                                                                    deathPlace: "Trois-Rivières, Quebec, Canada",
+                                                                                    birthDate: "26 September 1670",
+                                                                                    deathDate: "26 September 1720",
+                                                                                    parents: []
+                                                                                }
+                                                                            ]
+                                                                        }
+                                                                    ]
+                                                                }
+                                                            ]
                                                         },
                                                         {
                                                             name: "Pierre dit La Grand Pierre Chauvin",
@@ -293,7 +410,9 @@ export const georgeArseneaultConfig = {
                                             deathPlace: "Yamachiche, Québec, Canada",
                                             birthDate: "29 September 1723",
                                             deathDate: "21 June 1765",
-                                            parents: []
+                                            parents: [
+
+                                            ]
                                         },
                                         {
                                             name: "Joseph Marie Lamy",
