@@ -216,23 +216,20 @@ document.addEventListener("DOMContentLoaded", () => {
   themeToggleBtn.title = "Toggle Dark Mode";
   app.appendChild(themeToggleBtn);
 
-  // Add Legend Toggle Button
-  const legendToggleBtn = document.createElement("button");
-  legendToggleBtn.className = "legend-toggle-btn";
-  legendToggleBtn.textContent = "📋";
-  legendToggleBtn.title = "Toggle Legend";
-  app.appendChild(legendToggleBtn);
-
   // Add View Controls
   const viewControls = document.createElement("div");
   viewControls.className = "view-controls";
   viewControls.innerHTML = `
+    <button class="view-control-btn" id="legend-toggle-btn" title="Toggle Legend">📋</button>
     <button class="view-control-btn" id="zoom-in-btn" title="Zoom In">+</button>
     <button class="view-control-btn" id="zoom-out-btn" title="Zoom Out">−</button>
     <button class="view-control-btn" id="fit-screen-btn" title="Fit to Screen">⌂</button>
     <button class="view-control-btn" id="reset-view-btn" title="Reset View">↺</button>
   `;
   app.appendChild(viewControls);
+
+  // Get the legend toggle button reference
+  const legendToggleBtn = document.getElementById("legend-toggle-btn") as HTMLButtonElement;
 
   const searchInput = document.getElementById("search-input") as HTMLInputElement;
   const searchClearBtn = document.getElementById("search-clear-btn") as HTMLButtonElement;
@@ -2255,12 +2252,12 @@ document.addEventListener("DOMContentLoaded", () => {
       .style("stroke", "var(--border-secondary)")
       .attr("stroke-width", 0.5);
     
-    // Add text with truncation for long names
+    // Add text with truncation for long names - perfectly centered in background
     textGroups.append("text")
-      .attr("dy", d => scaleFactor(d.depth) + 15) // Slightly more spacing below nodes
+      .attr("dy", d => scaleFactor(d.depth) + 15) // Center of the 16px high background (7 + 16/2 = 15)
       .attr("x", 0)
       .attr("text-anchor", "middle")
-      .attr("dominant-baseline", "middle") // Perfect vertical centering
+      .attr("dominant-baseline", "central") // Perfect vertical centering
       .attr("class", "node-text")
       .text(d => {
         const name = d.data.name || "Unknown";
