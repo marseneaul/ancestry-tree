@@ -78,7 +78,7 @@ export const rosalieLambertConfig = {
                                                         {
                                                         	name: "Jeanne Kweh Anishnabek Bahmahmaadjimowin Giisis Nipissing",
                                                         	sex: "Female",
-                                                        	birthPlace: "Lac Nipissing, Nouvelle-France (Aujourd'hui en Ontario), Ontario, Canada",
+                                                        	birthPlace: "Nipissing Nation, Nipissing Lake, Ontario, Canada",
                                                         	deathPlace: "Québec, Nouvelle-France (Aujourd'hui dans Capitale-Nationale, Québec, Canada",
                                                         	birthDate: "1612",
                                                         	deathDate: "1636",

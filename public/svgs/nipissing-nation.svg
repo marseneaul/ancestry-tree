@@ -1,0 +1,35 @@
+<!-- Nipissing First Nation flag (wordmark version, cropped square 20x20) -->
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 600 600">
+  <!-- white field -->
+  <rect width="600" height="600" fill="#ffffff"/>
+
+  <!-- wordmark -->
+  <g fill="#000000" font-family="Helvetica, Arial, 'Liberation Sans', sans-serif">
+    <!-- Top line: NIPISSING -->
+    <text x="300" y="280"
+          font-size="96"
+          font-weight="700"
+          text-anchor="middle"
+          letter-spacing="4">NIPISSING</text>
+
+    <!-- Divider line -->
+    <rect x="160" y="295" width="280" height="6" fill="#000000"/>
+
+    <!-- Bottom line: FIRST NATION -->
+    <text x="300" y="380"
+          font-size="58"
+          font-weight="600"
+          text-anchor="middle"
+          letter-spacing="6">FIRST NATION</text>
+  </g>
+
+  <!-- Emblem placeholder (antler curve) -->
+  <path d="M80,210
+           C130,170 190,150 250,160
+           C195,185 165,215 155,250
+           C150,265 160,282 180,285
+           C165,295 150,300 135,298
+           C110,294 95,272 100,245
+           C105,220 120,200 80,210 Z"
+        fill="none" stroke="#000" stroke-width="8" opacity="0.25"/>
+</svg>
