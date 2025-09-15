@@ -1,4 +1,5 @@
 import { jeanNicoletStory } from "../../../stories/jean-nicolet";
+import { simonSavardStory } from "../../../stories/simon-savard";
 
 // COMPLETE
 export const rosalieLambertConfig = {
@@ -136,7 +137,64 @@ export const rosalieLambertConfig = {
                             birthPlace: "Deschambault-Grondines, Portneuf, Quebec, Canada",
                             deathPlace: "Louiseville, Maskinongé, Quebec, Canada",
                             birthDate: "31 July 1708",
-                            deathDate: "14 January 1775"
+                            deathDate: "14 January 1775",
+                            parents: [
+                                {
+                                    name: "Marie-Anne Inard",
+                                    sex: "Female",
+                                    birthPlace: "1674",
+                                    deathPlace: "9 January 1741",
+                                    birthDate: "Ste-Famille, Ile d'Orléans, Montmorency, Québec, Canada",
+                                    deathDate: "Deschambault, Portneuf, Québec, Canada",
+                                    parents: [
+                                        {
+                                            name: "Marie Bonville",
+                                            sex: "Female",
+                                            birthPlace: "Palaiseau, Essonne, Ile-De-France, France",
+                                            deathPlace: "Beauport, Quebec, Canada",
+                                            birthDate: "1651",
+                                            deathDate: "10 February 1687",
+                                            parents: [] // https://www.ancestry.com/family-tree/person/tree/43393916/person/322554680427/facts
+                                        },
+                                        {
+                                            name: "Paul Inard (Isnard) Dit Le Provençal",
+                                            sex: "Male",
+                                            birthPlace: "Saint-Rémi, Arles, Provence, Bouches du Rhône, Provence-Alpes-Côte d''Azur, France",
+                                            deathPlace: "Beauport, Québec, Québec, Canada",
+                                            birthDate: "1647",
+                                            deathDate: "1 October 1690",
+                                            parents: [] // https://www.ancestry.com/family-tree/person/tree/43393916/person/322554680426/facts
+                                        }
+                                    ]
+                                },
+                                {
+                                    name: "Simon Arcand Dit Bourdelais",
+                                    sex: "Male",
+                                    birthPlace: "Ste Croix Du Mont, Km Sud est De Bordeaux, Guyenne, France",
+                                    deathPlace: "Deschambault, Capitale-Nationale Region, Quebec, Canada",
+                                    birthDate: "1663",
+                                    deathDate: "10 December 1733",
+                                    parents: [
+                                        {
+                                            name: "Jeanne Poulet",
+                                            sex: "Female",
+                                            birthPlace: "Bordeaux, Gorinde, Gironde, Aquitaine, France",
+                                            deathPlace: "Bordeaux, Gorinde, Gironde, Aquitaine, France",
+                                            birthDate: "1635",
+                                            deathDate: "1730"
+                                        },
+                                        {
+                                            name: "Antoine Arcan",
+                                            sex: "Male",
+                                            birthPlace: "Dampierre-sur-Boutonne, Departement de la Charente-Maritime, Poitou-Charentes, France",
+                                            deathPlace: "Neuville, Capitale-Nationale Region, Quebec, Canada",
+                                            birthDate: "1630",
+                                            deathDate: "16 September 1723",
+                                            parents: [] // https://www.ancestry.com/family-tree/person/tree/43393916/person/322554679431/facts
+                                        }
+                                    ]
+                                }
+                            ]
                         },
                         {
                             name: "Simon Martineau dit St. Onge",
@@ -144,7 +202,69 @@ export const rosalieLambertConfig = {
                             birthPlace: "Lancienne-Lorette, Quebec, Quebec, Canada",
                             deathPlace: "Deschambault, Lotbinière, Quebec, Canada",
                             birthDate: "5 January 1699",
-                            deathDate: "19 January 1750"
+                            deathDate: "19 January 1750",
+                            parents: [
+                                {
+                                    name: "Marie Madeleine Fiset",
+                                    sex: "Female",
+                                    birthPlace: "Chateau-Richer, Montmorency, Quebec, Canada",
+                                    deathPlace: "UNKNOL'Ancienne-Lorette, Québec, CanadaWN",
+                                    birthDate: "29 June 1667",
+                                    deathDate: "13 August 1711",
+                                    parents: [
+                                        {
+                                            name: "Marie Denyse Savard",
+                                            sex: "Female",
+                                            birthPlace: "Montreuil, Departement de Seine-Saint-Denis, Île-de-France, France",
+                                            deathPlace: "L'Ange-Gardien, Montmorency, Quebec, Canada",
+                                            birthDate: "10 November 1646",
+                                            deathDate: "25 January 1708",
+                                            parents: [
+                                                {
+                                                    name: "Marie Hourdouille",
+                                                    sex: "Female",
+                                                    birthPlace: "Montreuil, Seine-Saint-Denis, Île-de-France, France",
+                                                    deathPlace: "Charlesbourg, Québec, Canada",
+                                                    birthDate: "December 1621",
+                                                    deathDate: "24 November 1703",
+                                                    parents: [] // https://www.ancestry.com/family-tree/person/tree/152319240/person/322093429994/facts
+                                                },
+                                                {
+                                                    name: "Simon Savard",
+                                                    sex: "Male",
+                                                    birthPlace: "Montreuil-sous-Bois, Seine-Saint-Denis, Ile-de-France, France",
+                                                    deathPlace: "Beauport, Québec, Québec, Canada",
+                                                    birthDate: "22 May 1623",
+                                                    deathDate: "12 January 1664",
+                                                    imageUrl: "./images/simon-savard.jpg",
+                                                    story: simonSavardStory,
+                                                    parents: [] // https://www.ancestry.com/family-tree/person/tree/152319240/person/322093429993/facts
+                                                }                                                
+                                            ]
+                                        },
+                                        {
+                                            name: "Francois Abraham Fiset",
+                                            sex: "Male",
+                                            birthPlace: "Dieppe, Seine-Maritime, Haute-Normandie, France",
+                                            deathPlace: "L'Ange-Gardien, Montmorency, Quebec (Urban Agglomeration), Quebec, Canada",
+                                            birthDate: "31 August 1635",
+                                            deathDate: "23 December 1700",
+                                            parents: [] // https://www.ancestry.com/family-tree/person/tree/152319240/person/322093429365/facts
+                                        }
+                                        
+                                    ]
+                                },
+                                {
+                                    name: "Mathurin Martineau dit Saintonge",
+                                    sex: "Male",
+                                    birthPlace: "Saint-Fraigne, Poitiers, Saintonge, Angoulême, Charente, Poitou-Charentes, France",
+                                    deathPlace: "L'Ancienne-Lorette, Quebec, Canada",
+                                    birthDate: "1647",
+                                    deathDate: "11 June 1708",
+                                    imageUrl: "./images/mathurin-martineau-dit-saintonge.jpg",
+                                    parents: [] // Descendant is in Our French Ancestors too! // https://www.ancestry.com/family-tree/person/tree/152319240/person/322093430508/facts
+                                }
+                            ]
                         }
                     ]
                 }
