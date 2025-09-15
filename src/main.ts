@@ -2237,9 +2237,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // Add background rectangle for text
     textGroups.append("rect")
       .attr("class", "text-background")
-      .attr("x", -50) // Half of max text width
+      .attr("x", -60) // Half of max text width
       .attr("y", d => scaleFactor(d.depth) + 7)
-      .attr("width", 100) // Slightly wider to accommodate longer names
+      .attr("width", 120) // Increased width to show more names
       .attr("height", 16) // Reduced height for more compact look
       .attr("rx", 8) // Increased border radius for more aesthetic rounded corners
       .attr("fill", "rgba(255, 255, 255, 0.9)")
@@ -2257,8 +2257,8 @@ document.addEventListener("DOMContentLoaded", () => {
       .attr("class", "node-text")
       .text(d => {
         const name = d.data.name || "Unknown";
-        // Truncate names that would exceed the 100px box width (roughly 12-14 characters)
-        return name.length > 14 ? name.substring(0, 11) + "..." : name;
+        // Truncate names that would exceed the 120px box width (roughly 16-18 characters)
+        return name.length > 18 ? name.substring(0, 15) + "..." : name;
       });
 
     // Tooltips (Enhanced)
