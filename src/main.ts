@@ -31,10 +31,18 @@ function createModal() {
 // Helper: make "Mi'kmaq Nation" -> "mikmaq-nation"
 const slugify = (s) =>
   s.normalize("NFKD")
-   .replace(/['’]/g, "")           // drop apostrophes
+   .replace(/['']/g, "")           // drop apostrophes
    .replace(/\s+/g, "-")           // spaces -> hyphens
    .replace(/[^a-zA-Z0-9-]/g, "")  // remove other punctuation
   .toLowerCase();
+
+// Helper: clean up "UNKNOWN" values for display
+const cleanUnknown = (value: string | undefined | null): string | null => {
+  if (!value || value.toUpperCase() === "UNKNOWN") {
+    return null;
+  }
+  return value;
+};
 
 // Add this new function to extend a random chain with Neanderthal
 function extendWithNeanderthal(ancient: Person) {
@@ -134,17 +142,25 @@ function showPersonModal(d: Person, depth: number) {
   }
   if (depth !== 0) relation += ` (${depth} generation${depth > 1 ? "s" : ""} back)`;
 
+  // Clean up data for display
+  const cleanName = cleanUnknown(d.name);
+  const cleanBirthDate = cleanUnknown(d.birthDate);
+  const cleanBirthPlace = cleanUnknown(d.birthPlace);
+  const cleanDeathDate = cleanUnknown(d.deathDate);
+  const cleanDeathPlace = cleanUnknown(d.deathPlace);
+  const cleanStory = cleanUnknown((d as Person).story);
+
   content.innerHTML = `
     <button class="modal-close-btn" onclick="closeModal()" aria-label="Close modal">×</button>
     <div style="display:flex; flex-direction:column; align-items:center; gap:16px; text-align:center; padding:8px;">
       ${imageHtml}
       ${placeholderHtml}
-      <h2 style="margin:0; font-size:20px; font-weight:700; color: var(--text-primary);">${d.name || "Unknown"}</h2>
+      <h2 style="margin:0; font-size:20px; font-weight:700; color: var(--text-primary);">${cleanName || "Name not available"}</h2>
       ${relation ? `<div style="color: var(--text-secondary);"><strong>Relation:</strong> ${relation}</div>` : ""}
-      <div style="color: var(--text-secondary);">${d.birthDate ? `<strong>Born:</strong> ${d.birthDate}` : ""} ${d.birthPlace ? `(${d.birthPlace})` : ""}</div>
-      <div style="color: var(--text-secondary);"><strong>Died:</strong> ${d.deathDate || "—"} ${age !== null && isDeceased ? `(age ${age})` : ""}</div>
+      ${cleanBirthDate || cleanBirthPlace ? `<div style="color: var(--text-secondary);">${cleanBirthDate ? `<strong>Born:</strong> ${cleanBirthDate}` : ""} ${cleanBirthPlace ? `${cleanBirthDate ? " " : ""}(${cleanBirthPlace})` : ""}</div>` : ""}
+      <div style="color: var(--text-secondary);"><strong>Died:</strong> ${cleanDeathDate || "—"} ${age !== null && isDeceased ? `(age ${age})` : ""}</div>
       ${age !== null && !isDeceased ? `<div style="color: var(--text-secondary);"><strong>Age:</strong> ${age}</div>` : ""}
-      <div style="margin-top:8px; color: var(--text-tertiary); font-style:italic; max-width:70vw">${(d as Person).story || "Stories coming soon..."}</div>
+      ${cleanStory ? `<div style="margin-top:8px; color: var(--text-tertiary); font-style:italic; max-width:70vw">${cleanStory}</div>` : ""}
     </div>
   `;
 
@@ -1831,14 +1847,18 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="timeline-decade">
               <div class="decade-header">${decade}s</div>
               <div class="decade-people">
-                ${people.slice(0, 10).map(person => `
+                ${people.slice(0, 10).map(person => {
+                  const cleanName = cleanUnknown(person.name);
+                  const cleanBirthPlace = cleanUnknown(person.birthPlace);
+                  return `
                   <div class="timeline-person" onclick="showPersonModal(${JSON.stringify(person).replace(/"/g, '&quot;')}, ${person.depth})">
                     <div class="person-year">${person.year}</div>
-                    <div class="person-name">${person.name}</div>
-                    <div class="person-place">${person.birthPlace}</div>
+                    <div class="person-name">${cleanName || "Name not available"}</div>
+                    ${cleanBirthPlace ? `<div class="person-place">${cleanBirthPlace}</div>` : ""}
                     <div class="person-country">${person.country}</div>
                   </div>
-                `).join('')}
+                `;
+                }).join('')}
                 ${people.length > 10 ? `<div class="more-people">+${people.length - 10} more</div>` : ''}
               </div>
             </div>
@@ -2272,7 +2292,41 @@ document.addEventListener("DOMContentLoaded", () => {
         const age = isDeceased 
           ? calculateAgeAtDate(d.data.birthDate ?? "", d.data.deathDate ?? "") 
           : calculateAgeAtDate(d.data.birthDate ?? "");
-        return `${d.data.name || "Unknown"}\nBorn: ${d.data.birthDate || "Unknown"} in ${d.data.birthPlace || "Unknown"}\nDied: ${d.data.deathDate || "N/A"} in ${d.data.deathPlace || "Unknown"}\n${isDeceased ? "Died at age" : "Age"}: ${age ?? "Unknown"}\nCountry: ${getCountry(d.data.birthPlace)}\nDNA Contribution: ~${(100 / Math.pow(2, d.depth)).toFixed(2)}%`;
+        
+        // Clean up data for tooltip
+        const cleanName = cleanUnknown(d.data.name);
+        const cleanBirthDate = cleanUnknown(d.data.birthDate);
+        const cleanBirthPlace = cleanUnknown(d.data.birthPlace);
+        const cleanDeathDate = cleanUnknown(d.data.deathDate);
+        const cleanDeathPlace = cleanUnknown(d.data.deathPlace);
+        
+        const lines = [];
+        lines.push(cleanName || "Name not available");
+        
+        if (cleanBirthDate || cleanBirthPlace) {
+          const birthInfo = [];
+          if (cleanBirthDate) birthInfo.push(cleanBirthDate);
+          if (cleanBirthPlace) birthInfo.push(cleanBirthPlace);
+          lines.push(`Born: ${birthInfo.join(" in ")}`);
+        }
+        
+        if (cleanDeathDate || cleanDeathPlace) {
+          const deathInfo = [];
+          if (cleanDeathDate) deathInfo.push(cleanDeathDate);
+          if (cleanDeathPlace) deathInfo.push(cleanDeathPlace);
+          lines.push(`Died: ${deathInfo.join(" in ")}`);
+        } else {
+          lines.push("Died: —");
+        }
+        
+        if (age !== null) {
+          lines.push(`${isDeceased ? "Died at age" : "Age"}: ${age}`);
+        }
+        
+        lines.push(`Country: ${getCountry(d.data.birthPlace)}`);
+        lines.push(`DNA Contribution: ~${(100 / Math.pow(2, d.depth)).toFixed(2)}%`);
+        
+        return lines.join("\n");
       });
 
     // Generation Labels (with Total DNA)
