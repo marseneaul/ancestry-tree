@@ -216,6 +216,13 @@ document.addEventListener("DOMContentLoaded", () => {
   themeToggleBtn.title = "Toggle Dark Mode";
   app.appendChild(themeToggleBtn);
 
+  // Add Legend Toggle Button
+  const legendToggleBtn = document.createElement("button");
+  legendToggleBtn.className = "legend-toggle-btn";
+  legendToggleBtn.textContent = "📋";
+  legendToggleBtn.title = "Toggle Legend";
+  app.appendChild(legendToggleBtn);
+
   // Add View Controls
   const viewControls = document.createElement("div");
   viewControls.className = "view-controls";
@@ -2691,6 +2698,24 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
   }
+
+  // Legend toggle functionality
+  const legendElement = document.getElementById('legend');
+  let legendVisible = true; // Start visible on both desktop and mobile
+  
+  // Set initial state
+  if (legendElement) {
+    legendElement.style.display = 'block';
+  }
+  legendToggleBtn.style.opacity = '1';
+  
+  legendToggleBtn.addEventListener('click', () => {
+    legendVisible = !legendVisible;
+    if (legendElement) {
+      legendElement.style.display = legendVisible ? 'block' : 'none';
+    }
+    legendToggleBtn.style.opacity = legendVisible ? '1' : '0.5';
+  });
 
   // Initialize mobile enhancements
   if (isMobile()) {

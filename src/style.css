@@ -109,6 +109,12 @@ body {
     z-index: 200;
     transition: background-color 0.3s ease, border-color 0.3s ease;
   }
+
+  /* Desktop legend positioning when toggle button is present */
+  .legend-toggle-btn + * #legend {
+    top: 84px;
+    right: 20px;
+  }
   
   #legend ul {
     list-style: none;
@@ -1026,6 +1032,15 @@ body {
       font-size: 16px;
     }
 
+    .legend-toggle-btn {
+      top: 10px;
+      right: 56px;
+      width: 36px;
+      height: 36px;
+      font-size: 16px;
+      display: flex;
+    }
+
     /* Tree container mobile adjustments */
     #tree-container {
       margin-top: 60px;
@@ -1055,20 +1070,47 @@ body {
       font-weight: 700;
     }
 
-    /* Mobile legend */
+    /* Mobile legend - much more compact */
     #legend {
       position: fixed;
       top: 60px;
       right: 10px;
-      left: 10px;
-      max-width: none;
-      font-size: 12px;
+      left: auto;
+      max-width: 200px;
+      font-size: 10px;
+      padding: 8px;
+      max-height: 120px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
     #legend ul {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin: 0;
+      padding: 0;
+    }
+
+    #legend .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+      font-size: 10px;
+      line-height: 1.2;
+    }
+
+    #legend .legend-section {
+      font-size: 9px;
+      font-weight: bold;
+      margin-top: 6px;
+      margin-bottom: 4px;
+    }
+
+    #legend .line-sample {
+      width: 20px;
+      height: 1px;
     }
 
     /* Filter panel mobile */
@@ -1209,6 +1251,13 @@ body {
       right: 5px;
     }
 
+    .legend-toggle-btn {
+      right: 46px;
+      width: 32px;
+      height: 32px;
+      font-size: 14px;
+    }
+
     .filter-panel {
       width: calc(100vw - 10px);
       left: 5px;
@@ -1273,9 +1322,30 @@ body {
     }
 
     #legend {
-      left: 5px;
       right: 5px;
+      left: auto;
       top: 50px;
+      max-width: 150px;
+      max-height: 100px;
+      font-size: 9px;
+      padding: 6px;
+    }
+
+    #legend .legend-item {
+      font-size: 9px;
+      gap: 4px;
+      margin-bottom: 2px;
+    }
+
+    #legend .legend-section {
+      font-size: 8px;
+      margin-top: 4px;
+      margin-bottom: 2px;
+    }
+
+    #legend .line-sample {
+      width: 15px;
+      height: 1px;
     }
 
     .node-text {
@@ -1762,6 +1832,37 @@ body {
   }
 
   .theme-toggle-btn:active {
+    transform: translateY(1px);
+  }
+
+  /* Legend Toggle Button */
+  .legend-toggle-btn {
+    position: fixed;
+    top: 20px;
+    right: 60px;
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--border-secondary);
+    border-radius: 6px;
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    z-index: 1000;
+    box-shadow: 0 2px 4px var(--shadow-light);
+    transition: all 0.2s ease;
+  }
+
+  .legend-toggle-btn:hover {
+    background: var(--bg-tertiary);
+    border-color: var(--accent-primary);
+    color: var(--accent-primary);
+  }
+
+  .legend-toggle-btn:active {
     transform: translateY(1px);
   }
 
