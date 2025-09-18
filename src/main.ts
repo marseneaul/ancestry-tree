@@ -2329,58 +2329,48 @@ document.addEventListener("DOMContentLoaded", () => {
         return lines.join("\n");
       });
 
-    // Generation Labels (with Total DNA) - Enhanced styling
-    g.selectAll(".gen-label-group").remove();
+    // Clean Modern Generation Headers
+    g.selectAll(".generation-header").remove();
+    g.selectAll(".generation-separator").remove();
+    
     const gens = getGenerations(root);
+    
+    // Create clean generation headers
     gens.forEach((info, depth) => {
       const nodesAtDepth = root.descendants().filter(d => d.depth === depth);
       if (nodesAtDepth.length === 0) return;
-      const y = nodesAtDepth[0].y ?? 0;  // All nodes at same y
+      const y = nodesAtDepth[0].y ?? 0;
       
-      // Create a group for the generation label
-      const labelGroup = g.append("g")
-        .attr("class", "gen-label-group")
-        .attr("transform", `translate(${horizontalCenter}, ${y + 90})`);
+      // Create generation header group
+      const headerGroup = g.append("g")
+        .attr("class", `generation-header generation-${depth}`)
+        .attr("transform", `translate(${horizontalCenter}, ${y - 80})`);
       
-      // Create background rectangle with rounded corners
-      const text = `Gen ${depth}: ${info.count}/${(2**depth).toLocaleString()} ancestors`;
-      const subText = `~${info.dnaPercentEach.toFixed(2)}% each • ${info.dnaPercentTotal.toFixed(2)}% total from this generation • ${info.probOfSharingDna.toFixed(2)}% chance of sharing`;
+      // Generation names
+      const generationNames = ["You", "Parents", "Grandparents", "Great-Grandparents", "2nd Great-Grandparents", "3rd Great-Grandparents"];
+      const genName = generationNames[depth] || `${depth}th Generation`;
       
-      // Estimate text width (rough calculation) - adjusted for longer text
-      const textLength = text.length * 7; // Approximate character width
-      const subTextLength = subText.length * 6;
-      const maxWidth = Math.max(textLength, subTextLength);
-      const padding = 20; // Increased padding for longer text
-      const height = 55; // Slightly taller for better spacing
+      // Main title
+      headerGroup.append("text")
+        .attr("class", "generation-title")
+        .attr("y", 0)
+        .text(genName);
       
-      // Background with rounded rectangle
-      labelGroup.append("rect")
-        .attr("class", "gen-label-bg")
-        .attr("x", -maxWidth/2 - padding)
-        .attr("y", -height/2)
-        .attr("width", maxWidth + padding * 2)
-        .attr("height", height)
-        .attr("rx", 20)
-        .attr("ry", 20)
-        .attr("stroke-width", 2);
+      // Subtitle with stats
+      headerGroup.append("text")
+        .attr("class", "generation-subtitle")
+        .attr("y", 20)
+        .text(`${info.count} of ${(2**depth).toLocaleString()} ancestors • ${info.dnaPercentEach.toFixed(1)}% DNA each • ${info.probOfSharingDna.toFixed(1)}% chance of sharing`);
       
-      // Main text
-      labelGroup.append("text")
-        .attr("class", "gen-label-main")
-        .attr("text-anchor", "middle")
-        .attr("y", -5)
-        .attr("font-size", "14px")
-        .attr("font-weight", "600")
-        .text(text);
-      
-      // Sub text
-      labelGroup.append("text")
-        .attr("class", "gen-label-sub")
-        .attr("text-anchor", "middle")
-        .attr("y", 15)
-        .attr("font-size", "11px")
-        .attr("font-weight", "400")
-        .text(subText);
+      // Add subtle separator line below the header
+      if (depth > 0) {
+        g.append("line")
+          .attr("class", "generation-separator")
+          .attr("x1", 0)
+          .attr("y1", y - 50)
+          .attr("x2", width)
+          .attr("y2", y - 50);
+      }
     });
 
     // Lineages

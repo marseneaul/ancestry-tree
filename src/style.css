@@ -153,58 +153,65 @@ body {
     stroke-width: 3;
   }
   
-  /* Generation Label Styling */
-  .gen-label-group {
+  /* Modern Generation Headers */
+  .generation-header {
     cursor: default;
     user-select: none;
-    transition: all 0.3s ease;
   }
 
-  .gen-label-group:hover {
-    /* Removed transform to fix wacky hover behavior */
-  }
-
-  .gen-label-group:hover .gen-label-bg {
-    fill: rgba(255, 255, 255, 0.95);
-    stroke: var(--accent-hover);
-    filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.2));
-  }
-
-  .gen-label-bg {
-    fill: rgba(255, 255, 255, 0.9);
-    stroke: var(--accent-primary);
-    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
-    transition: all 0.3s ease;
-  }
-
-  .gen-label-main {
+  .generation-title {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 18px;
+    font-weight: 600;
     fill: var(--text-primary);
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    text-anchor: middle;
+    dominant-baseline: middle;
   }
 
-  .gen-label-sub {
+  .generation-subtitle {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 12px;
+    font-weight: 400;
     fill: var(--text-secondary);
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    text-anchor: middle;
+    dominant-baseline: middle;
   }
 
-  /* Dark theme adjustments for gen labels */
-  [data-theme="dark"] .gen-label-bg {
-    fill: rgba(45, 45, 45, 0.9);
-    stroke: var(--accent-primary);
+  .generation-separator {
+    stroke: var(--border-primary);
+    stroke-width: 1;
+    opacity: 0.3;
   }
 
-  [data-theme="dark"] .gen-label-group:hover .gen-label-bg {
-    fill: rgba(45, 45, 45, 0.95);
+  /* Generation-specific colors */
+  .generation-0 .generation-title {
+    fill: #4a9eff;
   }
 
-  [data-theme="dark"] .gen-label-main {
-    fill: var(--text-primary);
+  .generation-1 .generation-title {
+    fill: #34a853;
   }
 
-  [data-theme="dark"] .gen-label-sub {
-    fill: var(--text-secondary);
+  .generation-2 .generation-title {
+    fill: #ffc107;
+  }
+
+  .generation-3 .generation-title {
+    fill: #ff5722;
+  }
+
+  .generation-4 .generation-title {
+    fill: #9c27b0;
+  }
+
+  .generation-5 .generation-title {
+    fill: #009688;
+  }
+
+  /* Dark theme adjustments */
+  [data-theme="dark"] .generation-separator {
+    stroke: var(--border-secondary);
+    opacity: 0.5;
   }
   
   text {
@@ -1241,19 +1248,17 @@ body {
       font-size: 9px;
     }
 
-    .gen-label-main {
-      font-size: 12px;
+    .generation-title {
+      font-size: 14px;
     }
 
-    .gen-label-sub {
+    .generation-subtitle {
       font-size: 10px;
     }
 
-    .gen-label-bg {
-      rx: 16;
-      ry: 16;
-      stroke-width: 1;
-      filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.2));
+    .generation-separator {
+      stroke-width: 0.5;
+      opacity: 0.2;
     }
 
     text {
@@ -1401,19 +1406,17 @@ body {
       font-size: 8px;
     }
 
-    .gen-label-main {
-      font-size: 10px;
+    .generation-title {
+      font-size: 12px;
     }
 
-    .gen-label-sub {
-      font-size: 8px;
+    .generation-subtitle {
+      font-size: 9px;
     }
 
-    .gen-label-bg {
-      rx: 12;
-      ry: 12;
-      stroke-width: 1;
-      filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.3));
+    .generation-separator {
+      stroke-width: 0.5;
+      opacity: 0.15;
     }
 
     text {
@@ -2162,20 +2165,22 @@ body {
       text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
     }
 
-    .gen-label-main {
-      font-size: 11px;
+    .generation-title {
+      font-size: 13px;
       text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
     }
 
-    .gen-label-sub {
-      font-size: 9px;
+    .generation-subtitle {
+      font-size: 10px;
       text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
     }
 
-    .gen-label-bg {
-      rx: 14;
-      ry: 14;
+    .generation-separator {
+      stroke-width: 0.8;
+      opacity: 0.3;
     }
+
+    /* Navigation indicators removed */
   }
 
   /* Very small mobile devices */
