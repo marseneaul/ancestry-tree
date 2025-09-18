@@ -36,7 +36,46 @@ export const marieDuboisConfig = {
                             birthPlace: "Baie-du-Febvre, Yamaska, Quebec, Canada",
                             deathPlace: "St-Gregoire, Nicolet, Quebec, Canada",
                             birthDate: "14 January 1786",
-                            deathDate: "16 April 1846"
+                            deathDate: "16 April 1846",
+                            parents: [
+                                {
+                                    name: "Marie-Antoinette Lafond",
+                                    sex: "Female",
+                                    birthPlace: "Baie-du-Febvre, Yamaska, Quebec, Canada",
+                                    deathPlace: "Yamaska, Quebec, Canada",
+                                    birthDate: "17 July 1751",
+                                    deathDate: "17 April 1826",
+                                    parents: []
+                                },
+                                {
+                                    name: "Antoine Benoit dit Laforest",
+                                    sex: "Male",
+                                    birthPlace: "Baie-du-Febvre, Centre-du-Quebec Region, Quebec, Canada",
+                                    deathPlace: "Baie-du-Febvre, Centre-du-Quebec Region, Quebec, Canada",
+                                    birthDate: "19 November 1744",
+                                    deathDate: "18 November 1795",
+                                    parents: [
+                                        {
+                                            name: "Marie-Madeleine Catherine Burel/Burelle",
+                                            sex: "Female",
+                                            birthPlace: "Verchères, Quebec, Canada",
+                                            deathPlace: "Baie-du-Febvre, Centre-du-Quebec Region, Quebec, Canada",
+                                            birthDate: "18 November 1708",
+                                            deathDate: "29 May 1792",
+                                            parents: []
+                                        },
+                                        {
+                                            name: "Joseph Benoit dit Laforest",
+                                            sex: "Male",
+                                            birthPlace: "Baie-du-Febvre, Centre-du-Quebec Region, Quebec, Canada",
+                                            deathPlace: "Quebec, Capitale-Nationale Region, Quebec, Canada",
+                                            birthDate: "29 April 1701",
+                                            deathDate: "30 August 1759",
+                                            parents: []
+                                        }
+                                    ]
+                                }
+                            ]
                         },
                         {
                             name: "Antoine Desilets",
