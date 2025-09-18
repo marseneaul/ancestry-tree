@@ -2329,19 +2329,58 @@ document.addEventListener("DOMContentLoaded", () => {
         return lines.join("\n");
       });
 
-    // Generation Labels (with Total DNA)
-    g.selectAll(".gen-label").remove();
+    // Generation Labels (with Total DNA) - Enhanced styling
+    g.selectAll(".gen-label-group").remove();
     const gens = getGenerations(root);
     gens.forEach((info, depth) => {
       const nodesAtDepth = root.descendants().filter(d => d.depth === depth);
       if (nodesAtDepth.length === 0) return;
       const y = nodesAtDepth[0].y ?? 0;  // All nodes at same y
-      g.append("text")
-        .attr("class", "gen-label")
-        .attr("x", horizontalCenter)
-        .attr("y", y + 65)  // Moved further up to avoid overlap with node text
+      
+      // Create a group for the generation label
+      const labelGroup = g.append("g")
+        .attr("class", "gen-label-group")
+        .attr("transform", `translate(${horizontalCenter}, ${y + 90})`);
+      
+      // Create background rectangle with rounded corners
+      const text = `Gen ${depth}: ${info.count}/${(2**depth).toLocaleString()} ancestors`;
+      const subText = `~${info.dnaPercentEach.toFixed(2)}% each • ${info.dnaPercentTotal.toFixed(2)}% total from this generation • ${info.probOfSharingDna.toFixed(2)}% chance of sharing`;
+      
+      // Estimate text width (rough calculation) - adjusted for longer text
+      const textLength = text.length * 7; // Approximate character width
+      const subTextLength = subText.length * 6;
+      const maxWidth = Math.max(textLength, subTextLength);
+      const padding = 20; // Increased padding for longer text
+      const height = 55; // Slightly taller for better spacing
+      
+      // Background with rounded rectangle
+      labelGroup.append("rect")
+        .attr("class", "gen-label-bg")
+        .attr("x", -maxWidth/2 - padding)
+        .attr("y", -height/2)
+        .attr("width", maxWidth + padding * 2)
+        .attr("height", height)
+        .attr("rx", 20)
+        .attr("ry", 20)
+        .attr("stroke-width", 2);
+      
+      // Main text
+      labelGroup.append("text")
+        .attr("class", "gen-label-main")
         .attr("text-anchor", "middle")
-        .text(`Gen ${depth}: ${info.count}/${(2**depth).toLocaleString()} ancestors, ~${info.dnaPercentEach.toFixed(2)}% each (${info.dnaPercentTotal.toFixed(2)}% total DNA), ${info.probOfSharingDna.toFixed(2)}% probability of sharing DNA`);
+        .attr("y", -5)
+        .attr("font-size", "14px")
+        .attr("font-weight", "600")
+        .text(text);
+      
+      // Sub text
+      labelGroup.append("text")
+        .attr("class", "gen-label-sub")
+        .attr("text-anchor", "middle")
+        .attr("y", 15)
+        .attr("font-size", "11px")
+        .attr("font-weight", "400")
+        .text(subText);
     });
 
     // Lineages

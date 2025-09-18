@@ -153,8 +153,57 @@ body {
     stroke-width: 3;
   }
   
-  .gen-label {
-    font-size: 12px;
+  /* Generation Label Styling */
+  .gen-label-group {
+    cursor: default;
+    user-select: none;
+    transition: all 0.3s ease;
+  }
+
+  .gen-label-group:hover {
+    /* Removed transform to fix wacky hover behavior */
+  }
+
+  .gen-label-group:hover .gen-label-bg {
+    fill: rgba(255, 255, 255, 0.95);
+    stroke: var(--accent-hover);
+    filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.2));
+  }
+
+  .gen-label-bg {
+    fill: rgba(255, 255, 255, 0.9);
+    stroke: var(--accent-primary);
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
+    transition: all 0.3s ease;
+  }
+
+  .gen-label-main {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    fill: var(--text-primary);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+
+  .gen-label-sub {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    fill: var(--text-secondary);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Dark theme adjustments for gen labels */
+  [data-theme="dark"] .gen-label-bg {
+    fill: rgba(45, 45, 45, 0.9);
+    stroke: var(--accent-primary);
+  }
+
+  [data-theme="dark"] .gen-label-group:hover .gen-label-bg {
+    fill: rgba(45, 45, 45, 0.95);
+  }
+
+  [data-theme="dark"] .gen-label-main {
+    fill: var(--text-primary);
+  }
+
+  [data-theme="dark"] .gen-label-sub {
     fill: var(--text-secondary);
   }
   
@@ -172,7 +221,6 @@ body {
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
     dominant-baseline: central;
     text-anchor: middle;
-    alignment-baseline: central;
     line-height: 1;
   }
 
@@ -1193,8 +1241,19 @@ body {
       font-size: 9px;
     }
 
-    .gen-label {
+    .gen-label-main {
+      font-size: 12px;
+    }
+
+    .gen-label-sub {
       font-size: 10px;
+    }
+
+    .gen-label-bg {
+      rx: 16;
+      ry: 16;
+      stroke-width: 1;
+      filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.2));
     }
 
     text {
@@ -1342,8 +1401,19 @@ body {
       font-size: 8px;
     }
 
-    .gen-label {
-      font-size: 9px;
+    .gen-label-main {
+      font-size: 10px;
+    }
+
+    .gen-label-sub {
+      font-size: 8px;
+    }
+
+    .gen-label-bg {
+      rx: 12;
+      ry: 12;
+      stroke-width: 1;
+      filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.3));
     }
 
     text {
@@ -2092,8 +2162,19 @@ body {
       text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
     }
 
-    .gen-label {
+    .gen-label-main {
+      font-size: 11px;
       text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    }
+
+    .gen-label-sub {
+      font-size: 9px;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    }
+
+    .gen-label-bg {
+      rx: 14;
+      ry: 14;
     }
   }
 
