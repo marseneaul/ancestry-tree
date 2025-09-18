@@ -2619,12 +2619,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (query.length > 0 && suggestions.length > 0) {
       dropdown.style.display = "block";
       
-      // Position dropdown relative to search input
-      const searchInputRect = searchInput.getBoundingClientRect();
-      dropdown.style.top = `${searchInputRect.bottom + window.scrollY}px`;
-      dropdown.style.left = `${searchInputRect.left + window.scrollX}px`;
-      dropdown.style.width = `${searchInputRect.width}px`;
-      
       // Add up to 10 suggestions
       suggestions.slice(0, 10).forEach(name => {
         const option = document.createElement("div");
@@ -2639,6 +2633,9 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         dropdown.appendChild(option);
       });
+      
+      // Position dropdown after content is added (small delay to ensure DOM update)
+      setTimeout(positionDropdown, 0);
     } else {
       dropdown.style.display = "none";
       dropdown.innerHTML = ""; // Clear old suggestions
@@ -2711,6 +2708,29 @@ document.addEventListener("DOMContentLoaded", () => {
       dropdown.innerHTML = ""; // Clear old suggestions
     }
   });
+
+  // Function to position dropdown relative to search input
+  const positionDropdown = () => {
+    if (dropdown.style.display === "block") {
+      const searchInputRect = searchInput.getBoundingClientRect();
+      dropdown.style.top = `${searchInputRect.bottom + window.scrollY}px`;
+      dropdown.style.left = `${searchInputRect.left + window.scrollX}px`;
+      dropdown.style.width = `${searchInputRect.width}px`;
+    }
+  };
+
+  // Debounced positioning function for resize events
+  let resizeTimeout: number;
+  const debouncedPositionDropdown = () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(positionDropdown, 100);
+  };
+
+  // Reposition dropdown on window resize (debounced)
+  window.addEventListener("resize", debouncedPositionDropdown);
+  
+  // Reposition dropdown on scroll
+  window.addEventListener("scroll", positionDropdown);
 
   // View Controls functionality
   const zoomInBtn = document.getElementById("zoom-in-btn");
