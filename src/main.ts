@@ -378,6 +378,7 @@ document.addEventListener("DOMContentLoaded", () => {
     searchResultsCount.textContent = "";
     searchResultsCount.classList.remove("highlighted");
     dropdown.style.display = "none";
+    dropdown.innerHTML = ""; // Clear old suggestions
     g.selectAll(".node").classed("highlighted", false);
   };
 
@@ -2583,7 +2584,7 @@ document.addEventListener("DOMContentLoaded", () => {
   dropdown.id = "name-suggestions";
   dropdown.className = "custom-dropdown";
   dropdown.style.display = "none";
-  searchInput.parentElement?.appendChild(dropdown);
+  document.body.appendChild(dropdown);
 
   // Enhanced Search Functionality with Autocomplete, Results Count, and Zoom
   searchInput.addEventListener("input", (e) => {
@@ -2617,6 +2618,13 @@ document.addEventListener("DOMContentLoaded", () => {
     // Show/hide dropdown
     if (query.length > 0 && suggestions.length > 0) {
       dropdown.style.display = "block";
+      
+      // Position dropdown relative to search input
+      const searchInputRect = searchInput.getBoundingClientRect();
+      dropdown.style.top = `${searchInputRect.bottom + window.scrollY}px`;
+      dropdown.style.left = `${searchInputRect.left + window.scrollX}px`;
+      dropdown.style.width = `${searchInputRect.width}px`;
+      
       // Add up to 10 suggestions
       suggestions.slice(0, 10).forEach(name => {
         const option = document.createElement("div");
@@ -2633,6 +2641,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     } else {
       dropdown.style.display = "none";
+      dropdown.innerHTML = ""; // Clear old suggestions
     }
 
     // Highlight matching nodes (keep current behavior)
@@ -2699,6 +2708,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener("click", (e) => {
     if (!searchInput.contains(e.target as Node) && !dropdown.contains(e.target as Node)) {
       dropdown.style.display = "none";
+      dropdown.innerHTML = ""; // Clear old suggestions
     }
   });
 
