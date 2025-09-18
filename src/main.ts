@@ -187,60 +187,180 @@ document.addEventListener("DOMContentLoaded", () => {
   // Create modal structure
   createModal();
 
-  // Add UI Elements for Professional Look
+  // Add Professional Header
   const header = document.createElement("header");
+  header.className = "main-header";
   header.innerHTML = `
-    <h1>Arseneault Family Tree Explorer</h1>
-    <div class="search-container">
-      <div class="search-input-wrapper">
-        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="11" cy="11" r="8"></circle>
-          <path d="m21 21-4.35-4.35"></path>
-        </svg>
-        <input type="text" id="search-input" placeholder="Search by name...">
-        <button class="search-clear-btn" id="search-clear-btn" onclick="clearSearch()" aria-label="Clear search">×</button>
+    <div class="header-content">
+      <div class="header-left">
+        <div class="logo-section">
+          <svg class="logo-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+            <path d="M2 17l10 5 10-5"/>
+            <path d="M2 12l10 5 10-5"/>
+          </svg>
+          <div class="title-section">
+            <h1>Arseneault Family Tree</h1>
+            <p class="subtitle">Explore Your Ancestry</p>
+          </div>
+        </div>
       </div>
-      <div class="search-results-count" id="search-results-count"></div>
-    </div>
+      
+      <div class="header-center">
+        <div class="search-container">
+          <div class="search-input-wrapper">
+            <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.35-4.35"></path>
+            </svg>
+            <input type="text" id="search-input" placeholder="Search for ancestors..." autocomplete="off">
+            <button class="search-clear-btn" id="search-clear-btn" onclick="clearSearch()" aria-label="Clear search">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+          <div class="search-results-count" id="search-results-count"></div>
+        </div>
+      </div>
+      
+      <div class="header-right">
+        <div class="header-controls">
+          <div class="control-group">
+            <button class="header-btn" id="stats-toggle-btn" title="Statistics Dashboard">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 3v18h18"/>
+                <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/>
+              </svg>
+              <span class="btn-label">Stats</span>
+            </button>
+            
+            <button class="header-btn" id="timeline-toggle-btn" title="Timeline View">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                <line x1="16" y1="2" x2="16" y2="6"/>
+                <line x1="8" y1="2" x2="8" y2="6"/>
+                <line x1="3" y1="10" x2="21" y2="10"/>
+              </svg>
+              <span class="btn-label">Timeline</span>
+            </button>
+            
+            <button class="header-btn" id="filter-toggle-btn" title="Filter Options">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46"/>
+              </svg>
+              <span class="btn-label">Filters</span>
+            </button>
+          </div>
+          
+          <div class="control-group">
+            <button class="header-btn" id="legend-toggle-btn" title="Toggle Legend">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14,2 14,8 20,8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+                <polyline points="10,9 9,9 8,9"/>
+              </svg>
+              <span class="btn-label">Legend</span>
+            </button>
+            
+            <button class="header-btn" id="theme-toggle-btn" title="Toggle Dark Mode">
+              <svg class="theme-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="5"/>
+                <line x1="12" y1="1" x2="12" y2="3"/>
+                <line x1="12" y1="21" x2="12" y2="23"/>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                <line x1="1" y1="12" x2="3" y2="12"/>
+                <line x1="21" y1="12" x2="23" y2="12"/>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+              </svg>
+              <span class="btn-label">Theme</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div> 
   `;
   app.appendChild(header);
 
-  // Add Statistics Toggle Button
-  const statsToggleBtn = document.createElement("button");
-  statsToggleBtn.className = "stats-toggle-btn";
-  statsToggleBtn.textContent = "📊";
-  statsToggleBtn.title = "Toggle Statistics";
-  app.appendChild(statsToggleBtn);
+  // Get references to the new header buttons
+  const statsToggleBtn = document.getElementById("stats-toggle-btn") as HTMLButtonElement;
+  const timelineToggleBtn = document.getElementById("timeline-toggle-btn") as HTMLButtonElement;
+  const filterToggleBtn = document.getElementById("filter-toggle-btn") as HTMLButtonElement;
+  const themeToggleBtn = document.getElementById("theme-toggle-btn") as HTMLButtonElement;
 
-  // Add Timeline Toggle Button
-  const timelineToggleBtn = document.createElement("button");
-  timelineToggleBtn.className = "timeline-toggle-btn";
-  timelineToggleBtn.textContent = "📅";
-  timelineToggleBtn.title = "Toggle Timeline View";
-  app.appendChild(timelineToggleBtn);
+  // Simple button interactions with just highlight effect
+  function addButtonInteractions() {
+    const headerButtons = document.querySelectorAll('.header-btn');
+    
+    headerButtons.forEach(button => {
+      // Add simple highlight effect on click
+      button.addEventListener('click', function() {
+        // Add highlight class temporarily
+        this.classList.add('clicked');
+        setTimeout(() => {
+          this.classList.remove('clicked');
+        }, 200);
+      });
+    });
+  }
 
-  // Add Filter Toggle Button
-  const filterToggleBtn = document.createElement("button");
-  filterToggleBtn.className = "filter-toggle-btn";
-  filterToggleBtn.textContent = "⚙";
-  filterToggleBtn.title = "Toggle Filters";
-  app.appendChild(filterToggleBtn);
+  // Initialize button interactions
+  addButtonInteractions();
 
-  // Add Theme Toggle Button
-  const themeToggleBtn = document.createElement("button");
-  themeToggleBtn.className = "theme-toggle-btn";
-  themeToggleBtn.title = "Toggle Dark Mode";
-  app.appendChild(themeToggleBtn);
+  // Add same click effect to view control buttons
+  function addViewControlInteractions() {
+    const viewControlButtons = document.querySelectorAll('.view-control-btn');
+    
+    viewControlButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        this.classList.add('clicked');
+        setTimeout(() => {
+          this.classList.remove('clicked');
+        }, 200);
+      });
+    });
+  }
 
-  // Add View Controls
+  // Initialize view control interactions
+  addViewControlInteractions();
+
+  // Add View Controls (Zoom and Navigation)
   const viewControls = document.createElement("div");
   viewControls.className = "view-controls";
   viewControls.innerHTML = `
-    <button class="view-control-btn" id="legend-toggle-btn" title="Toggle Legend">📋</button>
-    <button class="view-control-btn" id="zoom-in-btn" title="Zoom In">+</button>
-    <button class="view-control-btn" id="zoom-out-btn" title="Zoom Out">−</button>
-    <button class="view-control-btn" id="fit-screen-btn" title="Fit to Screen">⌂</button>
-    <button class="view-control-btn" id="reset-view-btn" title="Reset View">↺</button>
+    <div class="zoom-controls">
+      <button class="view-control-btn" id="zoom-in-btn" title="Zoom In">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          <line x1="11" y1="8" x2="11" y2="14"/>
+          <line x1="8" y1="11" x2="14" y2="11"/>
+        </svg>
+      </button>
+      <button class="view-control-btn" id="zoom-out-btn" title="Zoom Out">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          <line x1="8" y1="11" x2="14" y2="11"/>
+        </svg>
+      </button>
+      <button class="view-control-btn" id="fit-screen-btn" title="Fit to Screen">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+        </svg>
+      </button>
+      <button class="view-control-btn" id="reset-view-btn" title="Reset View">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="1,4 1,10 7,10"/>
+          <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+        </svg>
+      </button>
+    </div>
   `;
   app.appendChild(viewControls);
 
@@ -261,16 +381,46 @@ document.addEventListener("DOMContentLoaded", () => {
     g.selectAll(".node").classed("highlighted", false);
   };
 
-  // Keyboard shortcut for search (Ctrl+K or Cmd+K)
+  // Enhanced keyboard shortcuts and search functionality
   document.addEventListener("keydown", (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key === "k") {
       e.preventDefault();
       searchInput.focus();
+      searchInput.select();
     }
     // ESC to clear search
     if (e.key === "Escape" && document.activeElement === searchInput) {
       (window as any).clearSearch();
     }
+    // Enter to search (if dropdown is visible)
+    if (e.key === "Enter" && document.activeElement === searchInput) {
+      const firstOption = document.querySelector('.dropdown-option');
+      if (firstOption) {
+        (firstOption as HTMLElement).click();
+      }
+    }
+  });
+
+  // Enhanced search input interactions
+  searchInput.addEventListener('input', function() {
+    const hasValue = this.value.length > 0;
+    searchClearBtn.classList.toggle('visible', hasValue);
+    
+    // Add search animation
+    if (hasValue) {
+      this.style.background = 'var(--bg-secondary)';
+    } else {
+      this.style.background = 'var(--bg-tertiary)';
+    }
+  });
+
+  // Simple focus/blur without scaling animation
+  searchInput.addEventListener('focus', function() {
+    // Just ensure proper focus styling without scaling
+  });
+
+  searchInput.addEventListener('blur', function() {
+    // Reset any focus styling
   });
 
   const container = document.createElement("div");
@@ -1781,16 +1931,15 @@ document.addEventListener("DOMContentLoaded", () => {
   function closeStatsDashboard() {
     isStatsDashboardVisible = false;
     statsDashboard.classList.add("hidden");
-    statsToggleBtn.textContent = "📊";
+    statsToggleBtn.classList.remove("active");
   }
 
   // Toggle statistics dashboard visibility
   statsToggleBtn.addEventListener("click", () => {
     isStatsDashboardVisible = !isStatsDashboardVisible;
     statsDashboard.classList.toggle("hidden", !isStatsDashboardVisible);
-    statsToggleBtn.textContent = isStatsDashboardVisible ? " " : "📊";
-    
-    console.log('Stats button clicked, visible:', isStatsDashboardVisible, 'button text:', statsToggleBtn.textContent);
+    // Don't change button content - it's now handled by CSS classes
+    statsToggleBtn.classList.toggle("active", isStatsDashboardVisible);
     
     if (isStatsDashboardVisible) {
       initializeStatsDashboard();
@@ -1885,14 +2034,15 @@ document.addEventListener("DOMContentLoaded", () => {
   function closeTimelinePanel() {
     isTimelinePanelVisible = false;
     timelinePanel.classList.add("hidden");
-    timelineToggleBtn.textContent = "📅";
+    timelineToggleBtn.classList.remove("active");
   }
 
   // Toggle timeline panel visibility
   timelineToggleBtn.addEventListener("click", () => {
     isTimelinePanelVisible = !isTimelinePanelVisible;
     timelinePanel.classList.toggle("hidden", !isTimelinePanelVisible);
-    timelineToggleBtn.textContent = isTimelinePanelVisible ? " " : "📅";
+    // Don't change button content - it's now handled by CSS classes
+    timelineToggleBtn.classList.toggle("active", isTimelinePanelVisible);
     
     if (isTimelinePanelVisible) {
       initializeTimelinePanel();
@@ -1903,7 +2053,8 @@ document.addEventListener("DOMContentLoaded", () => {
   filterToggleBtn.addEventListener("click", () => {
     isFilterPanelVisible = !isFilterPanelVisible;
     filterPanel.classList.toggle("hidden", !isFilterPanelVisible);
-    filterToggleBtn.textContent = isFilterPanelVisible ? " " : "⚙";
+    // Don't change button content - it's now handled by CSS classes
+    filterToggleBtn.classList.toggle("active", isFilterPanelVisible);
   });
 
   // Theme management
@@ -1942,7 +2093,29 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   
   function updateThemeButton() {
-    themeToggleBtn.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+    // Update the SVG icon based on theme
+    const themeIcon = themeToggleBtn.querySelector('.theme-icon');
+    if (themeIcon) {
+      if (currentTheme === 'dark') {
+        // Sun icon for dark mode (to switch to light)
+        themeIcon.innerHTML = `
+          <circle cx="12" cy="12" r="5"/>
+          <line x1="12" y1="1" x2="12" y2="3"/>
+          <line x1="12" y1="21" x2="12" y2="23"/>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+          <line x1="1" y1="12" x2="3" y2="12"/>
+          <line x1="21" y1="12" x2="23" y2="12"/>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        `;
+      } else {
+        // Moon icon for light mode (to switch to dark)
+        themeIcon.innerHTML = `
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        `;
+      }
+    }
   }
   
   // Toggle theme
