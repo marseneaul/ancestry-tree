@@ -10,17 +10,31 @@ import { buildHierarchy, getGenerations, tracePatrilineal, traceMatrilineal, get
 function createModal() {
   const modal = document.createElement('div');
   modal.id = 'detail-modal';
-  modal.className = 'hidden fixed inset-0 flex items-center justify-center z-50';
+  modal.className = 'hidden';
   modal.style.background = 'var(--overlay)';
   
   const modalContent = document.createElement('div');
-  modalContent.className = 'modal-content rounded-lg shadow-lg max-w-lg w-full p-6 relative';
+  modalContent.className = 'modal-content rounded-lg shadow-lg w-full p-6 relative';
   modalContent.style.background = 'var(--bg-secondary)';
   modalContent.style.border = '1px solid var(--border-secondary)';
+  
+  // Add drag handle
+  const dragHandle = document.createElement('div');
+  dragHandle.className = 'modal-drag-handle';
+  dragHandle.innerHTML = '━━━';
+  dragHandle.style.cssText = `
+    width: 40px;
+    height: 4px;
+    background: var(--text-tertiary);
+    border-radius: 2px;
+    margin: 0 auto var(--space-4) auto;
+    cursor: grab;
+  `;
   
   const modalInnerContent = document.createElement('div');
   modalInnerContent.id = 'modal-inner-content';
   
+  modalContent.appendChild(dragHandle);
   modalContent.appendChild(modalInnerContent);
   modal.appendChild(modalContent);
   document.body.appendChild(modal);
@@ -187,9 +201,13 @@ document.addEventListener("DOMContentLoaded", () => {
   // Create modal structure
   createModal();
 
+  // Create Dashboard Container
+  const dashboardContainer = document.createElement("div");
+  dashboardContainer.className = "dashboard-container";
+
   // Add Professional Header
   const header = document.createElement("header");
-  header.className = "main-header";
+  header.className = "main-header dashboard-header";
   header.innerHTML = `
     <div class="header-content">
       <div class="header-left">
@@ -285,13 +303,68 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
     </div> 
   `;
-  app.appendChild(header);
+  dashboardContainer.appendChild(header);
 
-  // Get references to the new header buttons
-  const statsToggleBtn = document.getElementById("stats-toggle-btn") as HTMLButtonElement;
-  const timelineToggleBtn = document.getElementById("timeline-toggle-btn") as HTMLButtonElement;
-  const filterToggleBtn = document.getElementById("filter-toggle-btn") as HTMLButtonElement;
-  const themeToggleBtn = document.getElementById("theme-toggle-btn") as HTMLButtonElement;
+  // Note: Button references will be set after DOM elements are created
+
+  // Create Left Sidebar
+  const leftSidebar = document.createElement("div");
+  leftSidebar.className = "dashboard-sidebar-left";
+
+  // Create Filter Panel
+  const filterPanel = document.createElement("div");
+  filterPanel.className = "filter-panel";
+  filterPanel.id = "filter-panel";
+
+  // Create and append the statistics dashboard
+  const statsDashboard = document.createElement("div");
+  statsDashboard.className = "stats-dashboard hidden";
+  statsDashboard.id = "stats-dashboard";
+
+  // Create Timeline Panel
+  const timelinePanel = document.createElement("div");
+  timelinePanel.className = "timeline-panel hidden";
+  timelinePanel.id = "timeline-panel";
+
+  // Add panels to left sidebar (only one visible at a time)
+  leftSidebar.appendChild(filterPanel);
+  leftSidebar.appendChild(statsDashboard);
+  leftSidebar.appendChild(timelinePanel);
+
+  // Create Main Content Area
+  const mainContent = document.createElement("div");
+  mainContent.className = "dashboard-main";
+
+  const container = document.createElement("div");
+  container.id = "tree-container";
+  mainContent.appendChild(container);
+
+  // Create Right Sidebar
+  const rightSidebar = document.createElement("div");
+  rightSidebar.className = "dashboard-sidebar-right";
+
+  // Legend
+  const legend = document.createElement("div");
+  legend.id = "legend";
+  legend.innerHTML = `<h3>Legend</h3>
+    <div class="legend-item">
+      <svg width="20" height="20"><rect x="2" y="2" width="16" height="16" fill="none" stroke="black" stroke-width="1"/></svg>
+      Male
+    </div>
+    <div class="legend-item">
+      <svg width="20" height="20"><circle cx="10" cy="10" r="8" fill="none" stroke="black" stroke-width="1"/></svg>
+      Female
+    </div>
+    <div class="legend-item">
+      <span class="line-sample blue-dash"></span> Y-Chromosome (Patrilineal)
+    </div>
+    <div class="legend-item">
+      <span class="line-sample pink-dash"></span> Mitochondrial (Matrilineal)
+    </div>
+    <div class="legend-section">Countries:</div>
+    <ul id="color-legend"></ul>
+  `;
+  rightSidebar.appendChild(legend);
 
   // Simple button interactions with just highlight effect
   function addButtonInteractions() {
@@ -362,25 +435,35 @@ document.addEventListener("DOMContentLoaded", () => {
       </button>
     </div>
   `;
-  app.appendChild(viewControls);
 
-  // Get the legend toggle button reference
+  // Search input references will be set after DOM elements are created
+
+  // Enhanced keyboard shortcuts and search functionality will be set after variables are defined
+
+  // Enhanced search input interactions will be set after variables are defined
+
+  // Add view controls to main content
+  mainContent.appendChild(viewControls);
+
+  // Assemble dashboard
+  dashboardContainer.appendChild(leftSidebar);
+  dashboardContainer.appendChild(mainContent);
+  dashboardContainer.appendChild(rightSidebar);
+
+  // Add dashboard to app
+  app.appendChild(dashboardContainer);
+
+  // Now get references to the header buttons after they're in the DOM
+  const statsToggleBtn = document.getElementById("stats-toggle-btn") as HTMLButtonElement;
+  const timelineToggleBtn = document.getElementById("timeline-toggle-btn") as HTMLButtonElement;
+  const filterToggleBtn = document.getElementById("filter-toggle-btn") as HTMLButtonElement;
+  const themeToggleBtn = document.getElementById("theme-toggle-btn") as HTMLButtonElement;
   const legendToggleBtn = document.getElementById("legend-toggle-btn") as HTMLButtonElement;
-
   const searchInput = document.getElementById("search-input") as HTMLInputElement;
   const searchClearBtn = document.getElementById("search-clear-btn") as HTMLButtonElement;
   const searchResultsCount = document.getElementById("search-results-count") as HTMLDivElement;
 
-  // Clear search function
-  (window as any).clearSearch = function() {
-    searchInput.value = "";
-    searchClearBtn.classList.remove("visible");
-    searchResultsCount.textContent = "";
-    searchResultsCount.classList.remove("highlighted");
-    dropdown.style.display = "none";
-    dropdown.innerHTML = ""; // Clear old suggestions
-    g.selectAll(".node").classed("highlighted", false);
-  };
+  // Clear search function will be defined after dropdown and g variables are created
 
   // Enhanced keyboard shortcuts and search functionality
   document.addEventListener("keydown", (e) => {
@@ -423,51 +506,6 @@ document.addEventListener("DOMContentLoaded", () => {
   searchInput.addEventListener('blur', function() {
     // Reset any focus styling
   });
-
-  const container = document.createElement("div");
-  container.id = "tree-container";
-  app.appendChild(container);
-
-  // Create Filter Panel
-  // Create and append the statistics dashboard
-  const statsDashboard = document.createElement("div");
-  statsDashboard.className = "stats-dashboard hidden";
-  statsDashboard.id = "stats-dashboard";
-  app.appendChild(statsDashboard);
-
-  const filterPanel = document.createElement("div");
-  filterPanel.className = "filter-panel hidden";
-  filterPanel.id = "filter-panel";
-  app.appendChild(filterPanel);
-
-  // Create Timeline Panel
-  const timelinePanel = document.createElement("div");
-  timelinePanel.className = "timeline-panel hidden";
-  timelinePanel.id = "timeline-panel";
-  app.appendChild(timelinePanel);
-
-  // Legend
-  const legend = document.createElement("div");
-  legend.id = "legend";
-  legend.innerHTML = `<h3>Legend</h3>
-    <div class="legend-item">
-      <svg width="20" height="20"><rect x="2" y="2" width="16" height="16" fill="none" stroke="black" stroke-width="1"/></svg>
-      Male
-    </div>
-    <div class="legend-item">
-      <svg width="20" height="20"><circle cx="10" cy="10" r="8" fill="none" stroke="black" stroke-width="1"/></svg>
-      Female
-    </div>
-    <div class="legend-item">
-      <span class="line-sample blue-dash"></span> Y-Chromosome (Patrilineal)
-    </div>
-    <div class="legend-item">
-      <span class="line-sample pink-dash"></span> Mitochondrial (Matrilineal)
-    </div>
-    <div class="legend-section">Countries:</div>
-    <ul id="color-legend"></ul>
-  `;
-  app.appendChild(legend);
 
   const countrySvgs: Record<string, string> = {
     "France": "./svgs/france.svg",
@@ -1937,10 +1975,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Toggle statistics dashboard visibility
   statsToggleBtn.addEventListener("click", () => {
+    // Hide other panels first
+    filterPanel.classList.add("hidden");
+    timelinePanel.classList.add("hidden");
+    filterToggleBtn.classList.remove("active");
+    timelineToggleBtn.classList.remove("active");
+    
+    // Toggle stats panel
     isStatsDashboardVisible = !isStatsDashboardVisible;
     statsDashboard.classList.toggle("hidden", !isStatsDashboardVisible);
-    // Don't change button content - it's now handled by CSS classes
     statsToggleBtn.classList.toggle("active", isStatsDashboardVisible);
+    
+    // On mobile, toggle the left sidebar visibility
+    if (window.innerWidth <= 768) {
+      leftSidebar.classList.toggle('active', isStatsDashboardVisible);
+    }
     
     if (isStatsDashboardVisible) {
       initializeStatsDashboard();
@@ -2040,10 +2089,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Toggle timeline panel visibility
   timelineToggleBtn.addEventListener("click", () => {
+    // Hide other panels first
+    filterPanel.classList.add("hidden");
+    statsDashboard.classList.add("hidden");
+    filterToggleBtn.classList.remove("active");
+    statsToggleBtn.classList.remove("active");
+    
+    // Toggle timeline panel
     isTimelinePanelVisible = !isTimelinePanelVisible;
     timelinePanel.classList.toggle("hidden", !isTimelinePanelVisible);
-    // Don't change button content - it's now handled by CSS classes
     timelineToggleBtn.classList.toggle("active", isTimelinePanelVisible);
+    
+    // On mobile, toggle the left sidebar visibility
+    if (window.innerWidth <= 768) {
+      leftSidebar.classList.toggle('active', isTimelinePanelVisible);
+    }
     
     if (isTimelinePanelVisible) {
       initializeTimelinePanel();
@@ -2052,10 +2112,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Toggle filter panel visibility
   filterToggleBtn.addEventListener("click", () => {
+    // Hide other panels first
+    statsDashboard.classList.add("hidden");
+    timelinePanel.classList.add("hidden");
+    statsToggleBtn.classList.remove("active");
+    timelineToggleBtn.classList.remove("active");
+    
+    // Toggle filter panel
     isFilterPanelVisible = !isFilterPanelVisible;
     filterPanel.classList.toggle("hidden", !isFilterPanelVisible);
-    // Don't change button content - it's now handled by CSS classes
     filterToggleBtn.classList.toggle("active", isFilterPanelVisible);
+    
+    // On mobile, toggle the left sidebar visibility
+    if (window.innerWidth <= 768) {
+      leftSidebar.classList.toggle('active', isFilterPanelVisible);
+    }
   });
 
   // Theme management
@@ -2586,6 +2657,17 @@ document.addEventListener("DOMContentLoaded", () => {
   dropdown.style.display = "none";
   document.body.appendChild(dropdown);
 
+  // Clear search function (now that dropdown and g are defined)
+  (window as any).clearSearch = function() {
+    searchInput.value = "";
+    searchClearBtn.classList.remove("visible");
+    searchResultsCount.textContent = "";
+    searchResultsCount.classList.remove("highlighted");
+    dropdown.style.display = "none";
+    dropdown.innerHTML = ""; // Clear old suggestions
+    g.selectAll(".node").classed("highlighted", false);
+  };
+
   // Enhanced Search Functionality with Autocomplete, Results Count, and Zoom
   searchInput.addEventListener("input", (e) => {
     const query = (e.target as HTMLInputElement).value.toLowerCase();
@@ -2998,6 +3080,11 @@ document.addEventListener("DOMContentLoaded", () => {
       legendElement.style.display = legendVisible ? 'block' : 'none';
     }
     legendToggleBtn.style.opacity = legendVisible ? '1' : '0.5';
+    
+    // On mobile, toggle the right sidebar visibility
+    if (window.innerWidth <= 768) {
+      rightSidebar.classList.toggle('active', legendVisible);
+    }
   });
 
   // Initialize mobile enhancements
