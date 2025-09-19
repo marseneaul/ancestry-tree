@@ -18,23 +18,9 @@ function createModal() {
   modalContent.style.background = 'var(--bg-secondary)';
   modalContent.style.border = '1px solid var(--border-secondary)';
   
-  // Add drag handle
-  const dragHandle = document.createElement('div');
-  dragHandle.className = 'modal-drag-handle';
-  dragHandle.innerHTML = '━━━';
-  dragHandle.style.cssText = `
-    width: 40px;
-    height: 4px;
-    background: var(--text-tertiary);
-    border-radius: 2px;
-    margin: 0 auto var(--space-4) auto;
-    cursor: grab;
-  `;
-  
   const modalInnerContent = document.createElement('div');
   modalInnerContent.id = 'modal-inner-content';
   
-  modalContent.appendChild(dragHandle);
   modalContent.appendChild(modalInnerContent);
   modal.appendChild(modalContent);
   document.body.appendChild(modal);
@@ -541,7 +527,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Responsive SVG
   let width = window.innerWidth * 0.8;
-  let height = window.innerHeight * 0.55;
+  let height = window.innerHeight;
   const margin = { top: 50, right: 150, bottom: 50, left: 150 };
 
   const svg = d3.select("#tree-container").append("svg")
@@ -783,7 +769,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Filter state
   let maxGeneration = 0;
   let selectedCountries = new Set<string>();
-  let isFilterPanelVisible = false;
+  let isFilterPanelVisible = true;
   
   // Advanced filter states
   let birthYearRange = { min: 0, max: 2100 };
@@ -2129,6 +2115,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  // Set initial active state for filter button since panel is open by default
+  filterToggleBtn.classList.add("active");
+
   // Theme management
   let currentTheme = localStorage.getItem('theme') || 'light';
   
@@ -2375,8 +2364,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const horizontalCenter = width / 2;
     const rootXShift = horizontalCenter - (root.x ?? 0);
     
+    // Add vertical offset to ensure root is visible (shift up by 100px)
+    const verticalOffset = -100;
+    
     root.descendants().forEach(d => {
       d.x = (d.x ?? 0) + rootXShift;
+      d.y = (d.y ?? 0) + verticalOffset;
     });
 
     // Links
