@@ -400,12 +400,35 @@ body {
   .link {
     fill: none;
     stroke-width: 2;
-    transition: stroke-width var(--transition-normal);
+    transition: all var(--transition-normal) cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .node:hover ~ .link,
+  .node:hover + .link {
+    stroke-width: 3px;
+    stroke: var(--accent-primary);
+    opacity: 0.8;
   }
   
   .node {
     cursor: pointer;
-    transition: transform var(--transition-normal);
+    transition: filter var(--transition-normal) cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .node:hover {
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
+  }
+
+  .node circle,
+  .node rect {
+    transition: stroke-width var(--transition-normal), stroke var(--transition-normal), filter var(--transition-normal);
+  }
+
+  .node:hover circle,
+  .node:hover rect {
+    stroke-width: 3px;
+    stroke: var(--accent-primary);
+    filter: drop-shadow(0 2px 8px rgba(59, 130, 246, 0.3));
   }
 
   .node.root-node {
@@ -508,6 +531,7 @@ body {
     text-anchor: middle;
     line-height: 1;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+    transition: fill var(--transition-normal), font-weight var(--transition-normal);
   }
 
   .text-background {
@@ -518,9 +542,26 @@ body {
 
   .node:hover .text-background {
     fill: var(--bg-primary);
-    stroke: var(--border-primary);
-    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
-    transform: scale(1.05);
+    stroke: var(--accent-primary);
+    stroke-width: 2px;
+    filter: drop-shadow(0 4px 12px rgba(59, 130, 246, 0.2));
+  }
+
+  .node:hover .node-text {
+    fill: var(--accent-primary);
+    font-weight: 700;
+  }
+
+  .node:focus {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 4px;
+  }
+
+  .node:focus circle,
+  .node:focus rect {
+    stroke-width: 3px;
+    stroke: var(--accent-primary);
+    filter: drop-shadow(0 2px 8px rgba(59, 130, 246, 0.3));
   }
 
   .legend-item {
@@ -1632,6 +1673,17 @@ body {
     .node:hover circle,
     .node:hover rect {
       stroke-width: 3px;
+      stroke: var(--accent-primary);
+      filter: drop-shadow(0 2px 8px rgba(59, 130, 246, 0.3));
+    }
+
+    .node:hover {
+      filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
+    }
+
+    .node:hover .node-text {
+      fill: var(--accent-primary);
+      font-weight: 700;
     }
 
     /* Mobile text sizing */
