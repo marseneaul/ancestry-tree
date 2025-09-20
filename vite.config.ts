@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  base: '/',  // Set to '/' for custom domain (root path); assets load correctly at maxarseneault.com
+  base: '/ancestry-tree/',  // Set to '/ancestry-tree/' for GitHub Pages subdirectory
   build: {
     outDir: 'dist',  // Output folder for built files
   },
