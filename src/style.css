@@ -613,7 +613,6 @@ body {
   }
   
   .node.highlighted {
-    transform: scale(1.2);
     filter: drop-shadow(0 0 5px orange);
   }
   
