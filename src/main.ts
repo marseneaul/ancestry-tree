@@ -907,15 +907,15 @@ document.addEventListener("DOMContentLoaded", () => {
               <div class="filter-group-description">Filter by birth year period</div>
             </div>
             <div class="range-container">
-              <div class="range-inputs">
-                <div class="range-input">
+              <div class="range-row">
+                <div class="range-field">
                   <label class="range-label">From</label>
                   <input type="number" class="modern-input" id="birth-year-min" 
                          value="${minBirthYear}" min="${minBirthYear}" max="${maxBirthYear}" 
                          onchange="updateBirthYearRange()">
                 </div>
-                <div class="range-separator">to</div>
-                <div class="range-input">
+                <div class="range-to">to</div>
+                <div class="range-field">
                   <label class="range-label">To</label>
                   <input type="number" class="modern-input" id="birth-year-max" 
                          value="${maxBirthYear}" min="${minBirthYear}" max="${maxBirthYear}" 
@@ -931,14 +931,14 @@ document.addEventListener("DOMContentLoaded", () => {
               <div class="filter-group-description">Filter by age at death</div>
             </div>
             <div class="range-container">
-              <div class="range-inputs">
-                <div class="range-input">
+              <div class="range-row">
+                <div class="range-field">
                   <label class="range-label">Min Age</label>
                   <input type="number" class="modern-input" id="lifespan-min" 
                          value="0" min="0" max="120" onchange="updateLifespanFilter()">
                 </div>
-                <div class="range-separator">to</div>
-                <div class="range-input">
+                <div class="range-to">to</div>
+                <div class="range-field">
                   <label class="range-label">Max Age</label>
                   <input type="number" class="modern-input" id="lifespan-max" 
                          value="120" min="0" max="120" onchange="updateLifespanFilter()">
@@ -1600,7 +1600,6 @@ document.addEventListener("DOMContentLoaded", () => {
           if (!lifespanByGeneration.has(node.depth)) {
             lifespanByGeneration.set(node.depth, []);
           }
-          if (age > 200) console.log(node.data, age)
           lifespanByGeneration.get(node.depth)!.push(age);
         }
       }
