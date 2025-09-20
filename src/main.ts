@@ -2291,7 +2291,7 @@ document.addEventListener("DOMContentLoaded", () => {
             border-radius: 3px;
             flex-shrink: 0;
           "></div>
-          <span style="color: #374151; font-weight: 500;">${d.gender}</span>
+          <span style="color: var(--text-primary); font-weight: 500;">${d.gender}</span>
         </div>
       `;
     }).join('');
