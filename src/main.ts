@@ -2037,13 +2037,43 @@ document.addEventListener("DOMContentLoaded", () => {
     const height = 200;
     const radius = Math.min(width, height) / 2 - 10;
     
-    // Create color scale
+    // Create color scale based on country flag colors
+    const countryColors: { [key: string]: string } = {
+      'France': '#002395',        // French blue
+      'Germany': '#000000',       // German black
+      'Ireland': '#169B62',       // Irish green
+      'Scotland': '#0065BD',      // Scottish blue
+      'England': '#C8102E',       // English red
+      'Wales': '#D21034',         // Welsh red
+      'Italy': '#009246',         // Italian green
+      'Spain': '#C60B1E',         // Spanish red
+      'Portugal': '#046A38',      // Portuguese green
+      'Netherlands': '#21468B',   // Dutch blue
+      'Belgium': '#000000',       // Belgian black
+      'Switzerland': '#FF0000',   // Swiss red
+      'Austria': '#ED2939',       // Austrian red
+      'Hungary': '#CE2939',       // Hungarian red
+      'Poland': '#DC143C',        // Polish red
+      'Czech Republic': '#11457E', // Czech blue
+      'Slovakia': '#0B4EA2',      // Slovak blue
+      'Norway': '#EF2B2D',        // Norwegian red
+      'Sweden': '#006AA7',        // Swedish blue
+      'Denmark': '#C60C30',       // Danish red
+      'Finland': '#003580',       // Finnish blue
+      'Russia': '#0052CC',        // Russian blue
+      'Ukraine': '#0057B8',       // Ukrainian blue
+      'Romania': '#002B7F',       // Romanian blue
+      'Bulgaria': '#00966E',      // Bulgarian green
+      'Greece': '#0D5EAF',        // Greek blue
+      'Turkey': '#E30A17',        // Turkish red
+      'Lebanon': '#EE161F',       // Lebanese red
+      'Syria': '#CE1126',         // Syrian red
+      'Unknown': '#6B7280'        // Gray for unknown
+    };
+    
     const colorScale = d3.scaleOrdinal()
       .domain(pieData.map(d => d.country))
-      .range([
-        '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', 
-        '#06b6d4', '#84cc16', '#f97316', '#ec4899', '#6366f1'
-      ]);
+      .range(pieData.map(d => countryColors[d.country] || '#6B7280'));
     
     // Create pie generator
     const pie = d3.pie<any>()
