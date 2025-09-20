@@ -2944,6 +2944,38 @@ body {
       height: 12px;
     }
 
+    /* Mobile-optimized lifespan chart */
+    .lifespan-chart-container {
+      padding: var(--space-3);
+    }
+
+    .chart-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-3);
+    }
+
+    .chart-legend {
+      gap: var(--space-3);
+    }
+
+    .stats-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-2);
+    }
+
+    .stat-item {
+      padding: var(--space-2);
+    }
+
+    .stat-value {
+      font-size: var(--font-size-md);
+    }
+
+    .lifespan-line-chart {
+      min-width: 300px;
+    }
+
     /* Better mobile navigation */
     .view-controls {
       gap: 8px;
@@ -3118,6 +3150,145 @@ body {
 
   .data-quality .dna-fill[style*="background: #dc3545"] {
     background: linear-gradient(90deg, #dc3545, #e83e8c) !important;
+  }
+
+  /* Lifespan Chart Styles */
+  .lifespan-chart-container {
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    margin-top: var(--space-3);
+  }
+
+  .chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-4);
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .chart-header h4 {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+  }
+
+  .chart-legend {
+    display: flex;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+  }
+
+  .legend-color {
+    width: 16px;
+    height: 16px;
+    border-radius: var(--radius-sm);
+  }
+
+  .line-chart-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    margin-bottom: var(--space-4);
+  }
+
+  .lifespan-line-chart {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+
+  .lifespan-line {
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  }
+
+  .lifespan-point {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    opacity: 0.8;
+  }
+
+  .lifespan-point:hover {
+    opacity: 1;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
+  }
+
+  .lifespan-area {
+    opacity: 0.6;
+  }
+
+  .lifespan-range {
+    opacity: 0.4;
+  }
+
+  .chart-tooltip {
+    position: absolute;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-md);
+    padding: var(--space-2);
+    font-size: var(--font-size-sm);
+    color: var(--text-primary);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  .chart-tooltip div {
+    margin-bottom: 2px;
+  }
+
+  .chart-tooltip div:last-child {
+    margin-bottom: 0;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: var(--space-3);
+    margin-top: var(--space-3);
+  }
+
+  .stat-item {
+    text-align: center;
+    padding: var(--space-2);
+    background: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-primary);
+  }
+
+  .stat-value {
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    color: var(--accent-primary);
+    margin-bottom: var(--space-1);
+  }
+
+  .stat-label {
+    font-size: var(--font-size-xs);
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .no-data {
+    text-align: center;
+    color: var(--text-tertiary);
+    font-style: italic;
+    padding: var(--space-4);
   }
 
   /* Interactive chart elements */

@@ -764,6 +764,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // }
   const root = buildHierarchy(rootPerson);
 
+
   const treeLayout = d3.tree<Person>().size([width, height - 100]).nodeSize([180, 200]);  // Increased horizontal spacing to prevent text overlap
 
   // Filter state
@@ -1458,6 +1459,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Statistics dashboard state
   let isStatsDashboardVisible = false;
   let isTimelinePanelVisible = false;
+  let lifespanByGeneration = new Map<number, number[]>();
 
   // Initialize statistics dashboard
   function initializeStatsDashboard() {
@@ -1532,7 +1534,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Calculate additional statistics
     const genderStats = { male: 0, female: 0, unknown: 0 };
-    const lifespanByGeneration = new Map<number, number[]>();
+    lifespanByGeneration.clear(); // Clear previous data
     const migrationPatterns = new Map<string, number>();
     const dataCompleteness = {
       total: 0,
@@ -1596,6 +1598,7 @@ document.addEventListener("DOMContentLoaded", () => {
           if (!lifespanByGeneration.has(node.depth)) {
             lifespanByGeneration.set(node.depth, []);
           }
+          if (age > 200) console.log(node.data, age)
           lifespanByGeneration.get(node.depth)!.push(age);
         }
       }
@@ -1757,26 +1760,26 @@ document.addEventListener("DOMContentLoaded", () => {
           ⏰ Average Lifespan by Generation <span class="collapse-icon" onclick="event.stopPropagation(); toggleSection('lifespan');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
         </div>
         <div class="stats-section-content" id="lifespan">
-          <div class="dna-breakdown">
-            ${Array.from(lifespanByGeneration.entries())
-              .sort((a, b) => a[0] - b[0])
-              .map(([generation, ages]) => {
-                const avgAge = ages.reduce((sum, age) => sum + age, 0) / ages.length;
-                const maxAge = Math.max(...ages);
-                const minAge = Math.min(...ages);
-                return `
-                  <div class="dna-item">
-                    <span class="dna-label">Gen ${generation}: ${ages.length} people</span>
-                    <div class="dna-bar">
-                      <div class="dna-fill" style="width: ${Math.min((avgAge / 100) * 100, 100)}%"></div>
-                    </div>
-                    <span class="dna-percent">${avgAge.toFixed(1)}</span>
-                  </div>
-                  <div style="font-size: 10px; color: #888; margin-left: 8px; margin-bottom: 4px;">
-                    Range: ${minAge}-${maxAge} years
-                  </div>
-                `;
-              }).join('')}
+          <div class="lifespan-chart-container">
+            <div class="chart-header">
+              <h4>Lifespan Trends Across Generations</h4>
+              <div class="chart-legend">
+                <div class="legend-item">
+                  <div class="legend-color" style="background: var(--accent-primary);"></div>
+                  <span>Average Lifespan</span>
+                </div>
+                <div class="legend-item">
+                  <div class="legend-color" style="background: rgba(123, 179, 240, 0.3);"></div>
+                  <span>Range (Min-Max)</span>
+                </div>
+              </div>
+            </div>
+            <div class="line-chart-wrapper">
+              <svg id="lifespan-line-chart" class="lifespan-line-chart"></svg>
+            </div>
+            <div class="chart-stats" id="lifespan-stats">
+              <!-- Stats will be populated by JavaScript -->
+            </div>
           </div>
         </div>
       </div>
@@ -2288,6 +2291,20 @@ document.addEventListener("DOMContentLoaded", () => {
     }).join('');
     
     legend.html(legendHtml);
+    
+    // Debug: Log lifespan data
+    console.log('Lifespan data by generation:', Array.from(lifespanByGeneration.entries()));
+    
+    // Render the lifespan chart after a short delay to ensure DOM is ready
+    setTimeout(() => {
+      console.log('Rendering lifespan chart from initializeStatsDashboard...');
+      renderLifespanChart();
+      // Also populate the stats section
+      const statsElement = document.getElementById('lifespan-stats');
+      if (statsElement) {
+        statsElement.innerHTML = generateLifespanStats();
+      }
+    }, 200);
   }
 
   // Close statistics dashboard function
@@ -3473,4 +3490,343 @@ document.addEventListener("DOMContentLoaded", () => {
       }, 100);
     }
   });
+
+  // Generate lifespan statistics for the chart
+  function generateLifespanStats() {
+    const sortedGenerations = Array.from(lifespanByGeneration.entries()).sort((a, b) => a[0] - b[0]);
+    if (sortedGenerations.length < 2) return '<div class="no-data">Insufficient data for trend analysis</div>';
+    
+    const ages = sortedGenerations.map(([_, ages]) => ages.reduce((sum, age) => sum + age, 0) / ages.length);
+    const trend = ages[ages.length - 1] - ages[0];
+    const trendDirection = trend > 0 ? 'increasing' : trend < 0 ? 'decreasing' : 'stable';
+    const trendIcon = trend > 0 ? '📈' : trend < 0 ? '📉' : '➡️';
+    
+    const totalPeople = sortedGenerations.reduce((sum, [_, ages]) => sum + ages.length, 0);
+    const overallAvg = sortedGenerations.reduce((sum, [_, ages]) => sum + ages.reduce((s, age) => s + age, 0), 0) / totalPeople;
+    
+    return `
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-value">${trendIcon} ${Math.abs(trend).toFixed(1)}</div>
+          <div class="stat-label">${trendDirection} trend</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">${overallAvg.toFixed(1)}</div>
+          <div class="stat-label">Overall average</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">${totalPeople}</div>
+          <div class="stat-label">Total people</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">${sortedGenerations.length}</div>
+          <div class="stat-label">Generations</div>
+        </div>
+      </div>
+    `;
+  }
+
+  // Render the lifespan line chart
+  function renderLifespanChart() {
+    const svg = document.getElementById('lifespan-line-chart');
+    if (!svg) {
+      console.log('SVG element not found');
+      return;
+    }
+    
+    const container = svg.parentElement;
+    if (!container) {
+      console.log('Container not found');
+      return;
+    }
+    
+    const containerRect = container.getBoundingClientRect();
+    const margin = { top: 20, right: 30, bottom: 50, left: 50 };
+    const width = Math.max(containerRect.width - margin.left - margin.right, 300);
+    const height = 300;
+    
+    console.log('Container dimensions:', containerRect.width, containerRect.height);
+    console.log('Chart dimensions:', width, height);
+    
+    svg.setAttribute('width', width + margin.left + margin.right);
+    svg.setAttribute('height', height + margin.top + margin.bottom);
+    
+    // Clear previous content
+    svg.innerHTML = '';
+    const sortedGenerations = Array.from(lifespanByGeneration.entries()).sort((a, b) => a[0] - b[0]);
+    console.log('Sorted generations:', sortedGenerations);
+    
+    if (sortedGenerations.length === 0) {
+      // Create a simple test chart to verify SVG rendering works
+      svg.innerHTML = `
+        <rect x="50" y="50" width="200" height="100" fill="rgba(123, 179, 240, 0.3)" stroke="var(--accent-primary)" stroke-width="2"/>
+        <text x="150" y="110" text-anchor="middle" fill="var(--text-primary)" font-size="14">No lifespan data available</text>
+        <text x="150" y="130" text-anchor="middle" fill="var(--text-secondary)" font-size="12">Generations: ${sortedGenerations.length}</text>
+      `;
+      return;
+    }
+    
+    // Prepare data
+    const data = sortedGenerations.map(([generation, ages]) => {
+      const avgAge = ages.reduce((sum, age) => sum + age, 0) / ages.length;
+      const maxAge = Math.max(...ages);
+      const minAge = Math.min(...ages);
+      return { generation, avgAge, maxAge, minAge, count: ages.length };
+    });
+    
+    console.log('Processed data:', data);
+    
+    // Scales
+    const xScale = (generation) => {
+      if (data.length === 1) return margin.left + width / 2;
+      return margin.left + (generation - data[0].generation) * (width / (data.length - 1));
+    };
+    
+    const minAge = Math.min(...data.map(d => d.minAge));
+    const maxAge = Math.max(...data.map(d => d.maxAge));
+    const ageRange = maxAge - minAge;
+    
+    console.log('Age range:', minAge, 'to', maxAge, 'range:', ageRange);
+    
+    const yScale = (age) => {
+      if (ageRange === 0) return margin.top + height / 2;
+      return margin.top + height - ((age - minAge) / ageRange) * height;
+    };
+    
+    // Create gradient for area fill
+    const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+    const gradient = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
+    gradient.setAttribute('id', 'lifespan-gradient');
+    gradient.setAttribute('x1', '0%');
+    gradient.setAttribute('y1', '0%');
+    gradient.setAttribute('x2', '0%');
+    gradient.setAttribute('y2', '100%');
+    
+    const stop1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+    stop1.setAttribute('offset', '0%');
+    stop1.setAttribute('stop-color', 'var(--accent-primary)');
+    stop1.setAttribute('stop-opacity', '0.3');
+    
+    const stop2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+    stop2.setAttribute('offset', '100%');
+    stop2.setAttribute('stop-color', 'var(--accent-primary)');
+    stop2.setAttribute('stop-opacity', '0');
+    
+    gradient.appendChild(stop1);
+    gradient.appendChild(stop2);
+    defs.appendChild(gradient);
+    svg.appendChild(defs);
+    
+    // Create area under the line
+    const areaPath = data.map((d, i) => {
+      const x = xScale(d.generation);
+      const y = yScale(d.avgAge);
+      return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
+    }).join(' ') + ` L ${xScale(data[data.length - 1].generation)} ${margin.top + height} L ${xScale(data[0].generation)} ${margin.top + height} Z`;
+    
+    const area = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    area.setAttribute('d', areaPath);
+    area.setAttribute('fill', 'url(#lifespan-gradient)');
+    area.setAttribute('class', 'lifespan-area');
+    svg.appendChild(area);
+    
+    // Create range areas (min-max)
+    data.forEach((d, i) => {
+      if (i < data.length - 1) {
+        const x1 = xScale(d.generation);
+        const x2 = xScale(data[i + 1].generation);
+        const y1Min = yScale(d.minAge);
+        const y1Max = yScale(d.maxAge);
+        const y2Min = yScale(data[i + 1].minAge);
+        const y2Max = yScale(data[i + 1].maxAge);
+        
+        const rangePath = `M ${x1} ${y1Min} L ${x2} ${y2Min} L ${x2} ${y2Max} L ${x1} ${y1Max} Z`;
+        const rangeArea = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        rangeArea.setAttribute('d', rangePath);
+        rangeArea.setAttribute('fill', 'rgba(123, 179, 240, 0.2)');
+        rangeArea.setAttribute('class', 'lifespan-range');
+        svg.appendChild(rangeArea);
+      }
+    });
+    
+    // Create main line
+    const linePath = data.map((d, i) => {
+      const x = xScale(d.generation);
+      const y = yScale(d.avgAge);
+      return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
+    }).join(' ');
+    
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    line.setAttribute('d', linePath);
+    line.setAttribute('fill', 'none');
+    line.setAttribute('stroke', 'var(--accent-primary)');
+    line.setAttribute('stroke-width', '3');
+    line.setAttribute('class', 'lifespan-line');
+    svg.appendChild(line);
+    
+    // Create data points
+    data.forEach(d => {
+      const x = xScale(d.generation);
+      const y = yScale(d.avgAge);
+      
+      const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      circle.setAttribute('cx', x);
+      circle.setAttribute('cy', y);
+      circle.setAttribute('r', '4');
+      circle.setAttribute('fill', 'var(--accent-primary)');
+      circle.setAttribute('stroke', 'white');
+      circle.setAttribute('stroke-width', '1.5');
+      circle.setAttribute('class', 'lifespan-point');
+      circle.setAttribute('opacity', '0.8');
+      circle.setAttribute('data-generation', d.generation);
+      circle.setAttribute('data-avg', d.avgAge.toFixed(1));
+      circle.setAttribute('data-min', d.minAge);
+      circle.setAttribute('data-max', d.maxAge);
+      circle.setAttribute('data-count', d.count);
+      
+      // Add hover effect
+      circle.addEventListener('mouseenter', (e) => {
+        // Make the point slightly larger and more opaque on hover
+        circle.setAttribute('r', '5');
+        circle.setAttribute('opacity', '1');
+        
+        const tooltip = document.createElement('div');
+        tooltip.className = 'chart-tooltip';
+        tooltip.innerHTML = `
+          <div><strong>Generation ${d.generation}</strong></div>
+          <div>Average: ${d.avgAge.toFixed(1)} years</div>
+          <div>Range: ${d.minAge}-${d.maxAge} years</div>
+          <div>People: ${d.count}</div>
+        `;
+        document.body.appendChild(tooltip);
+        
+        const rect = e.target.getBoundingClientRect();
+        tooltip.style.left = rect.left + window.scrollX + 'px';
+        tooltip.style.top = (rect.top + window.scrollY - tooltip.offsetHeight - 10) + 'px';
+      });
+      
+      circle.addEventListener('mouseleave', () => {
+        // Reset the point to original size and opacity
+        circle.setAttribute('r', '4');
+        circle.setAttribute('opacity', '0.8');
+        
+        const tooltip = document.querySelector('.chart-tooltip');
+        if (tooltip) tooltip.remove();
+      });
+      
+      svg.appendChild(circle);
+    });
+    
+    // Create axes
+    const yAxis = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    yAxis.setAttribute('x1', margin.left);
+    yAxis.setAttribute('y1', margin.top);
+    yAxis.setAttribute('x2', margin.left);
+    yAxis.setAttribute('y2', margin.top + height);
+    yAxis.setAttribute('stroke', 'var(--border-primary)');
+    yAxis.setAttribute('stroke-width', '1');
+    svg.appendChild(yAxis);
+    
+    const xAxis = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    xAxis.setAttribute('x1', margin.left);
+    xAxis.setAttribute('y1', margin.top + height);
+    xAxis.setAttribute('x2', margin.left + width);
+    xAxis.setAttribute('y2', margin.top + height);
+    xAxis.setAttribute('stroke', 'var(--border-primary)');
+    xAxis.setAttribute('stroke-width', '1');
+    svg.appendChild(xAxis);
+    
+    // Add axis labels with smart spacing to prevent overlapping
+    const labelSpacing = 60; // Minimum pixel spacing between labels
+    const labelsToShow = [];
+    
+    // Calculate which labels to show based on spacing
+    for (let i = 0; i < data.length; i++) {
+      const currentX = xScale(data[i].generation);
+      const shouldShow = labelsToShow.length === 0 || 
+                        Math.abs(currentX - labelsToShow[labelsToShow.length - 1].x) >= labelSpacing;
+      
+      if (shouldShow) {
+        labelsToShow.push({ index: i, x: currentX, generation: data[i].generation });
+      }
+    }
+    
+    // Ensure first and last labels are shown, but check for spacing conflicts
+    if (data.length > 1) {
+      const firstIndex = 0;
+      const lastIndex = data.length - 1;
+      const firstX = xScale(data[firstIndex].generation);
+      const lastX = xScale(data[lastIndex].generation);
+      
+      // Add first label if not already shown and has enough space
+      if (labelsToShow.length === 0 || labelsToShow[0].index !== firstIndex) {
+        labelsToShow.unshift({ index: firstIndex, x: firstX, generation: data[firstIndex].generation });
+      }
+      
+      // Add last label if not already shown, but check spacing from previous label
+      const lastLabelAlreadyShown = labelsToShow.some(label => label.index === lastIndex);
+      if (!lastLabelAlreadyShown) {
+        const lastLabel = { index: lastIndex, x: lastX, generation: data[lastIndex].generation };
+        const previousLabel = labelsToShow[labelsToShow.length - 1];
+        
+        // Only add if there's enough space from the previous label
+        if (!previousLabel || Math.abs(lastX - previousLabel.x) >= labelSpacing) {
+          labelsToShow.push(lastLabel);
+        }
+      }
+    }
+    
+    // Render the selected labels
+    labelsToShow.forEach(({ x, generation }) => {
+      const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      text.setAttribute('x', x);
+      text.setAttribute('y', margin.top + height + 25);
+      text.setAttribute('text-anchor', 'middle');
+      text.setAttribute('fill', 'var(--text-secondary)');
+      text.setAttribute('font-size', '11');
+      text.setAttribute('font-weight', '500');
+      
+      // Use shorter labels for better readability
+      text.textContent = `Gen ${generation}`;
+      
+      svg.appendChild(text);
+    });
+    
+    // Add Y-axis labels
+    const ageStep = Math.ceil(ageRange / 5);
+    
+    for (let age = Math.ceil(minAge / ageStep) * ageStep; age <= maxAge; age += ageStep) {
+      const y = yScale(age);
+      const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      text.setAttribute('x', margin.left - 10);
+      text.setAttribute('y', y + 4);
+      text.setAttribute('text-anchor', 'end');
+      text.setAttribute('fill', 'var(--text-secondary)');
+      text.setAttribute('font-size', '12');
+      text.textContent = age;
+      svg.appendChild(text);
+    }
+    
+    // Add axis titles
+    const yAxisTitle = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    yAxisTitle.setAttribute('x', 15);
+    yAxisTitle.setAttribute('y', margin.top + height / 2);
+    yAxisTitle.setAttribute('text-anchor', 'middle');
+    yAxisTitle.setAttribute('fill', 'var(--text-secondary)');
+    yAxisTitle.setAttribute('font-size', '12');
+    yAxisTitle.setAttribute('transform', `rotate(-90, 15, ${margin.top + height / 2})`);
+    yAxisTitle.textContent = 'Age (years)';
+    svg.appendChild(yAxisTitle);
+  }
+
+  // Render the chart after a short delay to ensure DOM is ready
+  setTimeout(() => {
+    console.log('Attempting to render lifespan chart...');
+    renderLifespanChart();
+    // Also populate the stats section
+    const statsElement = document.getElementById('lifespan-stats');
+    if (statsElement) {
+      statsElement.innerHTML = generateLifespanStats();
+    }
+  }, 100);
 });

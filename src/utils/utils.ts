@@ -36,11 +36,14 @@ export function traceMatrilineal(root: Person): string[] {  // Mitochondrial: mo
 export function calculateAgeAtDate(birthDate: string, atDateStr: string = "", currentDate: Date = new Date("2025-09-08")): number | null {
   if (!birthDate) return null;
   if (birthDate[0] === '~' || birthDate[0] === '<' || birthDate[0] === '>') birthDate = birthDate.substring(1);
-  const birth = new Date(birthDate);
-  if (isNaN(birth.getTime())) return null;
   
-  const atDate = atDateStr ? new Date(atDateStr) : currentDate;
-  if (isNaN(atDate.getTime())) return null;
+  // Parse birth date
+  const birth = parseDate(birthDate);
+  if (!birth) return null;
+  
+  // Parse death/at date
+  const atDate = atDateStr ? parseDate(atDateStr) : currentDate;
+  if (!atDate) return null;
   
   let age = atDate.getFullYear() - birth.getFullYear();
   const monthDiff = atDate.getMonth() - birth.getMonth();
@@ -48,6 +51,54 @@ export function calculateAgeAtDate(birthDate: string, atDateStr: string = "", cu
     age--;
   }
   return age >= 0 ? age : null; // Avoid negative ages
+}
+
+// Helper function to parse various date formats
+function parseDate(dateStr: string): Date | null {
+  if (!dateStr) return null;
+  
+  // Handle formats like "29/30 September 1089" - extract the year
+  const yearMatch = dateStr.match(/\b(\d{4})\b/);
+  if (yearMatch) {
+    const year = parseInt(yearMatch[1]);
+    // If the year is reasonable (not in the future), use it
+    if (year <= new Date().getFullYear() + 10) {
+      // Try to parse the full date first
+      let parsed = new Date(dateStr);
+      if (!isNaN(parsed.getTime()) && parsed.getFullYear() === year) {
+        return parsed;
+      }
+      
+      // If that fails, try to extract month and day if possible
+      const monthNames = ['january', 'february', 'march', 'april', 'may', 'june',
+                         'july', 'august', 'september', 'october', 'november', 'december'];
+      const monthMatch = dateStr.toLowerCase().match(/\b(january|february|march|april|may|june|july|august|september|october|november|december)\b/);
+      
+      if (monthMatch) {
+        const monthIndex = monthNames.indexOf(monthMatch[1]);
+        // Try to extract day - look for numbers before the month
+        const dayMatch = dateStr.match(/(\d{1,2})/);
+        const day = dayMatch ? parseInt(dayMatch[1]) : 1;
+        
+        // Create date with extracted components
+        const constructedDate = new Date(year, monthIndex, day);
+        if (!isNaN(constructedDate.getTime())) {
+          return constructedDate;
+        }
+      }
+      
+      // Fallback: just use the year (January 1st of that year)
+      return new Date(year, 0, 1);
+    }
+  }
+  
+  // Try standard parsing
+  const parsed = new Date(dateStr);
+  if (!isNaN(parsed.getTime())) {
+    return parsed;
+  }
+  
+  return null;
 }
 
 // Helper for estimating ancient dates in BCE (returns string like "circa 50000 BCE")
