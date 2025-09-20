@@ -1947,9 +1947,183 @@ document.addEventListener("DOMContentLoaded", () => {
               }).join('');
           })()}
           </div>
+          
+          <!-- DNA Pie Chart -->
+          <div id="dna-pie-chart" style="margin-top: 20px;">
+            <h4 style="margin: 0 0 16px; color: var(--text-primary); font-size: 16px; font-weight: 600;">DNA Distribution</h4>
+            <div id="dna-pie-visualization" style="display: flex; align-items: center; gap: 20px;">
+              <svg id="dna-pie-svg" width="200" height="200"></svg>
+              <div id="dna-pie-legend" class="pie-legend"></div>
+            </div>
+          </div>
         </div>
       </div>
     `;
+    
+    // Create DNA pie chart after the HTML is rendered
+    setTimeout(() => {
+      createDnaPieChart();
+    }, 100);
+  }
+
+  // Create DNA pie chart visualization
+  function createDnaPieChart() {
+    const svg = d3.select("#dna-pie-svg");
+    const legend = d3.select("#dna-pie-legend");
+    
+    // Clear previous content
+    svg.selectAll("*").remove();
+    legend.selectAll("*").remove();
+    
+    // Get the DNA data (same calculation as in the HTML)
+    const allNodes = root.descendants();
+    const countryDnaContribution = new Map<string, number>();
+    const visitedNodes = new Set<string>();
+    
+    function traceAncestry(node: any, depth: number) {
+      if (visitedNodes.has(node.data.name) || depth > 20) {
+        return;
+      }
+      visitedNodes.add(node.data.name);
+      
+      const country = getCountry(node.data.birthPlace);
+      
+      if (country !== "United States" && country !== "Canada") {
+        const dnaPercent = 100 / Math.pow(2, depth);
+        countryDnaContribution.set(country, (countryDnaContribution.get(country) || 0) + dnaPercent);
+      } else {
+        let hasParents = false;
+        if (node.data.parents) {
+          node.data.parents.forEach((parent: any) => {
+            if (parent) {
+              const parentNode = allNodes.find(n => 
+                n.data.name === parent.name && 
+                n.data.birthDate === parent.birthDate &&
+                n.data.birthPlace === parent.birthPlace
+              );
+              if (parentNode && !visitedNodes.has(parentNode.data.name)) {
+                hasParents = true;
+                traceAncestry(parentNode, depth + 1);
+              }
+            }
+          });
+        }
+        
+        if (!hasParents) {
+          const dnaPercent = 100 / Math.pow(2, depth);
+          const deadEndCountry = country === "Canada" ? "France" : "Unknown";
+          countryDnaContribution.set(deadEndCountry, (countryDnaContribution.get(deadEndCountry) || 0) + dnaPercent);
+        }
+      }
+      
+      visitedNodes.delete(node.data.name);
+    }
+    
+    const rootNode = allNodes.find(n => n.depth === 0);
+    if (rootNode) {
+      traceAncestry(rootNode, 0);
+    }
+    
+    // Prepare data for pie chart
+    const pieData = Array.from(countryDnaContribution.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 8)
+      .map(([country, value]) => ({ country, value }));
+    
+    if (pieData.length === 0) return;
+    
+    // Set up pie chart dimensions
+    const width = 200;
+    const height = 200;
+    const radius = Math.min(width, height) / 2 - 10;
+    
+    // Create color scale
+    const colorScale = d3.scaleOrdinal()
+      .domain(pieData.map(d => d.country))
+      .range([
+        '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', 
+        '#06b6d4', '#84cc16', '#f97316', '#ec4899', '#6366f1'
+      ]);
+    
+    // Create pie generator
+    const pie = d3.pie<any>()
+      .value(d => d.value)
+      .sort(null);
+    
+    // Create arc generator
+    const arc = d3.arc<any>()
+      .innerRadius(0)
+      .outerRadius(radius);
+    
+    // Create the pie chart
+    const g = svg.append("g")
+      .attr("transform", `translate(${width/2}, ${height/2})`);
+    
+    const arcs = g.selectAll(".arc")
+      .data(pie(pieData))
+      .enter()
+      .append("g")
+      .attr("class", "arc");
+    
+    // Add pie slices
+    arcs.append("path")
+      .attr("d", arc)
+      .attr("fill", d => colorScale(d.data.country))
+      .attr("stroke", "var(--bg-secondary)")
+      .attr("stroke-width", 2)
+      .style("cursor", "pointer")
+      .on("mouseover", function(event, d) {
+        d3.select(this)
+          .attr("stroke-width", 3)
+          .attr("stroke", "var(--accent-primary)");
+        
+        // Show tooltip
+        const tooltip = d3.select("body").append("div")
+          .attr("class", "chart-tooltip")
+          .style("opacity", 0);
+        
+        tooltip.transition()
+          .duration(200)
+          .style("opacity", .9);
+        
+        tooltip.html(`
+          <strong>${d.data.country}</strong><br/>
+          ${d.data.value.toFixed(1)}% DNA contribution
+        `)
+          .style("left", (event.pageX + 10) + "px")
+          .style("top", (event.pageY - 28) + "px");
+      })
+      .on("mouseout", function(event, d) {
+        d3.select(this)
+          .attr("stroke-width", 2)
+          .attr("stroke", "var(--bg-secondary)");
+        
+        // Remove tooltip
+        d3.selectAll(".chart-tooltip").remove();
+      });
+    
+    // Create legend
+    const legendItems = legend.selectAll(".legend-item")
+      .data(pieData)
+      .enter()
+      .append("div")
+      .attr("class", "legend-item")
+      .style("display", "flex")
+      .style("align-items", "center")
+      .style("margin-bottom", "8px")
+      .style("font-size", "12px");
+    
+    legendItems.append("div")
+      .style("width", "12px")
+      .style("height", "12px")
+      .style("background-color", d => colorScale(d.country))
+      .style("margin-right", "8px")
+      .style("border-radius", "2px");
+    
+    legendItems.append("span")
+      .text(d => `${d.country} (${d.value.toFixed(1)}%)`)
+      .style("color", "var(--text-primary)")
+      .style("font-weight", "500");
   }
 
   // Close statistics dashboard function
