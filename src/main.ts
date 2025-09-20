@@ -2040,7 +2040,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Create color scale based on country flag colors
     const countryColors: { [key: string]: string } = {
       'France': '#002395',        // French blue
-      'Germany': '#000000',       // German black
+      'Germany': '#FFCC00',       // German gold/yellow
       'Ireland': '#169B62',       // Irish green
       'Scotland': '#0065BD',      // Scottish blue
       'England': '#C8102E',       // English red
@@ -2049,7 +2049,7 @@ document.addEventListener("DOMContentLoaded", () => {
       'Spain': '#C60B1E',         // Spanish red
       'Portugal': '#046A38',      // Portuguese green
       'Netherlands': '#21468B',   // Dutch blue
-      'Belgium': '#000000',       // Belgian black
+      'Belgium': '#ED2939',       // Belgian red
       'Switzerland': '#FF0000',   // Swiss red
       'Austria': '#ED2939',       // Austrian red
       'Hungary': '#CE2939',       // Hungarian red
