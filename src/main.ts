@@ -1740,38 +1740,13 @@ document.addEventListener("DOMContentLoaded", () => {
           👥 Gender Distribution <span class="collapse-icon" onclick="event.stopPropagation(); toggleSection('gender-distribution');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
         </div>
         <div class="stats-section-content" id="gender-distribution">
-          <div class="dna-breakdown">
-            <div class="dna-item">
-              <span class="dna-label">👨 Male</span>
-              <div class="dna-bar">
-                <div class="dna-fill" style="width: ${(genderStats.male / totalPeople) * 100}%"></div>
-              </div>
-              <span class="dna-percent">${genderStats.male}</span>
-            </div>
-            <div class="dna-item">
-              <span class="dna-label">👩 Female</span>
-              <div class="dna-bar">
-                <div class="dna-fill" style="width: ${(genderStats.female / totalPeople) * 100}%"></div>
-              </div>
-              <span class="dna-percent">${genderStats.female}</span>
-            </div>
-            ${genderStats.unknown > 0 ? `
-            <div class="dna-item">
-              <span class="dna-label">❓ Unknown</span>
-              <div class="dna-bar">
-                <div class="dna-fill" style="width: ${(genderStats.unknown / totalPeople) * 100}%"></div>
-              </div>
-              <span class="dna-percent">${genderStats.unknown}</span>
-            </div>
-            ` : ''}
-          </div>
-          
           <!-- Gender Pie Chart -->
-          <div id="gender-pie-chart" style="margin-top: 20px;">
-            <h4 style="margin: 0 0 16px; color: var(--text-primary); font-size: 16px; font-weight: 600;">Gender Distribution</h4>
+          <div id="gender-pie-chart">
             <div id="gender-pie-visualization" style="display: flex; align-items: center; gap: 20px;">
               <svg id="gender-pie-svg" width="200" height="200"></svg>
-              <div id="gender-pie-legend" class="pie-legend"></div>
+              <div id="gender-pie-legend" class="pie-legend">
+                <!-- Legend will be populated by JavaScript -->
+              </div>
             </div>
           </div>
         </div>
@@ -2178,9 +2153,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // Get the gender data from the stats
     const allNodes = root.descendants();
     const genderStats = {
-      male: allNodes.filter(d => d.data.gender === 'Male').length,
-      female: allNodes.filter(d => d.data.gender === 'Female').length,
-      unknown: allNodes.filter(d => !d.data.gender || d.data.gender === 'Unknown').length
+      male: allNodes.filter(d => d.data.sex === 'Male').length,
+      female: allNodes.filter(d => d.data.sex === 'Female').length,
+      unknown: allNodes.filter(d => !d.data.sex || d.data.sex === 'Unknown').length
     };
     
     // Prepare data for pie chart
@@ -2236,62 +2211,83 @@ document.addEventListener("DOMContentLoaded", () => {
     arcs.append("path")
       .attr("d", arc)
       .attr("fill", d => colorScale(d.data.gender))
-      .attr("stroke", "var(--bg-secondary)")
+      .attr("stroke", "#ffffff")
       .attr("stroke-width", 2)
       .style("cursor", "pointer")
       .on("mouseover", function(event, d) {
         d3.select(this)
           .attr("stroke-width", 3)
-          .attr("stroke", "var(--accent-primary)");
+          .attr("stroke", "#3b82f6");
         
         // Show tooltip
         const tooltip = d3.select("body").append("div")
           .attr("class", "chart-tooltip")
-          .style("opacity", 0);
+          .style("opacity", 0)
+          .style("position", "absolute")
+          .style("background", "rgba(0, 0, 0, 0.8)")
+          .style("color", "white")
+          .style("padding", "8px 12px")
+          .style("border-radius", "6px")
+          .style("font-size", "12px")
+          .style("font-weight", "500")
+          .style("pointer-events", "none")
+          .style("z-index", "1300")
+          .style("box-shadow", "0 4px 12px rgba(0, 0, 0, 0.3)")
+          .style("border", "1px solid rgba(255, 255, 255, 0.1)")
+          .style("backdrop-filter", "blur(10px)")
+          .style("max-width", "200px")
+          .style("line-height", "1.4");
         
         const percentage = ((d.data.count / (genderStats.male + genderStats.female + genderStats.unknown)) * 100).toFixed(1);
         
         tooltip.html(`
-          <strong>${d.data.emoji} ${d.data.gender}</strong><br/>
+          <strong style="color: #4a9eff; font-weight: 600;">${d.data.emoji} ${d.data.gender}</strong><br/>
           ${d.data.count} people (${percentage}%)
         `)
           .style("left", (event.pageX + 10) + "px")
           .style("top", (event.pageY - 28) + "px");
+        
+        tooltip.transition()
+          .duration(200)
+          .style("opacity", 0.9);
       })
       .on("mouseout", function(event, d) {
         d3.select(this)
           .attr("stroke-width", 2)
-          .attr("stroke", "var(--bg-secondary)");
+          .attr("stroke", "#ffffff");
         
         // Remove tooltip
         d3.selectAll(".chart-tooltip").remove();
       });
     
-    // Create legend
-    const legendItems = legend.selectAll(".legend-item")
-      .data(pieData)
-      .enter()
-      .append("div")
-      .attr("class", "legend-item")
-      .style("display", "flex")
-      .style("align-items", "center")
-      .style("margin-bottom", "8px")
-      .style("font-size", "12px");
+    // Create legend with hover effects
+    const legendHtml = pieData.map(d => {
+      const color = colorScale(d.gender);
+      return `
+        <div class="legend-item" style="
+          display: flex;
+          align-items: center;
+          margin-bottom: 12px;
+          font-size: 14px;
+          padding: 8px;
+          border-radius: 6px;
+          transition: all 0.2s ease;
+          cursor: pointer;
+        " onmouseover="this.style.background='#f1f5f9'; this.style.borderColor='#3b82f6'; this.style.transform='translateX(2px)'; this.style.boxShadow='0 2px 8px rgba(15, 23, 42, 0.08)';" onmouseout="this.style.background='transparent'; this.style.borderColor='transparent'; this.style.transform='translateX(0)'; this.style.boxShadow='none';">
+          <div style="
+            width: 16px;
+            height: 16px;
+            background-color: ${color};
+            margin-right: 12px;
+            border-radius: 3px;
+            flex-shrink: 0;
+          "></div>
+          <span style="color: #374151; font-weight: 500;">${d.gender}</span>
+        </div>
+      `;
+    }).join('');
     
-    legendItems.append("div")
-      .style("width", "12px")
-      .style("height", "12px")
-      .style("background-color", d => colorScale(d.data.gender))
-      .style("margin-right", "8px")
-      .style("border-radius", "2px");
-    
-    legendItems.append("span")
-      .text(d => {
-        const percentage = ((d.data.count / (genderStats.male + genderStats.female + genderStats.unknown)) * 100).toFixed(1);
-        return `${d.data.emoji} ${d.data.gender} (${d.data.count} - ${percentage}%)`;
-      })
-      .style("color", "var(--text-primary)")
-      .style("font-weight", "500");
+    legend.html(legendHtml);
   }
 
   // Close statistics dashboard function
