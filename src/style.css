@@ -113,7 +113,7 @@ body {
     grid-template-areas: 
       "header header header"
       "sidebar-left main sidebar-right";
-    grid-template-columns: 480px 1fr 480px;
+    grid-template-columns: 1fr 3fr 1fr;
     grid-template-rows: auto 1fr;
     min-height: 100vh;
     gap: 0;
@@ -1424,7 +1424,7 @@ body {
       grid-template-areas: 
         "header"
         "main";
-      grid-template-columns: 1fr 2fr 1fr;
+      grid-template-columns: 1fr 3fr 1fr;
       grid-template-rows: auto 1fr;
     }
 
