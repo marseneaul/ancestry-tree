@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  base: '/ancestry-tree/',  // Set to '/ancestry-tree/' for GitHub Pages subdirectory
+  base: '/',  // Set to '/' for custom domain (root path)
   build: {
     outDir: 'dist',  // Output folder for built files
   },
