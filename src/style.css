@@ -1424,7 +1424,7 @@ body {
       grid-template-areas: 
         "header"
         "main";
-      grid-template-columns: 1fr;
+      grid-template-columns: 1fr 2fr 1fr;
       grid-template-rows: auto 1fr;
     }
 
