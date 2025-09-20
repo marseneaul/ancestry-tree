@@ -373,6 +373,10 @@ body {
     transition: background-color var(--transition-normal), border-color var(--transition-normal);
   }
 
+  #legend.hidden {
+    display: none;
+  }
+
   #legend h3 {
     font-size: var(--font-size-base);
     font-weight: 700;

@@ -2320,6 +2320,27 @@ document.addEventListener("DOMContentLoaded", () => {
     statsToggleBtn.classList.remove("active");
   }
 
+  // Function to update grid layout based on visible panels
+  function updateGridLayout() {
+    const leftPanelVisible = !filterPanel.classList.contains("hidden") || 
+                            !statsDashboard.classList.contains("hidden") || 
+                            !timelinePanel.classList.contains("hidden");
+    const rightPanelVisible = !legend.classList.contains("hidden");
+    
+    let gridColumns;
+    if (leftPanelVisible && rightPanelVisible) {
+      gridColumns = "1fr 3fr 1fr";
+    } else if (leftPanelVisible && !rightPanelVisible) {
+      gridColumns = "1fr 4fr 0fr";
+    } else if (!leftPanelVisible && rightPanelVisible) {
+      gridColumns = "0fr 4fr 1fr";
+    } else {
+      gridColumns = "0fr 1fr 0fr";
+    }
+    
+    dashboardContainer.style.gridTemplateColumns = gridColumns;
+  }
+
   // Toggle statistics dashboard visibility
   statsToggleBtn.addEventListener("click", () => {
     // Hide other panels first
@@ -2332,6 +2353,9 @@ document.addEventListener("DOMContentLoaded", () => {
     isStatsDashboardVisible = !isStatsDashboardVisible;
     statsDashboard.classList.toggle("hidden", !isStatsDashboardVisible);
     statsToggleBtn.classList.toggle("active", isStatsDashboardVisible);
+    
+    // Update grid layout
+    updateGridLayout();
     
     // On mobile, toggle the left sidebar visibility
     if (window.innerWidth <= 768) {
@@ -2465,6 +2489,9 @@ document.addEventListener("DOMContentLoaded", () => {
     timelinePanel.classList.toggle("hidden", !isTimelinePanelVisible);
     timelineToggleBtn.classList.toggle("active", isTimelinePanelVisible);
     
+    // Update grid layout
+    updateGridLayout();
+    
     // On mobile, toggle the left sidebar visibility
     if (window.innerWidth <= 768) {
       leftSidebar.classList.toggle('active', isTimelinePanelVisible);
@@ -2487,6 +2514,9 @@ document.addEventListener("DOMContentLoaded", () => {
     isFilterPanelVisible = !isFilterPanelVisible;
     filterPanel.classList.toggle("hidden", !isFilterPanelVisible);
     filterToggleBtn.classList.toggle("active", isFilterPanelVisible);
+    
+    // Update grid layout
+    updateGridLayout();
     
     // On mobile, toggle the left sidebar visibility
     if (window.innerWidth <= 768) {
@@ -2576,6 +2606,9 @@ document.addEventListener("DOMContentLoaded", () => {
   
   // Initialize theme on load
   initializeTheme();
+  
+  // Initialize grid layout
+  updateGridLayout();
 
   // Toggle section functionality
   (window as any).toggleSection = function(sectionId: string) {
@@ -3442,16 +3475,19 @@ document.addEventListener("DOMContentLoaded", () => {
   
   // Set initial state
   if (legendElement) {
-    legendElement.style.display = 'block';
+    legendElement.classList.remove('hidden');
   }
   legendToggleBtn.style.opacity = '1';
   
   legendToggleBtn.addEventListener('click', () => {
     legendVisible = !legendVisible;
     if (legendElement) {
-      legendElement.style.display = legendVisible ? 'block' : 'none';
+      legendElement.classList.toggle('hidden', !legendVisible);
     }
     legendToggleBtn.style.opacity = legendVisible ? '1' : '0.5';
+    
+    // Update grid layout
+    updateGridLayout();
     
     // On mobile, toggle the right sidebar visibility
     if (window.innerWidth <= 768) {
