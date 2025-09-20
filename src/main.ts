@@ -334,11 +334,11 @@ document.addEventListener("DOMContentLoaded", () => {
   legend.id = "legend";
   legend.innerHTML = `<h3>Legend</h3>
     <div class="legend-item">
-      <svg width="20" height="20"><rect x="2" y="2" width="16" height="16" fill="none" stroke="black" stroke-width="1"/></svg>
+      <svg width="20" height="20"><rect x="2" y="2" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1"/></svg>
       Male
     </div>
     <div class="legend-item">
-      <svg width="20" height="20"><circle cx="10" cy="10" r="8" fill="none" stroke="black" stroke-width="1"/></svg>
+      <svg width="20" height="20"><circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" stroke-width="1"/></svg>
       Female
     </div>
     <div class="legend-item">
