@@ -3233,6 +3233,28 @@ body {
     opacity: 0.4;
   }
 
+  /* DNA Inheritance Chart Styles */
+  .dna-line {
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  }
+
+  .dna-point {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    opacity: 0.8;
+  }
+
+  .dna-point:hover {
+    opacity: 1;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
+  }
+
+  .dna-area {
+    opacity: 0.6;
+  }
+
   .chart-tooltip {
     position: absolute;
     background: var(--bg-primary);

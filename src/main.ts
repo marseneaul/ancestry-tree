@@ -1460,6 +1460,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let isStatsDashboardVisible = false;
   let isTimelinePanelVisible = false;
   let lifespanByGeneration = new Map<number, number[]>();
+  let dnaBreakdown: Array<{generation: number, count: number, dnaPercent: number}> = [];
 
   // Initialize statistics dashboard
   function initializeStatsDashboard() {
@@ -1519,7 +1520,7 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log('Countries found:', Array.from(countries.entries()));
 
     // Calculate DNA breakdown by generation
-    const dnaBreakdown = [];
+    dnaBreakdown = [];
     for (let depth = 0; depth <= maxDepth; depth++) {
       const nodesAtDepth = allNodes.filter(d => d.depth === depth);
       if (nodesAtDepth.length > 0) {
@@ -1531,6 +1532,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
     }
+    console.log('DNA breakdown calculated:', dnaBreakdown);
 
     // Calculate additional statistics
     const genderStats = { male: 0, female: 0, unknown: 0 };
@@ -1762,7 +1764,6 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="stats-section-content" id="lifespan">
           <div class="lifespan-chart-container">
             <div class="chart-header">
-              <h4>Lifespan Trends Across Generations</h4>
               <div class="chart-legend">
                 <div class="legend-item">
                   <div class="legend-color" style="background: var(--accent-primary);"></div>
@@ -1815,16 +1816,21 @@ document.addEventListener("DOMContentLoaded", () => {
           🧬 DNA Inheritance by Generation <span class="collapse-icon" onclick="event.stopPropagation(); toggleSection('dna-inheritance');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
         </div>
         <div class="stats-section-content" id="dna-inheritance">
-        <div class="dna-breakdown">
-          ${dnaBreakdown.map(item => `
-            <div class="dna-item">
-              <span class="dna-label">Gen ${item.generation}: ${item.count} people</span>
-              <div class="dna-bar">
-                <div class="dna-fill" style="width: ${Math.min(item.dnaPercent * 2, 100)}%"></div>
+          <div class="lifespan-chart-container">
+            <div class="chart-header">
+              <div class="chart-legend">
+                <div class="legend-item">
+                  <div class="legend-color" style="background: var(--accent-primary);"></div>
+                  <span>DNA Inheritance %</span>
+                </div>
               </div>
-              <span class="dna-percent">${item.dnaPercent}%</span>
             </div>
-          `).join('')}
+            <div class="line-chart-wrapper">
+              <svg id="dna-inheritance-line-chart" class="lifespan-line-chart"></svg>
+            </div>
+            <div class="chart-stats" id="dna-inheritance-stats">
+              <!-- Stats will be populated by JavaScript -->
+            </div>
           </div>
         </div>
       </div>
@@ -2334,6 +2340,24 @@ document.addEventListener("DOMContentLoaded", () => {
     
     if (isStatsDashboardVisible) {
       initializeStatsDashboard();
+      // Render charts after stats dashboard is initialized
+      setTimeout(() => {
+        console.log('Attempting to render lifespan chart...');
+        renderLifespanChart();
+        // Also populate the stats section
+        const statsElement = document.getElementById('lifespan-stats');
+        if (statsElement) {
+          statsElement.innerHTML = generateLifespanStats();
+        }
+        
+        console.log('Attempting to render DNA inheritance chart...');
+        renderDnaInheritanceChart();
+        // Also populate the DNA inheritance stats section
+        const dnaStatsElement = document.getElementById('dna-inheritance-stats');
+        if (dnaStatsElement) {
+          dnaStatsElement.innerHTML = generateDnaInheritanceStats();
+        }
+      }, 100);
     }
   });
 
@@ -3526,6 +3550,39 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
   }
 
+  function generateDnaInheritanceStats() {
+    if (dnaBreakdown.length === 0) {
+      return '<div class="no-data">No DNA inheritance data available</div>';
+    }
+    
+    const sortedData = dnaBreakdown.sort((a, b) => a.generation - b.generation);
+    const maxDna = Math.max(...sortedData.map(d => d.dnaPercent));
+    const minDna = Math.min(...sortedData.map(d => d.dnaPercent));
+    const totalAncestors = sortedData.reduce((sum, d) => sum + d.count, 0);
+    const generations = sortedData.length;
+    
+    return `
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-value">${maxDna.toFixed(1)}%</div>
+          <div class="stat-label">Max DNA %</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">${minDna.toFixed(1)}%</div>
+          <div class="stat-label">Min DNA %</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">${totalAncestors}</div>
+          <div class="stat-label">Total Ancestors</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">${generations}</div>
+          <div class="stat-label">Generations</div>
+        </div>
+      </div>
+    `;
+  }
+
   // Render the lifespan line chart
   function renderLifespanChart() {
     const svg = document.getElementById('lifespan-line-chart');
@@ -3819,14 +3876,269 @@ document.addEventListener("DOMContentLoaded", () => {
     svg.appendChild(yAxisTitle);
   }
 
-  // Render the chart after a short delay to ensure DOM is ready
-  setTimeout(() => {
-    console.log('Attempting to render lifespan chart...');
-    renderLifespanChart();
-    // Also populate the stats section
-    const statsElement = document.getElementById('lifespan-stats');
-    if (statsElement) {
-      statsElement.innerHTML = generateLifespanStats();
+  function renderDnaInheritanceChart() {
+    console.log('renderDnaInheritanceChart called, dnaBreakdown:', dnaBreakdown);
+    
+    const svg = document.getElementById('dna-inheritance-line-chart');
+    if (!svg) {
+      console.log('DNA inheritance SVG element not found');
+      return;
     }
-  }, 100);
+    
+    const container = svg.parentElement;
+    if (!container) {
+      console.log('DNA inheritance container not found');
+      return;
+    }
+    
+    const containerRect = container.getBoundingClientRect();
+    const margin = { top: 20, right: 30, bottom: 50, left: 50 };
+    const width = Math.max(containerRect.width - margin.left - margin.right, 300);
+    const height = 300;
+    
+    console.log('DNA inheritance container dimensions:', containerRect.width, containerRect.height);
+    console.log('DNA inheritance chart dimensions:', width, height);
+    
+    svg.setAttribute('width', width + margin.left + margin.right);
+    svg.setAttribute('height', height + margin.top + margin.bottom);
+    
+    // Clear previous content
+    svg.innerHTML = '';
+    
+    // Use the dnaBreakdown data that's already calculated
+    if (dnaBreakdown.length === 0) {
+      console.log('No DNA breakdown data available');
+      svg.innerHTML = `
+        <rect x="50" y="50" width="200" height="100" fill="rgba(123, 179, 240, 0.3)" stroke="var(--accent-primary)" stroke-width="2"/>
+        <text x="150" y="110" text-anchor="middle" fill="var(--text-primary)" font-size="14">No DNA inheritance data available</text>
+        <text x="150" y="130" text-anchor="middle" fill="var(--text-secondary)" font-size="12">Generations: ${dnaBreakdown.length}</text>
+      `;
+      return;
+    }
+    
+    // Prepare data - sort by generation
+    const data = dnaBreakdown.sort((a, b) => a.generation - b.generation);
+    console.log('DNA inheritance processed data:', data);
+    
+    // Scales
+    const xScale = (generation) => {
+      if (data.length === 1) return margin.left + width / 2;
+      return margin.left + (generation - data[0].generation) * (width / (data.length - 1));
+    };
+    
+    const minDna = Math.min(...data.map(d => d.dnaPercent));
+    const maxDna = Math.max(...data.map(d => d.dnaPercent));
+    const dnaRange = maxDna - minDna;
+    
+    console.log('DNA range:', minDna, 'to', maxDna, 'range:', dnaRange);
+    
+    const yScale = (dnaPercent) => {
+      if (dnaRange === 0) return margin.top + height / 2;
+      return margin.top + height - ((dnaPercent - minDna) / dnaRange) * height;
+    };
+    
+    // Create gradient for area fill
+    const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+    const gradient = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
+    gradient.setAttribute('id', 'dna-gradient');
+    gradient.setAttribute('x1', '0%');
+    gradient.setAttribute('y1', '0%');
+    gradient.setAttribute('x2', '0%');
+    gradient.setAttribute('y2', '100%');
+    
+    const stop1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+    stop1.setAttribute('offset', '0%');
+    stop1.setAttribute('stop-color', 'var(--accent-primary)');
+    stop1.setAttribute('stop-opacity', '0.3');
+    
+    const stop2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+    stop2.setAttribute('offset', '100%');
+    stop2.setAttribute('stop-color', 'var(--accent-primary)');
+    stop2.setAttribute('stop-opacity', '0');
+    
+    gradient.appendChild(stop1);
+    gradient.appendChild(stop2);
+    defs.appendChild(gradient);
+    svg.appendChild(defs);
+    
+    // Create area under the line
+    const areaPath = data.map((d, i) => {
+      const x = xScale(d.generation);
+      const y = yScale(d.dnaPercent);
+      return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
+    }).join(' ') + ` L ${xScale(data[data.length - 1].generation)} ${margin.top + height} L ${xScale(data[0].generation)} ${margin.top + height} Z`;
+    
+    const area = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    area.setAttribute('d', areaPath);
+    area.setAttribute('fill', 'url(#dna-gradient)');
+    area.setAttribute('class', 'dna-area');
+    svg.appendChild(area);
+    
+    // Create main line
+    const linePath = data.map((d, i) => {
+      const x = xScale(d.generation);
+      const y = yScale(d.dnaPercent);
+      return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
+    }).join(' ');
+    
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    line.setAttribute('d', linePath);
+    line.setAttribute('fill', 'none');
+    line.setAttribute('stroke', 'var(--accent-primary)');
+    line.setAttribute('stroke-width', '3');
+    line.setAttribute('class', 'dna-line');
+    svg.appendChild(line);
+    
+    // Create data points
+    data.forEach(d => {
+      const x = xScale(d.generation);
+      const y = yScale(d.dnaPercent);
+      
+      const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      circle.setAttribute('cx', x);
+      circle.setAttribute('cy', y);
+      circle.setAttribute('r', '4');
+      circle.setAttribute('fill', 'var(--accent-primary)');
+      circle.setAttribute('stroke', 'white');
+      circle.setAttribute('stroke-width', '1.5');
+      circle.setAttribute('class', 'dna-point');
+      circle.setAttribute('opacity', '0.8');
+      circle.setAttribute('data-generation', d.generation);
+      circle.setAttribute('data-dna', d.dnaPercent.toFixed(1));
+      circle.setAttribute('data-count', d.count);
+      
+      // Add hover effect
+      circle.addEventListener('mouseenter', (e) => {
+        // Make the point slightly larger and more opaque on hover
+        circle.setAttribute('r', '5');
+        circle.setAttribute('opacity', '1');
+        
+        const tooltip = document.createElement('div');
+        tooltip.className = 'chart-tooltip';
+        tooltip.innerHTML = `
+          <div><strong>Generation ${d.generation}</strong></div>
+          <div>DNA Inheritance: ${d.dnaPercent.toFixed(1)}%</div>
+          <div>Ancestors: ${d.count}</div>
+        `;
+        document.body.appendChild(tooltip);
+        
+        const rect = e.target.getBoundingClientRect();
+        tooltip.style.left = rect.left + window.scrollX + 'px';
+        tooltip.style.top = (rect.top + window.scrollY - tooltip.offsetHeight - 10) + 'px';
+      });
+      
+      circle.addEventListener('mouseleave', () => {
+        // Reset the point to original size and opacity
+        circle.setAttribute('r', '4');
+        circle.setAttribute('opacity', '0.8');
+        
+        const tooltip = document.querySelector('.chart-tooltip');
+        if (tooltip) tooltip.remove();
+      });
+      
+      svg.appendChild(circle);
+    });
+    
+    // Create axes
+    const yAxis = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    yAxis.setAttribute('x1', margin.left);
+    yAxis.setAttribute('y1', margin.top);
+    yAxis.setAttribute('x2', margin.left);
+    yAxis.setAttribute('y2', margin.top + height);
+    yAxis.setAttribute('stroke', 'var(--border-primary)');
+    yAxis.setAttribute('stroke-width', '1');
+    svg.appendChild(yAxis);
+    
+    const xAxis = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    xAxis.setAttribute('x1', margin.left);
+    xAxis.setAttribute('y1', margin.top + height);
+    xAxis.setAttribute('x2', margin.left + width);
+    xAxis.setAttribute('y2', margin.top + height);
+    xAxis.setAttribute('stroke', 'var(--border-primary)');
+    xAxis.setAttribute('stroke-width', '1');
+    svg.appendChild(xAxis);
+    
+    // Add axis labels with smart spacing to prevent overlapping
+    const labelSpacing = 60; // Minimum pixel spacing between labels
+    const labelsToShow = [];
+    
+    // Calculate which labels to show based on spacing
+    for (let i = 0; i < data.length; i++) {
+      const currentX = xScale(data[i].generation);
+      const shouldShow = labelsToShow.length === 0 || 
+                        Math.abs(currentX - labelsToShow[labelsToShow.length - 1].x) >= labelSpacing;
+      
+      if (shouldShow) {
+        labelsToShow.push({ index: i, x: currentX, generation: data[i].generation });
+      }
+    }
+    
+    // Ensure first and last labels are shown, but check for spacing conflicts
+    if (data.length > 1) {
+      const firstIndex = 0;
+      const lastIndex = data.length - 1;
+      const firstX = xScale(data[firstIndex].generation);
+      const lastX = xScale(data[lastIndex].generation);
+      
+      // Add first label if not already shown and has enough space
+      if (labelsToShow.length === 0 || labelsToShow[0].index !== firstIndex) {
+        labelsToShow.unshift({ index: firstIndex, x: firstX, generation: data[firstIndex].generation });
+      }
+      
+      // Add last label if not already shown, but check spacing from previous label
+      const lastLabelAlreadyShown = labelsToShow.some(label => label.index === lastIndex);
+      if (!lastLabelAlreadyShown) {
+        const lastLabel = { index: lastIndex, x: lastX, generation: data[lastIndex].generation };
+        const previousLabel = labelsToShow[labelsToShow.length - 1];
+        
+        // Only add if there's enough space from the previous label
+        if (!previousLabel || Math.abs(lastX - previousLabel.x) >= labelSpacing) {
+          labelsToShow.push(lastLabel);
+        }
+      }
+    }
+    
+    // Render the selected labels
+    labelsToShow.forEach(({ x, generation }) => {
+      const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      text.setAttribute('x', x);
+      text.setAttribute('y', margin.top + height + 25);
+      text.setAttribute('text-anchor', 'middle');
+      text.setAttribute('fill', 'var(--text-secondary)');
+      text.setAttribute('font-size', '11');
+      text.setAttribute('font-weight', '500');
+      
+      // Use shorter labels for better readability
+      text.textContent = `Gen ${generation}`;
+      
+      svg.appendChild(text);
+    });
+    
+    // Add Y-axis labels
+    const dnaStep = Math.ceil(dnaRange / 5);
+    
+    for (let dna = Math.ceil(minDna / dnaStep) * dnaStep; dna <= maxDna; dna += dnaStep) {
+      const y = yScale(dna);
+      const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      text.setAttribute('x', margin.left - 10);
+      text.setAttribute('y', y + 4);
+      text.setAttribute('text-anchor', 'end');
+      text.setAttribute('fill', 'var(--text-secondary)');
+      text.setAttribute('font-size', '12');
+      text.textContent = dna.toFixed(1);
+      svg.appendChild(text);
+    }
+    
+    // Add axis titles
+    const yAxisTitle = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    yAxisTitle.setAttribute('x', 15);
+    yAxisTitle.setAttribute('y', margin.top + height / 2);
+    yAxisTitle.setAttribute('text-anchor', 'middle');
+    yAxisTitle.setAttribute('fill', 'var(--text-secondary)');
+    yAxisTitle.setAttribute('font-size', '12');
+    yAxisTitle.setAttribute('transform', `rotate(-90, 15, ${margin.top + height / 2})`);
+    yAxisTitle.textContent = 'DNA %';
+    svg.appendChild(yAxisTitle);
+  }
+
 });
