@@ -1220,29 +1220,29 @@ body {
 
   .range-inputs {
     display: flex;
-    align-items: center;
-    gap: var(--space-4);
-    flex-wrap: nowrap;
+    align-items: flex-end;
+    gap: var(--space-3);
+    flex-wrap: wrap;
   }
 
   .range-input {
     flex: 1;
-    min-width: 140px;
+    min-width: 120px;
   }
 
   .range-label {
     display: block;
     font-size: var(--font-size-xs);
     color: var(--text-secondary);
-    margin-bottom: var(--space-2);
-    font-weight: 600;
+    margin-bottom: var(--space-1);
+    font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
 
   .modern-input {
     width: 100%;
-    padding: var(--space-3) var(--space-4);
+    padding: var(--space-2) var(--space-3);
     border: 1px solid var(--border-primary);
     border-radius: var(--radius-md);
     background: var(--bg-tertiary);
@@ -1262,16 +1262,16 @@ body {
   .range-separator {
     font-size: var(--font-size-sm);
     color: var(--text-tertiary);
-    font-weight: 500;
+    font-weight: 400;
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: center;
     flex-shrink: 0;
-    padding: 0 var(--space-2);
     height: 40px;
     background: transparent;
     border: none;
     min-width: 30px;
+    padding-bottom: 8px;
   }
 
   /* Checkbox Grid */
@@ -1653,10 +1653,10 @@ body {
     .range-separator {
       margin-top: 0;
       text-align: center;
-      height: 36px;
-      min-width: 30px;
+      height: auto;
+      min-width: auto;
       align-self: center;
-      padding: 0 var(--space-2);
+      padding: var(--space-1) 0;
     }
 
     .filter-tabs {
