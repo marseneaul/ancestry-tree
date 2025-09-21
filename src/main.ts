@@ -1853,6 +1853,15 @@ document.addEventListener("DOMContentLoaded", () => {
               </div>
             `).join('')}
           </div>
+          
+          <!-- Countries Pie Chart -->
+          <div id="countries-pie-chart" style="margin-top: 20px;">
+            <h4 style="margin: 0 0 16px; color: var(--text-primary); font-size: 16px; font-weight: 600;">Countries Distribution</h4>
+            <div id="countries-pie-visualization" style="display: flex; align-items: center; gap: 20px;">
+              <svg id="countries-pie-svg" width="200" height="200"></svg>
+              <div id="countries-pie-legend" class="pie-legend"></div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -1956,6 +1965,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setTimeout(() => {
       createDnaPieChart();
       createGenderPieChart();
+      createCountriesPieChart();
     }, 100);
   }
 
@@ -2296,20 +2306,162 @@ document.addEventListener("DOMContentLoaded", () => {
     }).join('');
     
     legend.html(legendHtml);
+  }
+
+  // Create Countries pie chart visualization
+  function createCountriesPieChart() {
+    const svg = d3.select("#countries-pie-svg");
+    const legend = d3.select("#countries-pie-legend");
     
-    // Debug: Log lifespan data
-    console.log('Lifespan data by generation:', Array.from(lifespanByGeneration.entries()));
+    // Clear previous content
+    svg.selectAll("*").remove();
+    legend.selectAll("*").remove();
     
-    // Render the lifespan chart after a short delay to ensure DOM is ready
-    setTimeout(() => {
-      console.log('Rendering lifespan chart from initializeStatsDashboard...');
-      renderLifespanChart();
-      // Also populate the stats section
-      const statsElement = document.getElementById('lifespan-stats');
-      if (statsElement) {
-        statsElement.innerHTML = generateLifespanStats();
-      }
-    }, 200);
+    // Get the countries data from the stats
+    const allNodes = root.descendants();
+    const countries = new Map<string, number>();
+    
+    allNodes.forEach(node => {
+      const country = getCountry(node.data.birthPlace);
+      countries.set(country, (countries.get(country) || 0) + 1);
+    });
+    
+    // Prepare data for pie chart
+    const pieData = Array.from(countries.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 8)
+      .map(([country, count]) => ({ country, count }));
+    
+    if (pieData.length === 0) return;
+    
+    // Set up pie chart dimensions
+    const width = 200;
+    const height = 200;
+    const radius = Math.min(width, height) / 2 - 10;
+    
+    // Create color scale based on country flag colors
+    const countryColors: { [key: string]: string } = {
+      'France': '#002395',        // French blue
+      'Germany': '#FFCC00',       // German gold/yellow
+      'Ireland': '#169B62',       // Irish green
+      'Scotland': '#0065BD',      // Scottish blue
+      'England': '#C8102E',       // English red
+      'Wales': '#D21034',         // Welsh red
+      'Italy': '#009246',         // Italian green
+      'Spain': '#C60B1E',         // Spanish red
+      'Portugal': '#046A38',      // Portuguese green
+      'Netherlands': '#21468B',   // Dutch blue
+      'Belgium': '#ED2939',       // Belgian red
+      'Switzerland': '#FF0000',   // Swiss red
+      'Austria': '#ED2939',       // Austrian red
+      'Hungary': '#CE2939',       // Hungarian red
+      'Poland': '#DC143C',        // Polish red
+      'Czech Republic': '#11457E', // Czech blue
+      'Slovakia': '#0B4EA2',      // Slovak blue
+      'Norway': '#EF2B2D',        // Norwegian red
+      'Sweden': '#006AA7',        // Swedish blue
+      'Denmark': '#C60C30',       // Danish red
+      'Finland': '#003580',       // Finnish blue
+      'Russia': '#0052CC',        // Russian blue
+      'Ukraine': '#0057B8',       // Ukrainian blue
+      'Romania': '#002B7F',       // Romanian blue
+      'Bulgaria': '#00966E',      // Bulgarian green
+      'Greece': '#0D5EAF',        // Greek blue
+      'Turkey': '#E30A17',        // Turkish red
+      'Lebanon': '#EE161F',       // Lebanese red
+      'Syria': '#CE1126',         // Syrian red
+      'United States': '#B22234', // US red
+      'Canada': '#FF0000',        // Canadian red
+      'Unknown': '#6B7280'        // Gray for unknown
+    };
+    
+    const colorScale = d3.scaleOrdinal()
+      .domain(pieData.map(d => d.country))
+      .range(pieData.map(d => countryColors[d.country] || '#6B7280'));
+    
+    // Create pie generator
+    const pie = d3.pie<any>()
+      .value(d => d.count)
+      .sort(null);
+    
+    // Create arc generator
+    const arc = d3.arc<any>()
+      .innerRadius(0)
+      .outerRadius(radius);
+    
+    // Create the pie chart
+    const g = svg.append("g")
+      .attr("transform", `translate(${width/2}, ${height/2})`);
+    
+    const arcs = g.selectAll(".arc")
+      .data(pie(pieData))
+      .enter()
+      .append("g")
+      .attr("class", "arc");
+    
+    // Add pie slices
+    arcs.append("path")
+      .attr("d", arc)
+      .attr("fill", d => colorScale(d.data.country))
+      .attr("stroke", "var(--bg-secondary)")
+      .attr("stroke-width", 2)
+      .style("cursor", "pointer")
+      .on("mouseover", function(event, d) {
+        d3.select(this)
+          .attr("stroke-width", 3)
+          .attr("stroke", "var(--accent-primary)");
+        
+        // Show tooltip
+        const tooltip = d3.select("body").append("div")
+          .attr("class", "chart-tooltip")
+          .style("opacity", 0);
+        
+        tooltip.transition()
+          .duration(200)
+          .style("opacity", .9);
+        
+        const totalPeople = allNodes.length;
+        const percentage = ((d.data.count / totalPeople) * 100).toFixed(1);
+        
+        tooltip.html(`
+          <strong>${d.data.country}</strong><br/>
+          ${d.data.count} people (${percentage}%)
+        `)
+          .style("left", (event.pageX + 10) + "px")
+          .style("top", (event.pageY - 28) + "px");
+      })
+      .on("mouseout", function(event, d) {
+        d3.select(this)
+          .attr("stroke-width", 2)
+          .attr("stroke", "var(--bg-secondary)");
+        
+        // Remove tooltip
+        d3.selectAll(".chart-tooltip").remove();
+      });
+    
+    // Create legend
+    const legendItems = legend.selectAll(".legend-item")
+      .data(pieData)
+      .enter()
+      .append("div")
+      .attr("class", "legend-item")
+      .style("display", "flex")
+      .style("align-items", "center")
+      .style("margin-bottom", "8px")
+      .style("font-size", "12px");
+    
+    legendItems.append("div")
+      .style("width", "12px")
+      .style("height", "12px")
+      .style("background-color", d => colorScale(d.country))
+      .style("margin-right", "8px")
+      .style("border-radius", "2px");
+    
+    const totalPeople = allNodes.length;
+    legendItems.append("span")
+      .text(d => `${d.country} (${d.count})`)
+      .style("color", "var(--text-primary)")
+      .style("font-weight", "500");
   }
 
   // Close statistics dashboard function
