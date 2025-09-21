@@ -5,6 +5,10 @@ import * as d3 from "d3";
 import { maxArseneaultConfig } from "./data/configs/max-arseneault.config";
 import { Person } from "./interfaces/person";
 import { buildHierarchy, getGenerations, tracePatrilineal, traceMatrilineal, getCountry, calculateAgeAtDate, countryColors, getInitials, getOrdinalFromNumber, estimateAncientBirthDate, getLeaves } from "./utils/utils";
+import { extendTreeWithDeepAncestry, getTimePeriodColor, shouldShowNeanderthalAdmixture } from "./utils/deep-ancestry-utils";
+import { TIME_PERIODS, getTimePeriodForYear, NEANDERTHAL_ADMIXTURE_INFO } from "./data/deep-ancestry-data";
+import { DeepAncestor } from "./interfaces/deep-ancestry";
+import { createDeepAncestryVisualization, renderDeepAncestryPaths } from "./utils/deep-ancestry-visualization";
 
 // Create modal HTML structure dynamically
 function createModal() {
@@ -428,8 +432,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Enhanced search input interactions will be set after variables are defined
 
+  // Add Deep Ancestry Toggle
+  // const deepAncestryToggle = document.createElement("div");
+  // deepAncestryToggle.className = "deep-ancestry-toggle";
+  // deepAncestryToggle.innerHTML = `
+  //   <input type="checkbox" id="deep-ancestry-toggle" />
+  //   <label for="deep-ancestry-toggle">Deep Ancestry Mode</label>
+  // `;
+
   // Add view controls to main content
   mainContent.appendChild(viewControls);
+  // mainContent.appendChild(deepAncestryToggle);
 
   // Assemble dashboard
   dashboardContainer.appendChild(leftSidebar);
@@ -756,13 +769,267 @@ document.addEventListener("DOMContentLoaded", () => {
       .attr("height", Math.max(10, rh));
   }
 
-  const rootPerson = maxArseneaultConfig;
-  // const leaves = getLeaves(rootPerson);
-  // if (leaves.length > 0) {
-  //   const randomLeaf = leaves[Math.floor(Math.random() * leaves.length)];
-  //   extendWithNeanderthal(randomLeaf);
-  // }
-  const root = buildHierarchy(rootPerson);
+  let rootPerson = maxArseneaultConfig;
+  let isDeepAncestryMode = false;
+  
+  // Deep Ancestry Mode functionality
+  function toggleDeepAncestryMode() {
+    const toggleInput = document.getElementById("deep-ancestry-toggle") as HTMLInputElement;
+    
+    if (isDeepAncestryMode) {
+      // Disable mode - remove visualization
+      isDeepAncestryMode = false;
+      removeDeepAncestryVisualization();
+      removeDeepAncestryLegend();
+      toggleInput.checked = false;
+    } else {
+      // Enable mode - show lightweight visualization
+      isDeepAncestryMode = true;
+      toggleInput.checked = true;
+      
+      // Create and render the visualization
+      const visualization = createDeepAncestryVisualization(maxArseneaultConfig, true);
+      renderDeepAncestryPaths(svg, width, height, visualization);
+      createDeepAncestryLegend();
+    }
+  }
+  
+  function createDeepAncestryLegend() {
+    // Remove existing legend if it exists
+    removeDeepAncestryLegend();
+    
+    const legend = document.createElement("div");
+    legend.className = "deep-ancestry-legend";
+    legend.innerHTML = `
+      <h4>Time Periods</h4>
+      ${TIME_PERIODS.map(period => `
+        <div class="legend-item">
+          <div class="legend-color" style="background-color: ${period.color}"></div>
+          <div class="legend-label">${period.name}</div>
+        </div>
+      `).join('')}
+    `;
+    
+    document.body.appendChild(legend);
+  }
+  
+  function removeDeepAncestryLegend() {
+    const existingLegend = document.querySelector('.deep-ancestry-legend');
+    if (existingLegend) {
+      existingLegend.remove();
+    }
+  }
+  
+  function removeDeepAncestryVisualization() {
+    // Remove all deep ancestry visualization elements
+    svg.selectAll('.deep-ancestry-paths').remove();
+    svg.selectAll('.deep-ancestry-path').remove();
+    svg.selectAll('.deep-ancestry-label').remove();
+    svg.selectAll('.deep-ancestry-year').remove();
+    svg.selectAll('.neanderthal-admixture').remove();
+    svg.selectAll('.neanderthal-label').remove();
+    svg.selectAll('.neanderthal-percentage').remove();
+    svg.selectAll('.timeline-background').remove();
+    
+    // Remove any tooltips
+    const existingTooltip = document.querySelector('.deep-ancestry-tooltip');
+    if (existingTooltip) {
+      existingTooltip.remove();
+    }
+  }
+  
+  // Helper function to determine if a color is light or dark
+  function isColorLight(color: string): boolean {
+    // Convert hex to RGB
+    const hex = color.replace('#', '');
+    const r = parseInt(hex.substr(0, 2), 16);
+    const g = parseInt(hex.substr(2, 2), 16);
+    const b = parseInt(hex.substr(4, 2), 16);
+    
+    // Calculate luminance
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    return luminance > 0.5;
+  }
+  
+  // Beautiful hover tooltip functions
+  let tooltipTimeout: number | null = null;
+  
+  function showPersonTooltip(person: Person, depth: number, element: any) {
+    hidePersonTooltip(); // Remove any existing tooltip
+    
+    // Clear any existing timeout
+    if (tooltipTimeout) {
+      clearTimeout(tooltipTimeout);
+    }
+    
+    // Set a delay before showing the tooltip
+    tooltipTimeout = window.setTimeout(() => {
+      createTooltip(person, depth, element);
+    }, 500); // 500ms delay
+  }
+  
+  function createTooltip(person: Person, depth: number, element: any) {
+    
+    const tooltip = document.createElement('div');
+    tooltip.className = 'person-tooltip';
+    
+    const initials = getInitials(person?.name);
+    const isDeceased = person.deathDate !== "N/A";
+    const age = isDeceased 
+      ? calculateAgeAtDate(person.birthDate ?? "", person.deathDate ?? "") 
+      : calculateAgeAtDate(person.birthDate ?? "");
+    
+    // Get country for color coding
+    const country = getCountry(person.birthPlace);
+    const countryColor = countryColors[country] || "#808080";
+    
+    // Calculate relationship
+    let relation = "";
+    if (depth === 0) {
+      relation = "You";
+    } else if (depth === 1) {
+      relation = person.sex === "Female" ? "Mother" : "Father";
+    } else if (depth === 2) {
+      relation = person.sex === "Female" ? "Grandmother" : "Grandfather";
+    } else {
+      const ordinal = getOrdinalFromNumber(depth - 2);
+      const greats = `${depth === 3 ? "" : ordinal + " "}Great-`;
+      relation = `${greats}Grand${person.sex === "Female" ? "mother" : "father"}`;
+    }
+    
+    // Clean up data for display
+    const cleanName = cleanUnknown(person.name);
+    const cleanBirthDate = cleanUnknown(person.birthDate);
+    const cleanBirthPlace = cleanUnknown(person.birthPlace);
+    const cleanDeathDate = cleanUnknown(person.deathDate);
+    const cleanStory = cleanUnknown(person.story);
+    
+    // Calculate DNA contribution
+    const dnaContribution = depth === 0 ? 100 : (100 / Math.pow(2, depth));
+    
+    // Determine text color for better readability on country background
+    const isLight = isColorLight(countryColor);
+    const headerTextColor = isLight ? '#000000' : '#ffffff';
+    const headerIconBg = isLight ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.2)';
+    
+    tooltip.innerHTML = `
+      <div class="tooltip-header" style="background-color: ${countryColor}; color: ${headerTextColor}; padding: 8px 12px; border-radius: 8px 8px 0 0; display: flex; align-items: center; gap: 8px;">
+        <div style="width: 24px; height: 24px; background: ${headerIconBg}; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600;">
+          ${initials}
+        </div>
+        <div>
+          <div style="font-weight: 600; font-size: 14px;">${cleanName || "Unknown"}</div>
+          <div style="font-size: 11px; opacity: 0.9;">${relation}</div>
+        </div>
+      </div>
+      <div class="tooltip-content" style="padding: 12px; background: var(--bg-secondary); border: 1px solid var(--border-secondary); border-radius: 0 0 8px 8px; max-width: 250px;">
+        ${cleanBirthDate || cleanBirthPlace ? `
+          <div style="margin-bottom: 8px;">
+            <div style="font-size: 11px; font-weight: 600; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">Birth</div>
+            <div style="font-size: 13px; color: var(--text-primary);">
+              ${cleanBirthDate ? `<strong>${cleanBirthDate}</strong>` : ""}
+              ${cleanBirthPlace ? `<br><span style="color: var(--text-secondary);">${cleanBirthPlace}</span>` : ""}
+            </div>
+          </div>
+        ` : ""}
+        
+        <div style="margin-bottom: 8px;">
+          <div style="font-size: 11px; font-weight: 600; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">Death</div>
+          <div style="font-size: 13px; color: var(--text-primary);">
+            <strong>${cleanDeathDate || "—"}</strong>
+            ${age !== null && isDeceased ? `<br><span style="color: var(--text-secondary);">Age ${age}</span>` : ""}
+            ${age !== null && !isDeceased ? `<br><span style="color: var(--success);">Currently ${age} years old</span>` : ""}
+          </div>
+        </div>
+        
+        <div style="margin-bottom: 8px;">
+          <div style="font-size: 11px; font-weight: 600; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">DNA Contribution</div>
+          <div style="font-size: 13px; color: var(--text-primary);">
+            <strong>${dnaContribution.toFixed(2)}%</strong>
+            <span style="color: var(--text-secondary); font-size: 11px;"> (${depth === 0 ? 'You' : depth === 1 ? 'Parent' : depth === 2 ? 'Grandparent' : `${depth} generations back`})</span>
+          </div>
+        </div>
+        
+        ${cleanStory ? `
+          <div style="border-top: 1px solid var(--border-primary); padding-top: 8px;">
+            <div style="font-size: 11px; font-weight: 600; color: var(--accent-primary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Story</div>
+            <div style="font-size: 12px; color: var(--text-primary); line-height: 1.4; font-style: italic;">
+              ${cleanStory.length > 100 ? cleanStory.substring(0, 100) + "..." : cleanStory}
+            </div>
+          </div>
+        ` : ""}
+      </div>
+    `;
+    
+    // Set initial positioning and styles BEFORE adding to DOM
+    tooltip.style.position = 'fixed';
+    tooltip.style.zIndex = '10000';
+    tooltip.style.boxShadow = 'var(--shadow-heavy)';
+    tooltip.style.opacity = '0';
+    tooltip.style.transform = 'translateY(-10px)';
+    tooltip.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+    tooltip.style.visibility = 'hidden'; // Hide while positioning
+    
+    // Add to DOM first to get dimensions
+    document.body.appendChild(tooltip);
+    
+    // Position the tooltip near the element
+    const rect = element.getBoundingClientRect();
+    
+    // Get tooltip dimensions after it's in the DOM
+    const tooltipRect = tooltip.getBoundingClientRect();
+    
+    // Position to the right of the element, or left if not enough space
+    let left = rect.right + 10;
+    if (left + tooltipRect.width > window.innerWidth) {
+      left = rect.left - tooltipRect.width - 10;
+    }
+    
+    // Ensure tooltip stays within viewport bounds
+    left = Math.max(10, Math.min(left, window.innerWidth - tooltipRect.width - 10));
+    
+    // Set final position
+    tooltip.style.left = `${left}px`;
+    tooltip.style.top = `${rect.top}px`;
+    tooltip.style.visibility = 'visible'; // Show now that positioning is set
+    
+    // Animate in
+    requestAnimationFrame(() => {
+      tooltip.style.opacity = '1';
+      tooltip.style.transform = 'translateY(0)';
+    });
+  }
+  
+  function hidePersonTooltip() {
+    // Clear any pending tooltip timeout
+    if (tooltipTimeout) {
+      clearTimeout(tooltipTimeout);
+      tooltipTimeout = null;
+    }
+    
+    const existingTooltip = document.querySelector('.person-tooltip');
+    if (existingTooltip) {
+      existingTooltip.style.opacity = '0';
+      existingTooltip.style.transform = 'translateY(-10px)';
+      setTimeout(() => {
+        existingTooltip.remove();
+      }, 200);
+    }
+  }
+  
+  function updateTreeWithNewData(newRoot: any) {
+    // Update the root reference
+    root = newRoot;
+    
+    // Clear existing tree
+    g.selectAll("*").remove();
+    
+    // Update tree layout and render
+    updateTree();
+  }
+  
+  
+  let root = buildHierarchy(rootPerson);
 
 
   const treeLayout = d3.tree<Person>().size([width, height - 100]).nodeSize([180, 200]);  // Increased horizontal spacing to prevent text overlap
@@ -2746,6 +3013,12 @@ document.addEventListener("DOMContentLoaded", () => {
     updateThemeButton();
   });
   
+  // Deep Ancestry Mode toggle
+  // const deepAncestryToggleInput = document.getElementById("deep-ancestry-toggle") as HTMLInputElement;
+  // deepAncestryToggleInput?.addEventListener("change", () => {
+  //   toggleDeepAncestryMode();
+  // });
+  
   // Listen for system theme changes
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
     if (!localStorage.getItem('theme')) {
@@ -2958,9 +3231,14 @@ document.addEventListener("DOMContentLoaded", () => {
       .attr("class", d => d.depth === 0 ? "node root-node" : "node")
       .attr("transform", d => `translate(${d.x ?? 0},${d.y ?? 0})`)
       .attr("opacity", 0)
-      .attr("aria-label", d => d.data.name)  // Accessibility
       .on("click", (_, d) => {
         showPersonModal(d.data, d.depth);
+      })
+      .on("mouseover", function(_, d) {
+        showPersonTooltip(d.data, d.depth, this);
+      })
+      .on("mouseout", function() {
+        hidePersonTooltip();
       });
 
     nodeEnter.transition().duration(300).attr("opacity", 1);
@@ -3010,6 +3288,7 @@ document.addEventListener("DOMContentLoaded", () => {
           .attr("stroke", "black");
       } else {
         d3.select(this).append("rect")
+          .attr("class", "node-circle")
           .attr("width", size)
           .attr("height", size)
           .attr("x", -halfSize)
@@ -3049,6 +3328,7 @@ document.addEventListener("DOMContentLoaded", () => {
           .attr("stroke", "black");
       } else {
         d3.select(this).append("circle")
+          .attr("class", "node-circle")
           .attr("r", radius)
           .attr("fill", svgUrl ? `url(#${patternId})` : countryColors[country] || "gray")
           .attr("stroke", "black");
@@ -3086,49 +3366,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return name.length > 18 ? name.substring(0, 15) + "..." : name;
       });
 
-    // Tooltips (Enhanced)
-    nodeEnter.append("title")
-      .text(d => {
-        const isDeceased = d.data.deathDate !== "N/A";
-        const age = isDeceased 
-          ? calculateAgeAtDate(d.data.birthDate ?? "", d.data.deathDate ?? "") 
-          : calculateAgeAtDate(d.data.birthDate ?? "");
-        
-        // Clean up data for tooltip
-        const cleanName = cleanUnknown(d.data.name);
-        const cleanBirthDate = cleanUnknown(d.data.birthDate);
-        const cleanBirthPlace = cleanUnknown(d.data.birthPlace);
-        const cleanDeathDate = cleanUnknown(d.data.deathDate);
-        const cleanDeathPlace = cleanUnknown(d.data.deathPlace);
-        
-        const lines = [];
-        lines.push(cleanName || "Name not available");
-        
-        if (cleanBirthDate || cleanBirthPlace) {
-          const birthInfo = [];
-          if (cleanBirthDate) birthInfo.push(cleanBirthDate);
-          if (cleanBirthPlace) birthInfo.push(cleanBirthPlace);
-          lines.push(`Born: ${birthInfo.join(" in ")}`);
-        }
-        
-        if (cleanDeathDate || cleanDeathPlace) {
-          const deathInfo = [];
-          if (cleanDeathDate) deathInfo.push(cleanDeathDate);
-          if (cleanDeathPlace) deathInfo.push(cleanDeathPlace);
-          lines.push(`Died: ${deathInfo.join(" in ")}`);
-        } else {
-          lines.push("Died: —");
-        }
-        
-        if (age !== null) {
-          lines.push(`${isDeceased ? "Died at age" : "Age"}: ${age}`);
-        }
-        
-        lines.push(`Country: ${getCountry(d.data.birthPlace)}`);
-        lines.push(`DNA Contribution: ~${(100 / Math.pow(2, d.depth)).toFixed(2)}%`);
-        
-        return lines.join("\n");
-      });
 
     // Clean Modern Generation Headers
     g.selectAll(".generation-header").remove();

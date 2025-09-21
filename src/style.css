@@ -62,6 +62,13 @@
   --transition-fast: 0.15s ease;
   --transition-normal: 0.3s ease;
   --transition-slow: 0.5s ease;
+  
+  /* Deep Ancestry Mode colors */
+  --deep-ancestry-stone-age: #8B7355;
+  --deep-ancestry-bronze-age: #CD7F32;
+  --deep-ancestry-neolithic: #8B4513;
+  --deep-ancestry-neanderthal: #D2691E;
+  --deep-ancestry-migration: #FF6B6B;
 }
 
 [data-theme="dark"] {
@@ -718,6 +725,7 @@ body {
     background: var(--bg-tertiary);
     color: var(--text-primary);
   }
+
 
   .modal-header {
     margin-bottom: var(--space-4);
@@ -3557,3 +3565,242 @@ body {
       gap: 8px;
     }
   }
+
+/* Deep Ancestry Mode Styles */
+.deep-ancestry-toggle {
+  position: absolute;
+  top: var(--space-4);
+  right: 200px; /* Position to the left of view controls */
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-secondary);
+  border-radius: var(--radius-md);
+  padding: var(--space-2);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  box-shadow: var(--shadow-light);
+  transition: var(--transition-normal);
+  z-index: 1100;
+}
+
+.deep-ancestry-toggle:hover {
+  box-shadow: var(--shadow-medium);
+}
+
+.deep-ancestry-toggle input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent-primary);
+}
+
+.deep-ancestry-toggle label {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--text-primary);
+  cursor: pointer;
+  user-select: none;
+}
+
+.deep-ancestry-toggle .loading-indicator {
+  font-size: var(--font-size-sm);
+  margin-left: var(--space-2);
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Time Period Node Styling */
+.node.deep-ancestry {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.node.deep-ancestry .node-circle {
+  stroke-width: 2px;
+  stroke: var(--text-primary);
+}
+
+.node.deep-ancestry.neanderthal .node-circle {
+  fill: var(--deep-ancestry-neanderthal);
+  stroke: #8B4513;
+  stroke-width: 3px;
+}
+
+.node.deep-ancestry.stone-age .node-circle {
+  fill: var(--deep-ancestry-stone-age);
+}
+
+.node.deep-ancestry.bronze-age .node-circle {
+  fill: var(--deep-ancestry-bronze-age);
+}
+
+.node.deep-ancestry.neolithic .node-circle {
+  fill: var(--deep-ancestry-neolithic);
+}
+
+.node.deep-ancestry.mesolithic .node-circle {
+  fill: #A0522D;
+}
+
+.node.deep-ancestry.paleolithic .node-circle {
+  fill: #696969;
+}
+
+/* Migration Path Styling */
+.migration-path {
+  stroke: var(--deep-ancestry-migration);
+  stroke-width: 2px;
+  stroke-dasharray: 5, 5;
+  fill: none;
+  opacity: 0.7;
+  animation: migration-flow 3s linear infinite;
+}
+
+@keyframes migration-flow {
+  0% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: 20; }
+}
+
+/* Educational Overlay */
+.educational-overlay {
+  position: absolute;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-secondary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  box-shadow: var(--shadow-heavy);
+  max-width: 300px;
+  z-index: 1000;
+  pointer-events: none;
+  opacity: 0;
+  transition: var(--transition-normal);
+}
+
+.educational-overlay.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.educational-overlay h4 {
+  margin: 0 0 var(--space-2) 0;
+  color: var(--text-primary);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+}
+
+.educational-overlay p {
+  margin: 0 0 var(--space-2) 0;
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+}
+
+.educational-overlay .time-period-badge {
+  display: inline-block;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  color: white;
+  margin-bottom: var(--space-2);
+}
+
+.educational-overlay .characteristics {
+  list-style: none;
+  padding: 0;
+  margin: var(--space-2) 0 0 0;
+}
+
+.educational-overlay .characteristics li {
+  padding: var(--space-1) 0;
+  color: var(--text-tertiary);
+  font-size: var(--font-size-xs);
+  border-bottom: 1px solid var(--border-primary);
+}
+
+.educational-overlay .characteristics li:last-child {
+  border-bottom: none;
+}
+
+/* Neanderthal Admixture Highlight */
+.neanderthal-admixture-highlight {
+  position: relative;
+}
+
+.neanderthal-admixture-highlight::before {
+  content: "🧬";
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  font-size: 16px;
+  background: var(--bg-secondary);
+  border-radius: 50%;
+  padding: 2px;
+  box-shadow: var(--shadow-light);
+}
+
+/* Deep Ancestry Legend */
+.deep-ancestry-legend {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-secondary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  box-shadow: var(--shadow-medium);
+  z-index: 100;
+  min-width: 200px;
+}
+
+.deep-ancestry-legend h4 {
+  margin: 0 0 var(--space-3) 0;
+  color: var(--text-primary);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+}
+
+.deep-ancestry-legend .legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.deep-ancestry-legend .legend-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1px solid var(--border-secondary);
+}
+
+.deep-ancestry-legend .legend-label {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
+/* Responsive adjustments for deep ancestry */
+@media (max-width: 768px) {
+  .deep-ancestry-toggle {
+    top: 80px;
+    right: var(--space-3);
+    left: var(--space-3);
+    position: fixed;
+  }
+  
+  .deep-ancestry-legend {
+    position: fixed;
+    top: auto;
+    bottom: 20px;
+    right: 20px;
+    left: 20px;
+    max-width: none;
+  }
+  
+  .educational-overlay {
+    max-width: 250px;
+    padding: var(--space-3);
+  }
+}
