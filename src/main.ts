@@ -5,10 +5,6 @@ import * as d3 from "d3";
 import { maxArseneaultConfig } from "./data/configs/max-arseneault.config";
 import { Person } from "./interfaces/person";
 import { buildHierarchy, getGenerations, tracePatrilineal, traceMatrilineal, getCountry, calculateAgeAtDate, countryColors, getInitials, getOrdinalFromNumber, estimateAncientBirthDate, getLeaves } from "./utils/utils";
-import { extendTreeWithDeepAncestry, getTimePeriodColor, shouldShowNeanderthalAdmixture } from "./utils/deep-ancestry-utils";
-import { TIME_PERIODS, getTimePeriodForYear, NEANDERTHAL_ADMIXTURE_INFO } from "./data/deep-ancestry-data";
-import { DeepAncestor } from "./interfaces/deep-ancestry";
-import { createDeepAncestryVisualization, renderDeepAncestryPaths } from "./utils/deep-ancestry-visualization";
 
 // Create modal HTML structure dynamically
 function createModal() {
@@ -432,17 +428,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Enhanced search input interactions will be set after variables are defined
 
-  // Add Deep Ancestry Toggle
-  // const deepAncestryToggle = document.createElement("div");
-  // deepAncestryToggle.className = "deep-ancestry-toggle";
-  // deepAncestryToggle.innerHTML = `
-  //   <input type="checkbox" id="deep-ancestry-toggle" />
-  //   <label for="deep-ancestry-toggle">Deep Ancestry Mode</label>
-  // `;
-
   // Add view controls to main content
   mainContent.appendChild(viewControls);
-  // mainContent.appendChild(deepAncestryToggle);
 
   // Assemble dashboard
   dashboardContainer.appendChild(leftSidebar);
@@ -770,73 +757,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   let rootPerson = maxArseneaultConfig;
-  let isDeepAncestryMode = false;
-  
-  // Deep Ancestry Mode functionality
-  function toggleDeepAncestryMode() {
-    const toggleInput = document.getElementById("deep-ancestry-toggle") as HTMLInputElement;
-    
-    if (isDeepAncestryMode) {
-      // Disable mode - remove visualization
-      isDeepAncestryMode = false;
-      removeDeepAncestryVisualization();
-      removeDeepAncestryLegend();
-      toggleInput.checked = false;
-    } else {
-      // Enable mode - show lightweight visualization
-      isDeepAncestryMode = true;
-      toggleInput.checked = true;
-      
-      // Create and render the visualization
-      const visualization = createDeepAncestryVisualization(maxArseneaultConfig, true);
-      renderDeepAncestryPaths(svg, width, height, visualization);
-      createDeepAncestryLegend();
-    }
-  }
-  
-  function createDeepAncestryLegend() {
-    // Remove existing legend if it exists
-    removeDeepAncestryLegend();
-    
-    const legend = document.createElement("div");
-    legend.className = "deep-ancestry-legend";
-    legend.innerHTML = `
-      <h4>Time Periods</h4>
-      ${TIME_PERIODS.map(period => `
-        <div class="legend-item">
-          <div class="legend-color" style="background-color: ${period.color}"></div>
-          <div class="legend-label">${period.name}</div>
-        </div>
-      `).join('')}
-    `;
-    
-    document.body.appendChild(legend);
-  }
-  
-  function removeDeepAncestryLegend() {
-    const existingLegend = document.querySelector('.deep-ancestry-legend');
-    if (existingLegend) {
-      existingLegend.remove();
-    }
-  }
-  
-  function removeDeepAncestryVisualization() {
-    // Remove all deep ancestry visualization elements
-    svg.selectAll('.deep-ancestry-paths').remove();
-    svg.selectAll('.deep-ancestry-path').remove();
-    svg.selectAll('.deep-ancestry-label').remove();
-    svg.selectAll('.deep-ancestry-year').remove();
-    svg.selectAll('.neanderthal-admixture').remove();
-    svg.selectAll('.neanderthal-label').remove();
-    svg.selectAll('.neanderthal-percentage').remove();
-    svg.selectAll('.timeline-background').remove();
-    
-    // Remove any tooltips
-    const existingTooltip = document.querySelector('.deep-ancestry-tooltip');
-    if (existingTooltip) {
-      existingTooltip.remove();
-    }
-  }
   
   // Helper function to determine if a color is light or dark
   function isColorLight(color: string): boolean {
@@ -3169,11 +3089,6 @@ document.addEventListener("DOMContentLoaded", () => {
     updateThemeButton();
   });
   
-  // Deep Ancestry Mode toggle
-  // const deepAncestryToggleInput = document.getElementById("deep-ancestry-toggle") as HTMLInputElement;
-  // deepAncestryToggleInput?.addEventListener("change", () => {
-  //   toggleDeepAncestryMode();
-  // });
   
   // Listen for system theme changes
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {

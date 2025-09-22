@@ -24,12 +24,3 @@ export interface AncestralTube {
   animationDelay: number; // For staggered animations
 }
 
-export interface DeepAncestryVisualization {
-  groups: AncestralGroup[];
-  tubes: AncestralTube[];
-  neanderthalAdmixture: {
-    percentage: number;
-    entryPoint: string; // Which group it enters
-    color: string;
-  };
-}
