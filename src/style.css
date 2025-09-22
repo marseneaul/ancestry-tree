@@ -3083,7 +3083,8 @@ body {
   #timeline-visualization,
   #country-pie-chart,
   #dna-pie-chart,
-  #gender-pie-chart {
+  #gender-pie-chart,
+  #archaic-ancestry-pie-chart {
     background: var(--bg-tertiary);
     border-radius: 8px;
     border: 1px solid var(--border-primary);

@@ -2226,6 +2226,53 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
         </div>
       </div>
+
+      <div class="stats-section">
+        <div class="stats-section-title collapsible" onclick="toggleSection('archaic-ancestry')">
+          🦴 Archaic Hominid Ancestry <span class="collapse-icon" onclick="event.stopPropagation(); toggleSection('archaic-ancestry');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
+        </div>
+        <div class="stats-section-content" id="archaic-ancestry">
+          <div class="dna-breakdown">
+            <div class="dna-item">
+              <span class="dna-label">🧬 Neanderthal DNA</span>
+              <div class="dna-bar">
+                <div class="dna-fill" style="width: 2.1%; background: #8B4513;"></div>
+              </div>
+              <span class="dna-percent">2.1%</span>
+            </div>
+            <div class="dna-item">
+              <span class="dna-label">🦴 Denisovan DNA</span>
+              <div class="dna-bar">
+                <div class="dna-fill" style="width: 0.05%; background: #A0522D;"></div>
+              </div>
+              <span class="dna-percent">0.05%</span>
+            </div>
+            <div class="dna-item">
+              <span class="dna-label">👤 Other Archaic DNA</span>
+              <div class="dna-bar">
+                <div class="dna-fill" style="width: 0.1%; background: #CD853F;"></div>
+              </div>
+              <span class="dna-percent">0.1%</span>
+            </div>
+            <div class="dna-item">
+              <span class="dna-label">🧑 Modern Human DNA</span>
+              <div class="dna-bar">
+                <div class="dna-fill" style="width: 97.75%; background: #4A90E2;"></div>
+              </div>
+              <span class="dna-percent">97.75%</span>
+            </div>
+          </div>
+          
+          <!-- Archaic Ancestry Pie Chart -->
+          <div id="archaic-ancestry-pie-chart" style="margin-top: 20px;">
+            <h4 style="margin: 0 0 16px; color: var(--text-primary); font-size: 16px; font-weight: 600;">Archaic Hominid DNA Distribution</h4>
+            <div id="archaic-ancestry-pie-visualization" style="display: flex; align-items: center; gap: 20px;">
+              <svg id="archaic-ancestry-pie-svg" width="200" height="200"></svg>
+              <div id="archaic-ancestry-pie-legend" class="pie-legend"></div>
+            </div>
+          </div>
+        </div>
+      </div>
     `;
     
     // Create pie charts after the HTML is rendered
@@ -2233,6 +2280,7 @@ document.addEventListener("DOMContentLoaded", () => {
       createDnaPieChart();
       createGenderPieChart();
       createCountriesPieChart();
+      createArchaicAncestryPieChart();
     }, 100);
   }
 
@@ -2727,6 +2775,114 @@ document.addEventListener("DOMContentLoaded", () => {
     const totalPeople = allNodes.length;
     legendItems.append("span")
       .text(d => `${d.country} (${d.count})`)
+      .style("color", "var(--text-primary)")
+      .style("font-weight", "500");
+  }
+
+  // Create Archaic Ancestry pie chart visualization
+  function createArchaicAncestryPieChart() {
+    const svg = d3.select("#archaic-ancestry-pie-svg");
+    const legend = d3.select("#archaic-ancestry-pie-legend");
+    
+    // Clear previous content
+    svg.selectAll("*").remove();
+    legend.selectAll("*").remove();
+    
+    // Archaic ancestry data based on typical European percentages
+    const archaicData = [
+      { type: "Neanderthal", percentage: 2.1, color: "#8B4513" },
+      { type: "Denisovan", percentage: 0.05, color: "#A0522D" },
+      { type: "Other Archaic", percentage: 0.1, color: "#CD853F" },
+      { type: "Modern Human", percentage: 97.75, color: "#4A90E2" }
+    ];
+    
+    // Set up pie chart dimensions
+    const width = 200;
+    const height = 200;
+    const radius = Math.min(width, height) / 2 - 10;
+    
+    // Create color scale
+    const colorScale = d3.scaleOrdinal()
+      .domain(archaicData.map(d => d.type))
+      .range(archaicData.map(d => d.color));
+    
+    // Create pie generator
+    const pie = d3.pie<any>()
+      .value(d => d.percentage)
+      .sort(null);
+    
+    // Create arc generator
+    const arc = d3.arc<any>()
+      .innerRadius(0)
+      .outerRadius(radius);
+    
+    // Create the pie chart
+    const g = svg.append("g")
+      .attr("transform", `translate(${width/2}, ${height/2})`);
+    
+    const arcs = g.selectAll(".arc")
+      .data(pie(archaicData))
+      .enter()
+      .append("g")
+      .attr("class", "arc");
+    
+    // Add pie slices
+    arcs.append("path")
+      .attr("d", arc)
+      .attr("fill", d => colorScale(d.data.type))
+      .attr("stroke", "var(--bg-secondary)")
+      .attr("stroke-width", 2)
+      .style("cursor", "pointer")
+      .on("mouseover", function(event, d) {
+        d3.select(this)
+          .attr("stroke-width", 3)
+          .attr("stroke", "var(--accent-primary)");
+        
+        // Show tooltip
+        const tooltip = d3.select("body").append("div")
+          .attr("class", "chart-tooltip")
+          .style("opacity", 0);
+        
+        tooltip.transition()
+          .duration(200)
+          .style("opacity", .9);
+        
+        tooltip.html(`
+          <strong>${d.data.type}</strong><br/>
+          ${d.data.percentage}% of total DNA
+        `)
+          .style("left", (event.pageX + 10) + "px")
+          .style("top", (event.pageY - 28) + "px");
+      })
+      .on("mouseout", function(event, d) {
+        d3.select(this)
+          .attr("stroke-width", 2)
+          .attr("stroke", "var(--bg-secondary)");
+        
+        // Remove tooltip
+        d3.selectAll(".chart-tooltip").remove();
+      });
+    
+    // Create legend
+    const legendItems = legend.selectAll(".legend-item")
+      .data(archaicData)
+      .enter()
+      .append("div")
+      .attr("class", "legend-item")
+      .style("display", "flex")
+      .style("align-items", "center")
+      .style("margin-bottom", "8px")
+      .style("font-size", "12px");
+    
+    legendItems.append("div")
+      .style("width", "12px")
+      .style("height", "12px")
+      .style("background-color", d => d.color)
+      .style("margin-right", "8px")
+      .style("border-radius", "2px");
+    
+    legendItems.append("span")
+      .text(d => `${d.type} (${d.percentage}%)`)
       .style("color", "var(--text-primary)")
       .style("font-weight", "500");
   }
