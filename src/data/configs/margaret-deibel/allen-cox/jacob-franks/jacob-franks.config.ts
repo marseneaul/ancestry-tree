@@ -97,7 +97,7 @@ export const jacobFranksConfig = {
                         },
                             {
                             // Manufactured powder
-                            name: "Heinrich 'Henry' Barnabus Smith",
+                            name: "Heinrich \"Henry\" Barnabus Smith",
                             sex: "Male",
                             birthPlace: "Antietam Farm, Frederick, Maryland, United States",
                             deathPlace: "Yorks Run, Fayette, Pennsylvania, United States",
