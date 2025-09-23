@@ -2991,10 +2991,11 @@ body {
 
     /* Mobile-optimized minimap */
     .minimap-container {
-      bottom: 20px;
-      right: 20px;
-      width: 120px;
-      height: 80px;
+      bottom: 16px;
+      right: 16px;
+      width: 160px;
+      height: 120px;
+      border-radius: 8px;
     }
 
     /* Better mobile panel transitions */
@@ -3353,6 +3354,11 @@ body {
 
   .stats-section-title:hover::before {
     left: 100%;
+  }
+
+  /* Minimap enhancements - simplified for performance */
+  .minimap-container {
+    cursor: pointer;
   }
 
   /* Mobile optimizations for charts */

@@ -570,9 +570,9 @@ document.addEventListener("DOMContentLoaded", () => {
   svg.call(zoom);
 
     // ───────────────── MINIMAP: setup ─────────────────
-  const miniW = 220;
-  const miniH = 150;
-  const miniPad = 8;
+  const miniW = 280;
+  const miniH = 200;
+  const miniPad = 12;
 
   // Container (fixed, bottom-right). Style here so you don't need to touch CSS.
   const miniWrap = document.createElement("div");
@@ -580,17 +580,19 @@ document.addEventListener("DOMContentLoaded", () => {
   miniWrap.className = "minimap-container";
   Object.assign(miniWrap.style, {
     position: "fixed",
-    right: "16px",
-    bottom: "16px",
+    right: "20px",
+    bottom: "20px",
     width: `${miniW + 2 * miniPad}px`,
     height: `${miniH + 2 * miniPad}px`,
     border: "1px solid var(--border-secondary)",
     background: "var(--bg-secondary)",
-    borderRadius: "8px",
-    boxShadow: "0 4px 8px var(--shadow-light)",
+    borderRadius: "12px",
+    boxShadow: "0 8px 24px var(--shadow-medium), 0 2px 8px var(--shadow-light)",
     zIndex: "1000",
     userSelect: "none",
-    transition: "background-color 0.3s ease, border-color 0.3s ease",
+    transition: "all 0.3s ease",
+    backdropFilter: "blur(10px)",
+    WebkitBackdropFilter: "blur(10px)",
   });
   app.appendChild(miniWrap);
 
@@ -601,23 +603,38 @@ document.addEventListener("DOMContentLoaded", () => {
     .attr("height", miniH + 2 * miniPad);
 
   const miniG = miniSvg.append("g").attr("transform", `translate(${miniPad},${miniPad})`);
+  
+  // Add simple background rect (no pattern for performance)
+  miniG.append("rect")
+    .attr("width", miniW)
+    .attr("height", miniH)
+    .attr("fill", "var(--bg-tertiary)")
+    .attr("opacity", 0.3)
+    .attr("rx", 8)
+    .attr("ry", 8);
+
+  // Clean minimap view - no title or legend for performance
+  
   const miniLinksG = miniG.append("g").attr("class", "minimap-links");
   const miniNodesG = miniG.append("g").attr("class", "minimap-nodes");
+  
   const miniViewport = miniG
     .append("rect")
     .attr("class", "minimap-viewport")
-    .attr("fill", "none")
-    .attr("stroke", "var(--text-primary)")
-    .attr("stroke-width", 1.5)
-    .attr("pointer-events", "all"); // needed for drag
+    .attr("fill", "rgba(74, 158, 255, 0.1)")
+    .attr("stroke", "var(--accent-primary)")
+    .attr("stroke-width", 2)
+    .attr("stroke-dasharray", "4,2")
+    .attr("pointer-events", "all");
 
   // Bounds/scales for minimap
   let treeBounds = { x0: 0, y0: 0, x1: 1, y1: 1 };
-  let miniScale = 1;
+  let miniScaleX = 1;
+  let miniScaleY = 1;
 
   // Helpers to map main coords → minimap coords
-  const mx = (x: number) => (x - treeBounds.x0) * miniScale;
-  const my = (y: number) => (y - treeBounds.y0) * miniScale;
+  const mx = (x: number) => (x - treeBounds.x0) * miniScaleX;
+  const my = (y: number) => (y - treeBounds.y0) * miniScaleY;
 
   // Drag to pan main view from the minimap
   const dragViewport = d3
@@ -627,8 +644,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const x0 = event.x; // in minimap group coords (already inside miniG with translate)
       const y0 = event.y;
 
-      const mainX0 = x0 / miniScale + treeBounds.x0;
-      const mainY0 = y0 / miniScale + treeBounds.y0;
+      const mainX0 = x0 / miniScaleX + treeBounds.x0;
+      const mainY0 = y0 / miniScaleY + treeBounds.y0;
 
       const k = currentTransform.k;
       const tx = -mainX0 * k;
@@ -637,6 +654,36 @@ document.addEventListener("DOMContentLoaded", () => {
       svg.call(zoom.transform, d3.zoomIdentity.translate(tx, ty).scale(k));
     });
   miniViewport.call(dragViewport);
+
+  // Add click-to-center functionality on the minimap background (throttled for performance)
+  let clickTimeout: number | null = null;
+  miniG.on("click", (event) => {
+    if (clickTimeout) return; // Throttle clicks
+    
+    clickTimeout = window.setTimeout(() => {
+      clickTimeout = null;
+    }, 100);
+    
+    const rect = miniG.node()?.getBoundingClientRect();
+    if (!rect) return;
+    
+    const x = event.offsetX;
+    const y = event.offsetY;
+    
+    // Convert minimap coords to main coords
+    const mainX = (x - offsetX) / miniScaleX + treeBounds.x0;
+    const mainY = (y - offsetY) / miniScaleY + treeBounds.y0;
+    
+    // Center the main view on this point
+    const k = currentTransform.k;
+    const tx = -mainX * k + width / 2;
+    const ty = -mainY * k + height / 2;
+    
+    svg.call(zoom.transform, d3.zoomIdentity.translate(tx, ty).scale(k));
+  });
+
+  // Add tooltip (simplified hover effects for performance)
+  miniWrap.title = "Click to center view • Drag viewport to pan • Drag tree to navigate";
 
   // Draw/update minimap content
   function updateMinimap() {
@@ -651,13 +698,28 @@ document.addEventListener("DOMContentLoaded", () => {
     const y1 = Math.max(...ys);
 
     // pad bounds slightly
-    const pad = 20;
+    const pad = 30;
     treeBounds = { x0: x0 - pad, x1: x1 + pad, y0: y0 - pad, y1: y1 + pad };
 
     const bw = treeBounds.x1 - treeBounds.x0;
     const bh = treeBounds.y1 - treeBounds.y0;
 
-    miniScale = Math.min(miniW / Math.max(bw, 1), miniH / Math.max(bh, 1));
+    // Calculate scale to fill the entire minimap area (stretched/distorted)
+    const scaleX = miniW / Math.max(bw, 1);
+    const scaleY = miniH / Math.max(bh, 1);
+    
+    // Use separate scales for X and Y to fill the entire minimap (distorted view)
+    miniScaleX = scaleX * 0.95; // 95% to add minimal padding
+    miniScaleY = scaleY * 0.95;
+    
+    // Center the tree in the minimap
+    const scaledWidth = bw * miniScaleX;
+    const scaledHeight = bh * miniScaleY;
+    const offsetX = (miniW - scaledWidth) / 2;
+    const offsetY = (miniH - scaledHeight) / 2;
+    
+    // Update the transform to center the content (no scaling here - done in coordinate functions)
+    miniG.attr("transform", `translate(${miniPad + offsetX},${miniPad + offsetY})`);
 
     // Links (draw as straight lines; simple & fast)
     const miniLinks = miniLinksG
@@ -674,7 +736,8 @@ document.addEventListener("DOMContentLoaded", () => {
             .attr("x2", (d) => mx(d.target.x))
             .attr("y2", (d) => my(d.target.y))
             .attr("stroke", "var(--text-tertiary)")
-            .attr("stroke-width", 1),
+            .attr("stroke-width", 1.5)
+            .attr("opacity", 0.6),
         (update) =>
           update
             .attr("x1", (d) => mx(d.source.x))
@@ -684,43 +747,16 @@ document.addEventListener("DOMContentLoaded", () => {
         (exit) => exit.remove()
       );
 
-    // Nodes (tiny dots/squares; no images)
+    // Nodes (simplified for performance - all circles, no gender distinction)
     const miniNodes = miniNodesG
-      .selectAll<SVGCircleElement | SVGRectElement, any>("circle,rect")
+      .selectAll<SVGCircleElement, any>("circle")
       .data(nodes, (d: any) => d.data.id || d.data.name + d.depth);
 
-    miniNodes.exit().remove();
-
-    const maleNodes = miniNodesG
-      .selectAll<SVGRectElement, any>("rect.minimap-male")
-      .data(nodes.filter((d) => d.data.sex === "Male"), (d: any) => d.data.id || d.data.name + d.depth);
-    maleNodes
-      .join(
-        (enter) =>
-          enter
-            .append("rect")
-            .attr("class", "minimap-male")
-            .attr("width", 3)
-            .attr("height", 3)
-            .attr("x", (d) => mx(d.x) - 1.5)
-            .attr("y", (d) => my(d.y) - 1.5)
-            .attr("fill", (d) => countryColors[getCountry(d.data.birthPlace)] || "#808080"),
-        (update) =>
-          update
-            .attr("x", (d) => mx(d.x) - 1.5)
-            .attr("y", (d) => my(d.y) - 1.5)
-            .attr("fill", (d) => countryColors[getCountry(d.data.birthPlace)] || "#808080")
-      );
-    
-    const femaleNodes = miniNodesG
-      .selectAll<SVGCircleElement, any>("circle.minimap-female")
-      .data(nodes.filter((d) => d.data.sex !== "Male"), (d: any) => d.data.id || d.data.name + d.depth);
-    femaleNodes
+    miniNodes
       .join(
         (enter) =>
           enter
             .append("circle")
-            .attr("class", "minimap-female")
             .attr("r", 1.5)
             .attr("cx", (d) => mx(d.x))
             .attr("cy", (d) => my(d.y))
@@ -728,7 +764,8 @@ document.addEventListener("DOMContentLoaded", () => {
         (update) => update
           .attr("cx", (d) => mx(d.x))
           .attr("cy", (d) => my(d.y))
-          .attr("fill", (d) => countryColors[getCountry(d.data.birthPlace)] || "#808080")
+          .attr("fill", (d) => countryColors[getCountry(d.data.birthPlace)] || "#808080"),
+        (exit) => exit.remove()
       );
 
     updateMinimapViewport(); // sync viewport rect
@@ -746,8 +783,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // Convert to minimap coords
     const rx = mx(x0);
     const ry = my(y0);
-    const rw = vw * miniScale;
-    const rh = vh * miniScale;
+    const rw = vw * miniScaleX;
+    const rh = vh * miniScaleY;
 
     miniViewport
       .attr("x", rx)
