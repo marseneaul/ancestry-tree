@@ -1538,7 +1538,7 @@ export const francoisDupontConfig = {
 																																													// Cerebral stroke
 																																													// HEINRICH I "der Vogelsteller/the Fowler" King of Germany at Fritzlar 6 May 919, duke of Saxony from 912 and the elected king of East Francia from 919 until his death in 936.
 																																													// PAINTINGS https://www.ancestry.com/family-tree/person/tree/44204929/person/430051861753/facts
-																																													name: "Heinrich I ('The Fowler King') of Germany",
+																																													name: "Heinrich I (\"The Fowler King\") of Germany",
 																																													sex: "Male",
 																																													birthPlace: "Membleben, Germany",
 																																													deathPlace: "Memleben, Burgenlandkreis, Saxony-Anhalt, Germany",
@@ -1837,7 +1837,7 @@ export const francoisDupontConfig = {
 																																		{
 																																			// GUILLAUME II Duke of Normandy; WILLIAM I "the Conqueror" King of England . the first Norman King of England
 																																			// https://www.ancestry.com/family-tree/person/tree/44204929/person/430054483814/facts
-																																			name: "Guillaume de Normandie (William I 'The Conqueror' King of England)",
+																																			name: "Guillaume de Normandie (William I \"The Conqueror\" King of England)",
 																																			sex: "Male",
 																																			birthPlace: "Falaise, Departement du Calvados, Basse-Normandie, France",
 																																			deathPlace: "Rouen, Departement de la Seine-Maritime, Haute-Normandie, France",

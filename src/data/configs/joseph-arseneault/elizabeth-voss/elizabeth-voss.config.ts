@@ -14,7 +14,7 @@ export const elizabethVossConfig = {
     story: elizabethVossStory,
     parents: [
         {
-            name: "Maria Theresia 'Tracy' Kaiser",
+            name: "Maria Theresia \"Tracy\" Kaiser",
             sex: "Female",
             birthPlace: "Paderborn, Westphalia, Prussia, Germany",
             deathPlace: "Hancock, Houghton County, Michigan, United States",
