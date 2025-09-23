@@ -605,8 +605,10 @@ document.addEventListener("DOMContentLoaded", () => {
   
   // Add simple background rect (no pattern for performance)
   miniG.append("rect")
-    .attr("width", miniW)
-    .attr("height", miniH)
+    .attr("width", miniW + 2 * miniPad)
+    .attr("height", miniH + 2 * miniPad)
+    .attr("x", -miniPad)
+    .attr("y", -miniPad)
     .attr("fill", "var(--bg-tertiary)")
     .attr("opacity", 0.3)
     .attr("rx", 8)
