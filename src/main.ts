@@ -815,25 +815,19 @@ document.addEventListener("DOMContentLoaded", () => {
   
   // Beautiful hover tooltip functions
   let tooltipTimeout: number | null = null;
+  let currentTooltip: HTMLElement | null = null;
+  let currentPerson: Person | null = null;
   
-  function showPersonTooltip(person: Person, depth: number, element: any) {
+  function showPersonTooltip(person: Person, depth: number, element: any, event?: any) {
     hidePersonTooltip(); // Remove any existing tooltip
-    
-    // Clear any existing timeout
-    if (tooltipTimeout) {
-      clearTimeout(tooltipTimeout);
-    }
-    
-    // Set a delay before showing the tooltip
-    tooltipTimeout = window.setTimeout(() => {
-      createTooltip(person, depth, element);
-    }, 500); // 500ms delay
+    currentPerson = person;
+    createTooltip(person, depth, element, event);
   }
   
-  function createTooltip(person: Person, depth: number, element: any) {
-    
+  function createTooltip(person: Person, depth: number, element: any, event?: any) {
     const tooltip = document.createElement('div');
     tooltip.className = 'person-tooltip';
+    currentTooltip = tooltip;
     
     const initials = getInitials(person?.name);
     const isDeceased = person.deathDate !== "N/A";
@@ -923,42 +917,54 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
     `;
     
-    // Set initial positioning and styles BEFORE adding to DOM
+    // Set tooltip styles for mouse following
     tooltip.style.position = 'fixed';
     tooltip.style.zIndex = '10000';
-    tooltip.style.boxShadow = 'var(--shadow-heavy)';
+    tooltip.style.pointerEvents = 'none';
     tooltip.style.opacity = '0';
-    tooltip.style.transform = 'translateY(-10px)';
-    tooltip.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
-    tooltip.style.visibility = 'hidden'; // Hide while positioning
+    tooltip.style.transition = 'opacity 0.2s ease';
     
-    // Add to DOM first to get dimensions
+    // Add to DOM
     document.body.appendChild(tooltip);
     
-    // Position the tooltip near the element
-    const rect = element.getBoundingClientRect();
-    
-    // Get tooltip dimensions after it's in the DOM
-    const tooltipRect = tooltip.getBoundingClientRect();
-    
-    // Position to the right of the element, or left if not enough space
-    let left = rect.right + 10;
-    if (left + tooltipRect.width > window.innerWidth) {
-      left = rect.left - tooltipRect.width - 10;
+    // Position tooltip based on mouse coordinates
+    if (event && event.clientX !== undefined && event.clientY !== undefined) {
+      // Account for the CSS zoom transform (scale 0.75)
+      const scale = 0.75;
+      const scaledX = event.clientX / scale;
+      const scaledY = event.clientY / scale;
+      
+      // Position tooltip upper-left corner to the right of mouse cursor
+      let left = scaledX + 20; // 20px gap from cursor (scaled)
+      let top = scaledY - 15;  // 15px above cursor (scaled)
+      
+      // Get tooltip dimensions after it's in the DOM
+      const tooltipRect = tooltip.getBoundingClientRect();
+      
+      // Adjust if tooltip would go off screen (use scaled viewport)
+      const scaledViewportWidth = window.innerWidth / scale;
+      const scaledViewportHeight = window.innerHeight / scale;
+      
+      if (left + tooltipRect.width > scaledViewportWidth) {
+        left = scaledX - tooltipRect.width - 20; // Position to the left instead
+      }
+      if (top < 0) {
+        top = scaledY + 20; // Position below cursor if not enough space above
+      }
+      
+      tooltip.style.left = `${left}px`;
+      tooltip.style.top = `${top}px`;
+    } else {
+      // Fallback positioning if no event coordinates
+      tooltip.style.left = '10px';
+      tooltip.style.top = '10px';
     }
     
-    // Ensure tooltip stays within viewport bounds
-    left = Math.max(10, Math.min(left, window.innerWidth - tooltipRect.width - 10));
-    
-    // Set final position
-    tooltip.style.left = `${left}px`;
-    tooltip.style.top = `${rect.top}px`;
-    tooltip.style.visibility = 'visible'; // Show now that positioning is set
-    
-    // Animate in
+    // Show tooltip
     requestAnimationFrame(() => {
-      tooltip.style.opacity = '1';
-      tooltip.style.transform = 'translateY(0)';
+      if (currentTooltip) {
+        currentTooltip.style.opacity = '1';
+      }
     });
   }
   
@@ -969,12 +975,15 @@ document.addEventListener("DOMContentLoaded", () => {
       tooltipTimeout = null;
     }
     
-    const existingTooltip = document.querySelector('.person-tooltip') as HTMLElement;
-    if (existingTooltip) {
-      existingTooltip.style.opacity = '0';
-      existingTooltip.style.transform = 'translateY(-10px)';
+    if (currentTooltip) {
+      // Fade out and remove
+      currentTooltip.style.opacity = '0';
       setTimeout(() => {
-        existingTooltip.remove();
+        if (currentTooltip && currentTooltip.parentNode) {
+          currentTooltip.parentNode.removeChild(currentTooltip);
+        }
+        currentTooltip = null;
+        currentPerson = null;
       }, 200);
     }
   }
@@ -1852,6 +1861,7 @@ document.addEventListener("DOMContentLoaded", () => {
     statsDashboard.innerHTML = `
       <div class="stats-title">📊 Family Tree Statistics</div>
       
+      <div class="stats-content">
       <div class="stats-section">
         <div class="stats-section-title collapsible" onclick="toggleSection('overview')">
           📈 Overview <span class="collapse-icon" onclick="event.stopPropagation(); toggleSection('overview');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
@@ -2234,6 +2244,7 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
           </div>
         </div>
+      </div>
       </div>
     `;
     
@@ -3345,10 +3356,15 @@ document.addEventListener("DOMContentLoaded", () => {
       .attr("transform", d => `translate(${d.x ?? 0},${d.y ?? 0})`)
       .attr("opacity", 0)
       .on("click", (_, d) => {
+        // Clear any pending hover timeout to prevent conflicts
+        if (hoverTimeout) {
+          clearTimeout(hoverTimeout);
+          hoverTimeout = null;
+        }
         showPersonModal((d as any).data, (d as any).depth);
       })
-      .on("mouseover", function(_, d) {
-        showPersonTooltip((d as any).data, (d as any).depth, this);
+      .on("mouseover", function(event, d) {
+        showPersonTooltip((d as any).data, (d as any).depth, this, event);
       })
       .on("mouseout", function() {
         hidePersonTooltip();
@@ -3855,12 +3871,19 @@ document.addEventListener("DOMContentLoaded", () => {
   // Enhanced node interactions for mobile
   let lastTapTime = 0;
   let tapCount = 0;
+  let hoverTimeout: number | null = null;
 
   // Override the existing node click behavior for mobile
   const originalNodeClick = g.selectAll(".node").on("click");
   
   g.selectAll(".node")
     .on("click", function(event, d) {
+      // Clear any pending hover timeout to prevent conflicts
+      if (hoverTimeout) {
+        clearTimeout(hoverTimeout);
+        hoverTimeout = null;
+      }
+      
       if (isMobile()) {
         const currentTime = Date.now();
         const timeDiff = currentTime - lastTapTime;
