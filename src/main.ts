@@ -2413,8 +2413,8 @@ document.addEventListener("DOMContentLoaded", () => {
           <strong>${d.data.country}</strong><br/>
           ${d.data.value.toFixed(1)}% DNA contribution
         `)
-          .style("left", (event.pageX + 10) + "px")
-          .style("top", (event.pageY - 28) + "px");
+          .style("left", (event.pageX / 0.75 + 10) + "px")
+          .style("top", (event.pageY / 0.75 - 28) + "px");
       })
       .on("mouseout", function(event, d) {
         d3.select(this)
@@ -2552,8 +2552,8 @@ document.addEventListener("DOMContentLoaded", () => {
           <strong style="color: #4a9eff; font-weight: 600;">${d.data.emoji} ${d.data.gender}</strong><br/>
           ${d.data.count} people (${percentage}%)
         `)
-          .style("left", (event.pageX + 10) + "px")
-          .style("top", (event.pageY - 28) + "px");
+          .style("left", (event.pageX / 0.75 + 10) + "px")
+          .style("top", (event.pageY / 0.75 - 28) + "px");
         
         tooltip.transition()
           .duration(200)
@@ -2717,8 +2717,8 @@ document.addEventListener("DOMContentLoaded", () => {
           <strong>${d.data.country}</strong><br/>
           ${d.data.count} people (${percentage}%)
         `)
-          .style("left", (event.pageX + 10) + "px")
-          .style("top", (event.pageY - 28) + "px");
+          .style("left", (event.pageX / 0.75 + 10) + "px")
+          .style("top", (event.pageY / 0.75 - 28) + "px");
       })
       .on("mouseout", function(event, d) {
         d3.select(this)
@@ -2826,8 +2826,8 @@ document.addEventListener("DOMContentLoaded", () => {
           <strong>${d.data.type}</strong><br/>
           ${d.data.percentage}% of total DNA
         `)
-          .style("left", (event.pageX + 10) + "px")
-          .style("top", (event.pageY - 28) + "px");
+          .style("left", (event.pageX / 0.75 + 10) + "px")
+          .style("top", (event.pageY / 0.75 - 28) + "px");
       })
       .on("mouseout", function(event, d) {
         d3.select(this)
@@ -4320,8 +4320,9 @@ document.addEventListener("DOMContentLoaded", () => {
         document.body.appendChild(tooltip);
         
         const rect = (e.target as Element).getBoundingClientRect();
-        tooltip.style.left = rect.left + window.scrollX + 'px';
-        tooltip.style.top = (rect.top + window.scrollY - tooltip.offsetHeight - 10) + 'px';
+        const scale = 0.75;
+        tooltip.style.left = (rect.left / scale + window.scrollX) + 'px';
+        tooltip.style.top = ((rect.top / scale + window.scrollY) - tooltip.offsetHeight - 10) + 'px';
       });
       
       circle.addEventListener('mouseleave', () => {
@@ -4585,8 +4586,9 @@ document.addEventListener("DOMContentLoaded", () => {
         document.body.appendChild(tooltip);
         
         const rect = (e.target as Element).getBoundingClientRect();
-        tooltip.style.left = rect.left + window.scrollX + 'px';
-        tooltip.style.top = (rect.top + window.scrollY - tooltip.offsetHeight - 10) + 'px';
+        const scale = 0.75;
+        tooltip.style.left = (rect.left / scale + window.scrollX) + 'px';
+        tooltip.style.top = ((rect.top / scale + window.scrollY) - tooltip.offsetHeight - 10) + 'px';
       });
       
       circle.addEventListener('mouseleave', () => {
