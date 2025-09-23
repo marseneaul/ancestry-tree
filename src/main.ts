@@ -989,7 +989,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let root = buildHierarchy(rootPerson);
 
 
-  const treeLayout = d3.tree<Person>().size([width, height - 100]).nodeSize([180, 200]);  // Increased horizontal spacing to prevent text overlap
+  const treeLayout = d3.tree<Person>().size([width, height - 120]).nodeSize([180, 200]);  // Increased horizontal spacing to prevent text overlap
 
   // Filter state
   let maxGeneration = 0;
@@ -3308,8 +3308,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const horizontalCenter = width / 2;
     const rootXShift = horizontalCenter - (root.x ?? 0);
     
-    // Add vertical offset to ensure root is visible (shift up by 100px)
-    const verticalOffset = -100;
+    // Add vertical offset to ensure root is visible (shift up by 20px)
+    const verticalOffset = -20;
     
     root.descendants().forEach(d => {
       d.x = (d.x ?? 0) + rootXShift;
