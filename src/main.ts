@@ -1,9 +1,8 @@
 // src/main.ts
-// @ts-nocheck
 import "./style.css";
 import * as d3 from "d3";
-import { maxArseneaultConfig } from "./data/configs/max-arseneault.config";
-import { Person } from "./interfaces/person";
+import { Person, Sex } from "./interfaces/person";
+import { migratedMaxArseneaultConfig } from "./utils/migrate-existing-data";
 import { buildHierarchy, getGenerations, tracePatrilineal, traceMatrilineal, getCountry, calculateAgeAtDate, countryColors, getInitials, getOrdinalFromNumber, estimateAncientBirthDate, getLeaves } from "./utils/utils";
 
 // Create modal HTML structure dynamically
@@ -56,7 +55,7 @@ function extendWithNeanderthal(ancient: Person) {
   // Create Neanderthal node
   const neanderthal: Person = {
     name: "Neanderthal Woman",
-    sex: "Female",
+    sex: Sex.FEMALE,
     birthPlace: "Eurasia",
     birthDate: "circa 40000 BCE",
     deathDate: "N/A",
@@ -69,7 +68,7 @@ function extendWithNeanderthal(ancient: Person) {
   let last: Person = neanderthal;
 
   for (let i = numUnknowns; i > 0; i--) {
-    const sex = Math.random() > 0.5 ? "Male" : "Female";
+    const sex = Math.random() > 0.5 ? Sex.MALE : Sex.FEMALE;
     const unk: Person = {
       name: "Unknown Ancestor",
       sex: sex,
@@ -544,7 +543,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Define country SVG patterns once
   Object.entries(countrySvgs).forEach(([country, url]) => {
     const patternId = `country-pattern-${slugify(country)}`;
-    const href = url ?? `${assetBase}/${slugify(country)}.svg`;
+    const href = url ?? `./svgs/${slugify(country)}.svg`;
 
     const pattern = defs.append("pattern")
       .attr("id", patternId)
@@ -563,7 +562,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const zoom = d3.zoom().on("zoom", (event) => {
     currentTransform = event.transform;
-    g.attr("transform", currentTransform);
+    g.attr("transform", currentTransform.toString());
     updateMinimapViewport(); // keep minimap viewport in sync
   });
 
@@ -606,8 +605,10 @@ document.addEventListener("DOMContentLoaded", () => {
   
   // Add simple background rect (no pattern for performance)
   miniG.append("rect")
-    .attr("width", miniW)
-    .attr("height", miniH)
+    .attr("width", miniW + 2 * miniPad)
+    .attr("height", miniH + 2 * miniPad)
+    .attr("x", -miniPad)
+    .attr("y", -miniPad)
     .attr("fill", "var(--bg-tertiary)")
     .attr("opacity", 0.3)
     .attr("rx", 8)
@@ -669,6 +670,12 @@ document.addEventListener("DOMContentLoaded", () => {
     
     const x = event.offsetX;
     const y = event.offsetY;
+    
+    // Get the current offset values from the minimap
+    const scaledWidth = treeBounds.x1 - treeBounds.x0;
+    const scaledHeight = treeBounds.y1 - treeBounds.y0;
+    const offsetX = (miniW - scaledWidth * miniScaleX) / 2;
+    const offsetY = (miniH - scaledHeight * miniScaleY) / 2;
     
     // Convert minimap coords to main coords
     const mainX = (x - offsetX) / miniScaleX + treeBounds.x0;
@@ -793,7 +800,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .attr("height", Math.max(10, rh));
   }
 
-  let rootPerson = maxArseneaultConfig;
+  let rootPerson = migratedMaxArseneaultConfig;
   
   // Helper function to determine if a color is light or dark
   function isColorLight(color: string): boolean {
@@ -810,25 +817,19 @@ document.addEventListener("DOMContentLoaded", () => {
   
   // Beautiful hover tooltip functions
   let tooltipTimeout: number | null = null;
+  let currentTooltip: HTMLElement | null = null;
+  let currentPerson: Person | null = null;
   
-  function showPersonTooltip(person: Person, depth: number, element: any) {
+  function showPersonTooltip(person: Person, depth: number, element: any, event?: any) {
     hidePersonTooltip(); // Remove any existing tooltip
-    
-    // Clear any existing timeout
-    if (tooltipTimeout) {
-      clearTimeout(tooltipTimeout);
-    }
-    
-    // Set a delay before showing the tooltip
-    tooltipTimeout = window.setTimeout(() => {
-      createTooltip(person, depth, element);
-    }, 500); // 500ms delay
+    currentPerson = person;
+    createTooltip(person, depth, element, event);
   }
   
-  function createTooltip(person: Person, depth: number, element: any) {
-    
+  function createTooltip(person: Person, depth: number, element: any, event?: any) {
     const tooltip = document.createElement('div');
     tooltip.className = 'person-tooltip';
+    currentTooltip = tooltip;
     
     const initials = getInitials(person?.name);
     const isDeceased = person.deathDate !== "N/A";
@@ -918,42 +919,54 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
     `;
     
-    // Set initial positioning and styles BEFORE adding to DOM
+    // Set tooltip styles for mouse following
     tooltip.style.position = 'fixed';
     tooltip.style.zIndex = '10000';
-    tooltip.style.boxShadow = 'var(--shadow-heavy)';
+    tooltip.style.pointerEvents = 'none';
     tooltip.style.opacity = '0';
-    tooltip.style.transform = 'translateY(-10px)';
-    tooltip.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
-    tooltip.style.visibility = 'hidden'; // Hide while positioning
+    tooltip.style.transition = 'opacity 0.2s ease';
     
-    // Add to DOM first to get dimensions
+    // Add to DOM
     document.body.appendChild(tooltip);
     
-    // Position the tooltip near the element
-    const rect = element.getBoundingClientRect();
-    
-    // Get tooltip dimensions after it's in the DOM
-    const tooltipRect = tooltip.getBoundingClientRect();
-    
-    // Position to the right of the element, or left if not enough space
-    let left = rect.right + 10;
-    if (left + tooltipRect.width > window.innerWidth) {
-      left = rect.left - tooltipRect.width - 10;
+    // Position tooltip based on mouse coordinates
+    if (event && event.clientX !== undefined && event.clientY !== undefined) {
+      // Account for the CSS zoom transform (scale 0.75)
+      const scale = 0.75;
+      const scaledX = event.clientX / scale;
+      const scaledY = event.clientY / scale;
+      
+      // Position tooltip upper-left corner to the right of mouse cursor
+      let left = scaledX + 20; // 20px gap from cursor (scaled)
+      let top = scaledY - 15;  // 15px above cursor (scaled)
+      
+      // Get tooltip dimensions after it's in the DOM
+      const tooltipRect = tooltip.getBoundingClientRect();
+      
+      // Adjust if tooltip would go off screen (use scaled viewport)
+      const scaledViewportWidth = window.innerWidth / scale;
+      const scaledViewportHeight = window.innerHeight / scale;
+      
+      if (left + tooltipRect.width > scaledViewportWidth) {
+        left = scaledX - tooltipRect.width - 20; // Position to the left instead
+      }
+      if (top < 0) {
+        top = scaledY + 20; // Position below cursor if not enough space above
+      }
+      
+      tooltip.style.left = `${left}px`;
+      tooltip.style.top = `${top}px`;
+    } else {
+      // Fallback positioning if no event coordinates
+      tooltip.style.left = '10px';
+      tooltip.style.top = '10px';
     }
     
-    // Ensure tooltip stays within viewport bounds
-    left = Math.max(10, Math.min(left, window.innerWidth - tooltipRect.width - 10));
-    
-    // Set final position
-    tooltip.style.left = `${left}px`;
-    tooltip.style.top = `${rect.top}px`;
-    tooltip.style.visibility = 'visible'; // Show now that positioning is set
-    
-    // Animate in
+    // Show tooltip
     requestAnimationFrame(() => {
-      tooltip.style.opacity = '1';
-      tooltip.style.transform = 'translateY(0)';
+      if (currentTooltip) {
+        currentTooltip.style.opacity = '1';
+      }
     });
   }
   
@@ -964,12 +977,15 @@ document.addEventListener("DOMContentLoaded", () => {
       tooltipTimeout = null;
     }
     
-    const existingTooltip = document.querySelector('.person-tooltip');
-    if (existingTooltip) {
-      existingTooltip.style.opacity = '0';
-      existingTooltip.style.transform = 'translateY(-10px)';
+    if (currentTooltip) {
+      // Fade out and remove
+      currentTooltip.style.opacity = '0';
       setTimeout(() => {
-        existingTooltip.remove();
+        if (currentTooltip && currentTooltip.parentNode) {
+          currentTooltip.parentNode.removeChild(currentTooltip);
+        }
+        currentTooltip = null;
+        currentPerson = null;
       }, 200);
     }
   }
@@ -1548,8 +1564,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const maxGen = parseInt((document.getElementById("generation-slider") as HTMLInputElement)?.value || maxGeneration.toString());
     
     // Get lineage data for filtering
-    const patrilinealNames = tracePatrilineal(maxArseneaultConfig);
-    const matrilinealNames = traceMatrilineal(maxArseneaultConfig);
+    const patrilinealNames = tracePatrilineal(migratedMaxArseneaultConfig);
+    const matrilinealNames = traceMatrilineal(migratedMaxArseneaultConfig);
     
     // Filter nodes based on all criteria
     g.selectAll(".node")
@@ -1847,6 +1863,7 @@ document.addEventListener("DOMContentLoaded", () => {
     statsDashboard.innerHTML = `
       <div class="stats-title">📊 Family Tree Statistics</div>
       
+      <div class="stats-content">
       <div class="stats-section">
         <div class="stats-section-title collapsible" onclick="toggleSection('overview')">
           📈 Overview <span class="collapse-icon" onclick="event.stopPropagation(); toggleSection('overview');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
@@ -2230,6 +2247,7 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
         </div>
       </div>
+      </div>
     `;
     
     // Create pie charts after the HTML is rendered
@@ -2372,8 +2390,8 @@ document.addEventListener("DOMContentLoaded", () => {
     
     // Add pie slices
     arcs.append("path")
-      .attr("d", arc)
-      .attr("fill", d => colorScale(d.data.country))
+      .attr("d", (d: any) => arc(d) as string)
+      .attr("fill", (d: any) => colorScale(d.data.country) as string)
       .attr("stroke", "var(--bg-secondary)")
       .attr("stroke-width", 2)
       .style("cursor", "pointer")
@@ -2421,7 +2439,7 @@ document.addEventListener("DOMContentLoaded", () => {
     legendItems.append("div")
       .style("width", "12px")
       .style("height", "12px")
-      .style("background-color", d => colorScale(d.country))
+      .style("background-color", (d: any) => colorScale(d.country) as string)
       .style("margin-right", "8px")
       .style("border-radius", "2px");
     
@@ -2499,8 +2517,8 @@ document.addEventListener("DOMContentLoaded", () => {
     
     // Add pie slices
     arcs.append("path")
-      .attr("d", arc)
-      .attr("fill", d => colorScale(d.data.gender))
+      .attr("d", (d: any) => arc(d) as string)
+      .attr("fill", (d: any) => colorScale(d.data.gender) as string)
       .attr("stroke", "#ffffff")
       .attr("stroke-width", 2)
       .style("cursor", "pointer")
@@ -2673,8 +2691,8 @@ document.addEventListener("DOMContentLoaded", () => {
     
     // Add pie slices
     arcs.append("path")
-      .attr("d", arc)
-      .attr("fill", d => colorScale(d.data.country))
+      .attr("d", (d: any) => arc(d) as string)
+      .attr("fill", (d: any) => colorScale(d.data.country) as string)
       .attr("stroke", "var(--bg-secondary)")
       .attr("stroke-width", 2)
       .style("cursor", "pointer")
@@ -2725,7 +2743,7 @@ document.addEventListener("DOMContentLoaded", () => {
     legendItems.append("div")
       .style("width", "12px")
       .style("height", "12px")
-      .style("background-color", d => colorScale(d.country))
+      .style("background-color", (d: any) => colorScale(d.country) as string)
       .style("margin-right", "8px")
       .style("border-radius", "2px");
     
@@ -2785,8 +2803,8 @@ document.addEventListener("DOMContentLoaded", () => {
     
     // Add pie slices
     arcs.append("path")
-      .attr("d", arc)
-      .attr("fill", d => colorScale(d.data.type))
+      .attr("d", (d: any) => arc(d) as string)
+      .attr("fill", (d: any) => colorScale(d.data.type) as string)
       .attr("stroke", "var(--bg-secondary)")
       .attr("stroke-width", 2)
       .style("cursor", "pointer")
@@ -3193,7 +3211,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const filterTabs = document.querySelectorAll('.filter-tab');
     filterTabs.forEach((tab, index) => {
       tab.addEventListener('keydown', (e) => {
-        const key = e.key;
+        const key = (e as KeyboardEvent).key;
         let targetIndex = index;
         
         if (key === 'ArrowLeft' || key === 'ArrowUp') {
@@ -3318,32 +3336,37 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Links
     const links = g.selectAll(".link")
-      .data(root.links(), d => `${(d.source as any).id}-${(d.target as any).id}`);
+      .data(root.links(), (d: any) => `${(d.source as any).id || (d.source as any).data.name}-${(d.target as any).id || (d.target as any).data.name}`);
 
     links.enter().append("path")
       .attr("class", "link")
-      .attr("d", d3.linkVertical().x(d => d.x ?? 0).y(d => d.y ?? 0))
+      .attr("d", d3.linkVertical<any, any>().x((d: any) => d.x ?? 0).y((d: any) => d.y ?? 0))
       .attr("opacity", 0)
       .transition().duration(300).attr("opacity", 1);
 
     links.transition().duration(300)
-      .attr("d", d3.linkVertical().x(d => d.x ?? 0).y(d => d.y ?? 0));
+      .attr("d", d3.linkVertical<any, any>().x((d: any) => d.x ?? 0).y((d: any) => d.y ?? 0));
 
     links.exit().transition().duration(300).attr("opacity", 0).remove();
 
     // Nodes
     const nodes = g.selectAll(".node")
-      .data(root.descendants(), d => (d as any).id || d.data.name);
+      .data(root.descendants(), d => (d as any).id || (d as any).data.name);
 
     const nodeEnter = nodes.enter().append("g")
       .attr("class", d => d.depth === 0 ? "node root-node" : "node")
       .attr("transform", d => `translate(${d.x ?? 0},${d.y ?? 0})`)
       .attr("opacity", 0)
       .on("click", (_, d) => {
-        showPersonModal(d.data, d.depth);
+        // Clear any pending hover timeout to prevent conflicts
+        if (hoverTimeout) {
+          clearTimeout(hoverTimeout);
+          hoverTimeout = null;
+        }
+        showPersonModal((d as any).data, (d as any).depth);
       })
-      .on("mouseover", function(_, d) {
-        showPersonTooltip(d.data, d.depth, this);
+      .on("mouseover", function(event, d) {
+        showPersonTooltip((d as any).data, (d as any).depth, this, event);
       })
       .on("mouseout", function() {
         hidePersonTooltip();
@@ -3520,8 +3543,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Lineages
-    const patrilinealNames = tracePatrilineal(maxArseneaultConfig);
-    const matrilinealNames = traceMatrilineal(maxArseneaultConfig);
+    const patrilinealNames = tracePatrilineal(migratedMaxArseneaultConfig);
+    const matrilinealNames = traceMatrilineal(migratedMaxArseneaultConfig);
 
     g.selectAll(".link")
       .attr("stroke", "#ccc")
@@ -3529,13 +3552,13 @@ document.addEventListener("DOMContentLoaded", () => {
       .attr("stroke-width", 2);
 
     g.selectAll(".link")
-      .filter(d => patrilinealNames.includes(d.source.data.name) && patrilinealNames.includes(d.target.data.name))
+      .filter(d => patrilinealNames.includes((d as any).source.data.name) && patrilinealNames.includes((d as any).target.data.name))
       .attr("stroke", "blue")
       .attr("stroke-dasharray", "5,5")
       .attr("stroke-width", 3);
 
     g.selectAll(".link")
-      .filter(d => matrilinealNames.includes(d.source.data.name) && matrilinealNames.includes(d.target.data.name))
+      .filter(d => matrilinealNames.includes((d as any).source.data.name) && matrilinealNames.includes((d as any).target.data.name))
       .attr("stroke", "pink")
       .attr("stroke-dasharray", "5,5")
       .attr("stroke-width", 3);
@@ -3626,7 +3649,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Highlight matching nodes (keep current behavior)
     g.selectAll(".node")
-      .classed("highlighted", d => query && (d.data.name?.toLowerCase().includes(query) ?? false));
+      .classed("highlighted", d => query && ((d as any).data.name?.toLowerCase().includes(query) ?? false));
   });
 
   // On selection (change event fires when picking from datalist)
@@ -3706,7 +3729,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let resizeTimeout: number;
   const debouncedPositionDropdown = () => {
     clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(positionDropdown, 100);
+    resizeTimeout = setTimeout(positionDropdown, 100) as any;
   };
 
   // Reposition dropdown on window resize (debounced)
@@ -3850,12 +3873,19 @@ document.addEventListener("DOMContentLoaded", () => {
   // Enhanced node interactions for mobile
   let lastTapTime = 0;
   let tapCount = 0;
+  let hoverTimeout: number | null = null;
 
   // Override the existing node click behavior for mobile
   const originalNodeClick = g.selectAll(".node").on("click");
   
   g.selectAll(".node")
     .on("click", function(event, d) {
+      // Clear any pending hover timeout to prevent conflicts
+      if (hoverTimeout) {
+        clearTimeout(hoverTimeout);
+        hoverTimeout = null;
+      }
+      
       if (isMobile()) {
         const currentTime = Date.now();
         const timeDiff = currentTime - lastTapTime;
@@ -3872,7 +3902,7 @@ document.addEventListener("DOMContentLoaded", () => {
           // Single tap - show modal after a short delay to allow for double tap
           setTimeout(() => {
             if (tapCount === 1) {
-              showPersonModal(d.data, d.depth);
+              showPersonModal((d as any).data, (d as any).depth);
             }
           }, 300);
         } else if (tapCount === 2) {
@@ -3880,8 +3910,8 @@ document.addEventListener("DOMContentLoaded", () => {
           tapCount = 0;
           const currentTransform = d3.zoomTransform(svg.node()!);
           const scale = Math.min(currentTransform.k * 2, 3);
-          const tx = width / 2 - (d.x ?? 0) * scale;
-          const ty = height / 2 - (d.y ?? 0) * scale;
+          const tx = width / 2 - ((d as any).x ?? 0) * scale;
+          const ty = height / 2 - ((d as any).y ?? 0) * scale;
           
           svg.transition().duration(300).call(
             zoom.transform,
@@ -3890,7 +3920,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       } else {
         // Desktop behavior
-        showPersonModal(d.data, d.depth);
+        showPersonModal((d as any).data, (d as any).depth);
       }
     });
 
@@ -4137,8 +4167,8 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log('Container dimensions:', containerRect.width, containerRect.height);
     console.log('Chart dimensions:', width, height);
     
-    svg.setAttribute('width', width + margin.left + margin.right);
-    svg.setAttribute('height', height + margin.top + margin.bottom);
+    svg.setAttribute('width', String(width + margin.left + margin.right));
+    svg.setAttribute('height', String(height + margin.top + margin.bottom));
     
     // Clear previous content
     svg.innerHTML = '';
@@ -4259,19 +4289,19 @@ document.addEventListener("DOMContentLoaded", () => {
       const y = yScale(d.avgAge);
       
       const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-      circle.setAttribute('cx', x);
-      circle.setAttribute('cy', y);
+      circle.setAttribute('cx', String(x));
+      circle.setAttribute('cy', String(y));
       circle.setAttribute('r', '4');
       circle.setAttribute('fill', 'var(--accent-primary)');
       circle.setAttribute('stroke', 'white');
       circle.setAttribute('stroke-width', '1.5');
       circle.setAttribute('class', 'lifespan-point');
       circle.setAttribute('opacity', '0.8');
-      circle.setAttribute('data-generation', d.generation);
+      circle.setAttribute('data-generation', String(d.generation));
       circle.setAttribute('data-avg', d.avgAge.toFixed(1));
-      circle.setAttribute('data-min', d.minAge);
-      circle.setAttribute('data-max', d.maxAge);
-      circle.setAttribute('data-count', d.count);
+      circle.setAttribute('data-min', String(d.minAge));
+      circle.setAttribute('data-max', String(d.maxAge));
+      circle.setAttribute('data-count', String(d.count));
       
       // Add hover effect
       circle.addEventListener('mouseenter', (e) => {
@@ -4289,7 +4319,7 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
         document.body.appendChild(tooltip);
         
-        const rect = e.target.getBoundingClientRect();
+        const rect = (e.target as Element).getBoundingClientRect();
         tooltip.style.left = rect.left + window.scrollX + 'px';
         tooltip.style.top = (rect.top + window.scrollY - tooltip.offsetHeight - 10) + 'px';
       });
@@ -4308,19 +4338,19 @@ document.addEventListener("DOMContentLoaded", () => {
     
     // Create axes
     const yAxis = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-    yAxis.setAttribute('x1', margin.left);
-    yAxis.setAttribute('y1', margin.top);
-    yAxis.setAttribute('x2', margin.left);
-    yAxis.setAttribute('y2', margin.top + height);
+    yAxis.setAttribute('x1', String(margin.left));
+    yAxis.setAttribute('y1', String(margin.top));
+    yAxis.setAttribute('x2', String(margin.left));
+    yAxis.setAttribute('y2', String(margin.top + height));
     yAxis.setAttribute('stroke', 'var(--border-primary)');
     yAxis.setAttribute('stroke-width', '1');
     svg.appendChild(yAxis);
     
     const xAxis = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-    xAxis.setAttribute('x1', margin.left);
-    xAxis.setAttribute('y1', margin.top + height);
-    xAxis.setAttribute('x2', margin.left + width);
-    xAxis.setAttribute('y2', margin.top + height);
+    xAxis.setAttribute('x1', String(margin.left));
+    xAxis.setAttribute('y1', String(margin.top + height));
+    xAxis.setAttribute('x2', String(margin.left + width));
+    xAxis.setAttribute('y2', String(margin.top + height));
     xAxis.setAttribute('stroke', 'var(--border-primary)');
     xAxis.setAttribute('stroke-width', '1');
     svg.appendChild(xAxis);
@@ -4369,7 +4399,7 @@ document.addEventListener("DOMContentLoaded", () => {
     labelsToShow.forEach(({ x, generation }) => {
       const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
       text.setAttribute('x', x);
-      text.setAttribute('y', margin.top + height + 25);
+      text.setAttribute('y', String(margin.top + height + 25));
       text.setAttribute('text-anchor', 'middle');
       text.setAttribute('fill', 'var(--text-secondary)');
       text.setAttribute('font-size', '11');
@@ -4387,19 +4417,19 @@ document.addEventListener("DOMContentLoaded", () => {
     for (let age = Math.ceil(minAge / ageStep) * ageStep; age <= maxAge; age += ageStep) {
       const y = yScale(age);
       const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-      text.setAttribute('x', margin.left - 10);
-      text.setAttribute('y', y + 4);
+      text.setAttribute('x', String(margin.left - 10));
+      text.setAttribute('y', String(y + 4));
       text.setAttribute('text-anchor', 'end');
       text.setAttribute('fill', 'var(--text-secondary)');
       text.setAttribute('font-size', '12');
-      text.textContent = age;
+      text.textContent = String(age);
       svg.appendChild(text);
     }
     
     // Add axis titles
     const yAxisTitle = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    yAxisTitle.setAttribute('x', 15);
-    yAxisTitle.setAttribute('y', margin.top + height / 2);
+    yAxisTitle.setAttribute('x', '15');
+    yAxisTitle.setAttribute('y', String(margin.top + height / 2));
     yAxisTitle.setAttribute('text-anchor', 'middle');
     yAxisTitle.setAttribute('fill', 'var(--text-secondary)');
     yAxisTitle.setAttribute('font-size', '12');
@@ -4431,8 +4461,8 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log('DNA inheritance container dimensions:', containerRect.width, containerRect.height);
     console.log('DNA inheritance chart dimensions:', width, height);
     
-    svg.setAttribute('width', width + margin.left + margin.right);
-    svg.setAttribute('height', height + margin.top + margin.bottom);
+    svg.setAttribute('width', String(width + margin.left + margin.right));
+    svg.setAttribute('height', String(height + margin.top + margin.bottom));
     
     // Clear previous content
     svg.innerHTML = '';
@@ -4527,17 +4557,17 @@ document.addEventListener("DOMContentLoaded", () => {
       const y = yScale(d.dnaPercent);
       
       const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-      circle.setAttribute('cx', x);
-      circle.setAttribute('cy', y);
+      circle.setAttribute('cx', String(x));
+      circle.setAttribute('cy', String(y));
       circle.setAttribute('r', '4');
       circle.setAttribute('fill', 'var(--accent-primary)');
       circle.setAttribute('stroke', 'white');
       circle.setAttribute('stroke-width', '1.5');
       circle.setAttribute('class', 'dna-point');
       circle.setAttribute('opacity', '0.8');
-      circle.setAttribute('data-generation', d.generation);
+      circle.setAttribute('data-generation', String(d.generation));
       circle.setAttribute('data-dna', d.dnaPercent.toFixed(1));
-      circle.setAttribute('data-count', d.count);
+      circle.setAttribute('data-count', String(d.count));
       
       // Add hover effect
       circle.addEventListener('mouseenter', (e) => {
@@ -4554,7 +4584,7 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
         document.body.appendChild(tooltip);
         
-        const rect = e.target.getBoundingClientRect();
+        const rect = (e.target as Element).getBoundingClientRect();
         tooltip.style.left = rect.left + window.scrollX + 'px';
         tooltip.style.top = (rect.top + window.scrollY - tooltip.offsetHeight - 10) + 'px';
       });
@@ -4573,19 +4603,19 @@ document.addEventListener("DOMContentLoaded", () => {
     
     // Create axes
     const yAxis = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-    yAxis.setAttribute('x1', margin.left);
-    yAxis.setAttribute('y1', margin.top);
-    yAxis.setAttribute('x2', margin.left);
-    yAxis.setAttribute('y2', margin.top + height);
+    yAxis.setAttribute('x1', String(margin.left));
+    yAxis.setAttribute('y1', String(margin.top));
+    yAxis.setAttribute('x2', String(margin.left));
+    yAxis.setAttribute('y2', String(margin.top + height));
     yAxis.setAttribute('stroke', 'var(--border-primary)');
     yAxis.setAttribute('stroke-width', '1');
     svg.appendChild(yAxis);
     
     const xAxis = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-    xAxis.setAttribute('x1', margin.left);
-    xAxis.setAttribute('y1', margin.top + height);
-    xAxis.setAttribute('x2', margin.left + width);
-    xAxis.setAttribute('y2', margin.top + height);
+    xAxis.setAttribute('x1', String(margin.left));
+    xAxis.setAttribute('y1', String(margin.top + height));
+    xAxis.setAttribute('x2', String(margin.left + width));
+    xAxis.setAttribute('y2', String(margin.top + height));
     xAxis.setAttribute('stroke', 'var(--border-primary)');
     xAxis.setAttribute('stroke-width', '1');
     svg.appendChild(xAxis);
@@ -4634,7 +4664,7 @@ document.addEventListener("DOMContentLoaded", () => {
     labelsToShow.forEach(({ x, generation }) => {
       const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
       text.setAttribute('x', x);
-      text.setAttribute('y', margin.top + height + 25);
+      text.setAttribute('y', String(margin.top + height + 25));
       text.setAttribute('text-anchor', 'middle');
       text.setAttribute('fill', 'var(--text-secondary)');
       text.setAttribute('font-size', '11');
@@ -4652,8 +4682,8 @@ document.addEventListener("DOMContentLoaded", () => {
     for (let dna = Math.ceil(minDna / dnaStep) * dnaStep; dna <= maxDna; dna += dnaStep) {
       const y = yScale(dna);
       const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-      text.setAttribute('x', margin.left - 10);
-      text.setAttribute('y', y + 4);
+      text.setAttribute('x', String(margin.left - 10));
+      text.setAttribute('y', String(y + 4));
       text.setAttribute('text-anchor', 'end');
       text.setAttribute('fill', 'var(--text-secondary)');
       text.setAttribute('font-size', '12');
@@ -4663,8 +4693,8 @@ document.addEventListener("DOMContentLoaded", () => {
     
     // Add axis titles
     const yAxisTitle = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    yAxisTitle.setAttribute('x', 15);
-    yAxisTitle.setAttribute('y', margin.top + height / 2);
+    yAxisTitle.setAttribute('x', '15');
+    yAxisTitle.setAttribute('y', String(margin.top + height / 2));
     yAxisTitle.setAttribute('text-anchor', 'middle');
     yAxisTitle.setAttribute('fill', 'var(--text-secondary)');
     yAxisTitle.setAttribute('font-size', '12');

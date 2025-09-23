@@ -170,10 +170,15 @@ body {
     transition: background-color var(--transition-normal), color var(--transition-normal);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    overflow-x: hidden;
+    overflow: hidden;
     letter-spacing: -0.01em;
     /* Ensure consistent font rendering */
     font-display: swap;
+    /* Apply zoom effect to simulate zoom = 0.75 (devicePixelRatio = 1.5) */
+    transform: scale(0.75);
+    transform-origin: top left;
+    width: 133.33vw; /* Use viewport width to ensure full coverage */
+    height: 133.33vh; /* Use viewport height to ensure full coverage */
   }
 
   /* Main Dashboard Layout */
@@ -184,7 +189,7 @@ body {
       "sidebar-left main sidebar-right";
     grid-template-columns: 1fr 3sfr 1fr;
     grid-template-rows: auto 1fr;
-    min-height: 100vh;
+    min-height: 133.33vh; /* Compensate for the 0.75 scale to maintain full viewport height */
     gap: 0;
     background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-tertiary) 100%);
   }
@@ -201,6 +206,11 @@ body {
     overflow-y: auto;
     z-index: 100;
     box-shadow: 2px 0 8px var(--shadow-light);
+    /* Ensure the sidebar fills the available height */
+    height: 100%;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
   }
 
   .dashboard-main {
@@ -209,6 +219,11 @@ body {
     overflow: hidden;
     position: relative;
     box-shadow: inset 0 0 20px var(--shadow-light);
+    /* Ensure the main area fills the available height */
+    height: 100%;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
   }
 
   .dashboard-sidebar-right {
@@ -434,16 +449,24 @@ body {
   #tree-container {
     width: 100%;
     height: 100%;
+    min-height: 100%;
     background: var(--bg-primary);
     overflow: hidden;
     transition: background-color var(--transition-normal);
     position: relative;
+    /* Ensure the tree container fills the available space */
+    display: flex;
+    flex-direction: column;
   }
 
-  /* Ensure SVG elements stay below search dropdown */
+  /* Ensure SVG elements stay below search dropdown and fill the container */
   #tree-container svg {
     z-index: 1;
     position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+    flex: 1;
   }
   
   #legend {
@@ -1080,9 +1103,12 @@ body {
   .filter-panel {
     background: var(--bg-secondary);
     height: 100%;
+    min-height: 100%;
     overflow: hidden;
     transition: all var(--transition-normal);
     position: relative;
+    display: flex;
+    flex-direction: column;
   }
 
   .filter-panel::before {
@@ -1831,7 +1857,7 @@ body {
       left: var(--space-3);
       right: var(--space-3);
       max-width: none;
-      max-height: calc(100vh - 80px);
+      max-height: calc(133.33vh - 80px); /* Compensate for the 0.75 scale */
     }
 
     /* Timeline panel mobile */
@@ -1840,7 +1866,7 @@ body {
       right: var(--space-3);
       left: var(--space-3);
       max-width: none;
-      max-height: calc(100vh - 120px);
+      max-height: calc(133.33vh - 120px); /* Compensate for the 0.75 scale */
     }
 
     /* Touch-friendly node interactions */
@@ -2035,11 +2061,11 @@ body {
     .filter-panel,
     .stats-dashboard,
     .timeline-panel {
-      max-height: calc(100vh - 60px);
+      max-height: calc(133.33vh - 60px); /* Compensate for the 0.75 scale */
     }
 
     .filter-content {
-      max-height: calc(100vh - 180px);
+      max-height: calc(133.33vh - 180px); /* Compensate for the 0.75 scale */
     }
 
     .modal-content {
@@ -2182,11 +2208,15 @@ body {
   .stats-dashboard {
     background: var(--bg-secondary);
     height: 100%;
+    max-height: 100%;
     padding: var(--space-6);
-    overflow-y: auto;
+    overflow: hidden;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
     transition: background-color var(--transition-normal), border-color var(--transition-normal);
     position: relative;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
   }
 
   .stats-dashboard::before {
@@ -2202,6 +2232,14 @@ body {
 
   .stats-dashboard.hidden {
     display: none;
+  }
+
+  .stats-content {
+    height: calc(100% - 60px); /* Use full height minus header space */
+    max-height: calc(133.33vh - 220px); /* Compensate for the 0.75 scale */
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex: 1;
   }
 
   .stats-title {
@@ -2331,11 +2369,14 @@ body {
   .timeline-panel {
     background: var(--bg-secondary);
     height: 100%;
+    min-height: 100%;
     padding: var(--space-6);
     overflow-y: auto;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
     transition: background-color var(--transition-normal), border-color var(--transition-normal);
     position: relative;
+    display: flex;
+    flex-direction: column;
   }
 
   .timeline-panel::before {
@@ -2767,7 +2808,8 @@ body {
   }
 
   .timeline-content {
-    max-height: calc(100vh - 220px);
+    height: calc(100% - 60px); /* Use full height minus header space */
+    max-height: calc(133.33vh - 220px); /* Compensate for the 0.75 scale */
     overflow-y: auto;
   }
 
@@ -2950,6 +2992,7 @@ body {
     /* Better scrollbars on mobile */
     .filter-content,
     .timeline-content,
+    .stats-content,
     .modal-content {
       -webkit-overflow-scrolling: touch;
       scrollbar-width: thin;
@@ -2957,12 +3000,14 @@ body {
 
     .filter-content::-webkit-scrollbar,
     .timeline-content::-webkit-scrollbar,
+    .stats-content::-webkit-scrollbar,
     .modal-content::-webkit-scrollbar {
       width: 4px;
     }
 
     .filter-content::-webkit-scrollbar-thumb,
     .timeline-content::-webkit-scrollbar-thumb,
+    .stats-content::-webkit-scrollbar-thumb,
     .modal-content::-webkit-scrollbar-thumb {
       background: var(--border-primary);
       border-radius: 2px;
@@ -2988,6 +3033,11 @@ body {
 
     /* Mobile-optimized stats */
     .stats-dashboard {
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+    }
+
+    .stats-content {
       -webkit-overflow-scrolling: touch;
       overscroll-behavior: contain;
     }
