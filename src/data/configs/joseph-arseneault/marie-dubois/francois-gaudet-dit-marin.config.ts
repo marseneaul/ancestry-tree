@@ -412,7 +412,7 @@ export const francoisGaudetDitMarinConfig = {
                         	deathDate: "12 August 1714",
                             parents: [
                                 {
-                                	name: "Jeanne Radegonde 'Joy' Lambert",
+                                	name: "Jeanne Radegonde \"Joy\" Lambert",
                                 	sex: "Female",
                                 	birthPlace: "Loudun, Departement de la Vienne, Poitou-Charentes, France",
                                 	deathPlace: "Beaubassin, Acadie [Amherst, NS], Nova Scotia, Canada",

@@ -93,7 +93,7 @@ export const margaretDeibelConfig = {
                                             ]
                                         },
                                         {
-                                            name: "Ingram Patrick 'Pat' Fenn",
+                                            name: "Ingram Patrick \"Pat\" Fenn",
                                             sex: "Male",
                                             birthPlace: "Ireland",
                                             deathPlace: "Blackwater and Killala, Wexford, Ireland",
@@ -168,7 +168,7 @@ export const margaretDeibelConfig = {
                             ]
                         },
                         {
-                            name: "Pierce 'Piney' O'Connor",
+                            name: "Pierce \"Piney\" O'Connor",
                             sex: "Male",
                             birthPlace: "Kerry, Ireland",
                             deathPlace: "Detroit, Michigan, United States",
@@ -204,7 +204,7 @@ export const margaretDeibelConfig = {
                             deathDate: "22 February 1900",
                             parents: [
                                 {
-                                    name: "Maria 'Mary' Franklin",
+                                    name: "Maria \"Mary\" Franklin",
                                     sex: "Female",
                                     birthPlace: "Ireland",
                                     deathPlace: "UNKNOWN",
@@ -212,7 +212,7 @@ export const margaretDeibelConfig = {
                                     deathDate: "UNKNOWN"
                                 },
                                 {
-                                    name: "Michaelis 'Michael' Canane",
+                                    name: "Michaelis \"Michael\" Canane",
                                     sex: "Male",
                                     birthPlace: "Ireland",
                                     deathPlace: "UNKNOWN",

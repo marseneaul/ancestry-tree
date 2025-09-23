@@ -139,7 +139,7 @@ export const friedrichMoserConfig = {
                     deathDate: "15 May 1875",
                     parents: [
                         {
-                            name: "Euphrosyna 'Rosina' Magdalena Schlegel",
+                            name: "Euphrosyna \"Rosina\" Magdalena Schlegel",
                             sex: "Female",
                             birthPlace: "Germany",
                             deathPlace: "UNKNOWN",

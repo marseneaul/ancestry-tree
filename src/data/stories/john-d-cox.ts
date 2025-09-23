@@ -8,4 +8,4 @@
 
 // When in Onaway make your home at the Greenwood and enjoy life.
 
-export const johnDCoxStory = "J.D. 'Jim' Cox arrived in tiny Onaway, Michigan, on March 29, 1898, when it had just 28 residents, becoming the town's first barber before launching the successful Hotel Greenwood in May 1899. Operating the popular hostelry with his son Allen D. and wife, Jim's warm personality and attention to guests made it a favorite spot at $1.50–$2.00 per day, complete with sample rooms for travelers and a well-stocked bar. His foresight helped build the hotel into a central, welcoming hub as the town grew.";
+export const johnDCoxStory = "J.D. \"Jim\" Cox arrived in tiny Onaway, Michigan, on March 29, 1898, when it had just 28 residents, becoming the town's first barber before launching the successful Hotel Greenwood in May 1899. Operating the popular hostelry with his son Allen D. and wife, Jim's warm personality and attention to guests made it a favorite spot at $1.50–$2.00 per day, complete with sample rooms for travelers and a well-stocked bar. His foresight helped build the hotel into a central, welcoming hub as the town grew.";

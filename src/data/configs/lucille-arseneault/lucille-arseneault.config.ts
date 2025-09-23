@@ -41,7 +41,7 @@ export const lucilleArseneaultConfig = {
                             deathDate: "16 May 1893"
                         },
                         { 
-                            name: "Johann George 'John' Bauer",
+                            name: "Johann George \"John\" Bauer",
                             sex: "Male",
                             birthPlace: "Franconia, Bavaria, Germany",
                             deathPlace: "Richville, Tuscola, Michigan, United States",

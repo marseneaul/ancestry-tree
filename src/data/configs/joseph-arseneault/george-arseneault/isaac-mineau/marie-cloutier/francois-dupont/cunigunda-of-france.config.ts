@@ -251,7 +251,7 @@ export const cunigundaOfFranceConfig = {
                             // Holy Roman Emperor, Charles II
                             // King of Italy
                             // PAINTING https://www.ancestry.com/family-tree/person/tree/44204929/person/430051918090/facts
-                            name: "Charles 'The Bald' of the West Franks",
+                            name: "Charles \"The Bald\" of the West Franks",
                             sex: "Male",
                             birthPlace: "Frankfurt Am Main, Darmstadt, Hesse, Germany",
                             deathPlace: "Brides, Les Bains, Pyrénées-Orientales, Languedoc-Roussillon, France",

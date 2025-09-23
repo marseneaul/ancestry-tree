@@ -80,7 +80,7 @@ export const jacobFranksConfig = {
             story: corneliusFranksStory,
             parents: [
                 {
-                    name: "Mary Magdalena 'Polly' Smith",
+                    name: "Mary Magdalena \"Polly\" Smith",
                     sex: "Female",
                     birthPlace: "Fayette City, Fayette, Pennsylvania, United States",
                     deathPlace: "Smithville, Wayne, Ohio, United States",
