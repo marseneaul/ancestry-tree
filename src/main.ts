@@ -3162,19 +3162,72 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Toggle section functionality
   (window as any).toggleSection = function(sectionId: string) {
-    const content = document.getElementById(sectionId);
-    const title = document.querySelector(`[onclick="toggleSection('${sectionId}')"]`);
-    const icon = title?.querySelector('.collapse-icon');
+    // Look specifically for the stats section content, not filter checkboxes
+    const content = document.querySelector(`.stats-section-content#${sectionId}`);
+    if (!content) {
+      console.error(`Stats section content with id '${sectionId}' not found`);
+      return;
+    }
     
-    if (content && icon) {
-      if (content.style.display === 'none') {
-        content.style.display = 'block';
-        icon.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg>';
-      } else {
-        content.style.display = 'none';
-        icon.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9,18 15,12 9,6"></polyline></svg>';
+    // Try multiple approaches to find the title element
+    let title = null;
+    let icon = null;
+    
+    // Approach 1: Look for previous sibling
+    title = content.previousElementSibling;
+    if (title && title.classList.contains('stats-section-title')) {
+      icon = title.querySelector('.collapse-icon');
+    }
+    
+    // Approach 2: Look for parent stats-section
+    if (!title || !icon) {
+      const statsSection = content.closest('.stats-section');
+      if (statsSection) {
+        title = statsSection.querySelector('.stats-section-title.collapsible');
+        if (title) {
+          icon = title.querySelector('.collapse-icon');
+        }
       }
     }
+    
+    // Approach 3: Look for any element with the onclick attribute containing the sectionId
+    if (!title || !icon) {
+      const titleElements = document.querySelectorAll('.stats-section-title.collapsible');
+      for (const element of titleElements) {
+        if (element.getAttribute('onclick')?.includes(sectionId)) {
+          title = element;
+          icon = element.querySelector('.collapse-icon');
+          break;
+        }
+      }
+    }
+    
+    if (!title || !icon) {
+      console.error(`Title element or icon not found for section '${sectionId}'`);
+      console.log('Content element:', content);
+      console.log('Content parent:', content.parentElement);
+      console.log('Available title elements:', document.querySelectorAll('.stats-section-title.collapsible'));
+      return;
+    }
+    
+    // Debug: Log current state
+    console.log('Current display style:', content.style.display);
+    console.log('Current computed display:', window.getComputedStyle(content).display);
+    console.log('Content element:', content);
+    
+    if (content.style.display === 'none') {
+      console.log('Expanding section...');
+      content.style.display = 'block';
+      icon.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg>';
+    } else {
+      console.log('Collapsing section...');
+      content.style.display = 'none';
+      icon.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9,18 15,12 9,6"></polyline></svg>';
+    }
+    
+    // Debug: Log new state
+    console.log('New display style:', content.style.display);
+    console.log('New computed display:', window.getComputedStyle(content).display);
   };
 
   // Tab switching functionality
