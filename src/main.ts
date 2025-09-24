@@ -2955,10 +2955,14 @@ document.addEventListener("DOMContentLoaded", () => {
           name: node.data.name,
           birthDate: node.data.birthDate,
           deathDate: node.data.deathDate,
+          deathPlace: node.data.deathPlace,
           birthPlace: node.data.birthPlace,
           sex: node.data.sex,
           depth: node.depth,
-          country: getCountry(node.data.birthPlace)
+          country: getCountry(node.data.birthPlace),
+          imageUrl: node.data.imageUrl,
+          largeImageUrl: (node.data as any).largeImageUrl,
+          story: node.data.story
         };
       })
       .filter(item => item !== null)
@@ -3163,7 +3167,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Toggle section functionality
   (window as any).toggleSection = function(sectionId: string) {
     // Look specifically for the stats section content, not filter checkboxes
-    const content = document.querySelector(`.stats-section-content#${sectionId}`);
+    const content = document.querySelector(`.stats-section-content#${sectionId}`) as HTMLElement;
     if (!content) {
       console.error(`Stats section content with id '${sectionId}' not found`);
       return;
