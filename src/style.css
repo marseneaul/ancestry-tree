@@ -279,8 +279,8 @@ body {
 
   .header-center {
     flex: 1;
-    max-width: 500px;
-    margin: 0 var(--space-8);
+    max-width: 600px;
+    margin: 0 var(--space-6);
   }
 
   .header-right {
@@ -332,14 +332,14 @@ body {
   .header-controls {
     display: flex;
     align-items: center;
-    gap: var(--space-6);
+    gap: var(--space-4);
   }
 
   .control-group {
     display: flex;
     align-items: center;
-    gap: var(--space-2);
-    padding: var(--space-2);
+    gap: var(--space-1);
+    padding: var(--space-1);
     background: var(--bg-tertiary);
     border-radius: var(--radius-lg);
     border: 1px solid var(--border-primary);
@@ -350,7 +350,7 @@ body {
     display: flex;
     align-items: center;
     gap: var(--space-2);
-    padding: var(--space-3) var(--space-5);
+    padding: var(--space-2) var(--space-3);
     background: var(--bg-tertiary);
     border: 1px solid var(--border-primary);
     border-radius: var(--radius-xl);
@@ -362,7 +362,7 @@ body {
     white-space: nowrap;
     position: relative;
     overflow: hidden;
-    min-height: 44px;
+    min-height: 40px;
     box-shadow: 0 2px 8px var(--shadow-light);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
@@ -944,7 +944,8 @@ body {
     align-items: center;
     gap: var(--space-3);
     width: 100%;
-    z-index: 9999;
+    z-index: 10000; /* Very high z-index to ensure it's above SVG */
+    isolation: isolate; /* Creates a new stacking context */
   }
 
   .search-input-wrapper {
@@ -1042,10 +1043,11 @@ body {
     border-radius: var(--radius-lg);
     max-height: 200px;
     overflow-y: auto;
-    z-index: 9999;
+    z-index: 999999; /* Very high z-index to escape stacking context */
     box-shadow: 0 4px 6px var(--shadow-light);
     transition: background-color 0.3s ease, border-color 0.3s ease;
     min-width: 200px;
+    width: auto;
   }
 
   .dropdown-option {

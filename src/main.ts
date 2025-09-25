@@ -4,6 +4,7 @@ import * as d3 from "d3";
 import { Person, Sex } from "./interfaces/person";
 import { migratedMaxArseneaultConfig } from "./utils/migrate-existing-data";
 import { buildHierarchy, getGenerations, tracePatrilineal, traceMatrilineal, getCountry, calculateAgeAtDate, countryColors, getInitials, getOrdinalFromNumber, estimateAncientBirthDate, getLeaves } from "./utils/utils";
+import { exportPersonToGEDCOM, downloadGEDCOM } from "./utils/gedcom-export";
 
 // Create modal HTML structure dynamically
 function createModal() {
@@ -258,6 +259,15 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
           
           <div class="control-group">
+            <button class="header-btn" id="export-btn" title="Export to GEDCOM">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="7,10 12,15 17,10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+              <span class="btn-label">Export</span>
+            </button>
+            
             <button class="header-btn" id="legend-toggle-btn" title="Toggle Legend">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -442,6 +452,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const statsToggleBtn = document.getElementById("stats-toggle-btn") as HTMLButtonElement;
   const timelineToggleBtn = document.getElementById("timeline-toggle-btn") as HTMLButtonElement;
   const filterToggleBtn = document.getElementById("filter-toggle-btn") as HTMLButtonElement;
+  const exportBtn = document.getElementById("export-btn") as HTMLButtonElement;
   const themeToggleBtn = document.getElementById("theme-toggle-btn") as HTMLButtonElement;
   const legendToggleBtn = document.getElementById("legend-toggle-btn") as HTMLButtonElement;
   const searchInput = document.getElementById("search-input") as HTMLInputElement;
@@ -3141,6 +3152,85 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
   
+  // Export to GEDCOM
+  exportBtn.addEventListener("click", () => {
+    try {
+      // Show loading state
+      exportBtn.disabled = true;
+      exportBtn.innerHTML = `
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 12a9 9 0 11-6.219-8.56"/>
+        </svg>
+        <span class="btn-label">Exporting...</span>
+      `;
+      
+      // Export the data
+      const gedcomContent = exportPersonToGEDCOM(rootPerson, {
+        includeStories: true,
+        includeImages: false,
+        sourceName: 'Ancestry Tree',
+        sourceVersion: '1.0'
+      });
+      
+      // Generate filename with current date
+      const now = new Date();
+      const dateStr = now.toISOString().split('T')[0]; // YYYY-MM-DD format
+      const filename = `ancestry-tree-${dateStr}.ged`;
+      
+      // Download the file
+      downloadGEDCOM(gedcomContent, filename);
+      
+      // Show success message
+      setTimeout(() => {
+        exportBtn.innerHTML = `
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20,6 9,17 4,12"/>
+          </svg>
+          <span class="btn-label">Exported!</span>
+        `;
+        
+        // Reset button after 2 seconds
+        setTimeout(() => {
+          exportBtn.disabled = false;
+          exportBtn.innerHTML = `
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7,10 12,15 17,10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            <span class="btn-label">Export</span>
+          `;
+        }, 2000);
+      }, 500);
+      
+    } catch (error) {
+      console.error('Export failed:', error);
+      
+      // Show error state
+      exportBtn.innerHTML = `
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="15" y1="9" x2="9" y2="15"/>
+          <line x1="9" y1="9" x2="15" y2="15"/>
+        </svg>
+        <span class="btn-label">Error</span>
+      `;
+      
+      // Reset button after 3 seconds
+      setTimeout(() => {
+        exportBtn.disabled = false;
+        exportBtn.innerHTML = `
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7,10 12,15 17,10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          <span class="btn-label">Export</span>
+        `;
+      }, 3000);
+    }
+  });
+
   // Toggle theme
   themeToggleBtn.addEventListener("click", () => {
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
@@ -3636,6 +3726,8 @@ document.addEventListener("DOMContentLoaded", () => {
   dropdown.id = "name-suggestions";
   dropdown.className = "custom-dropdown";
   dropdown.style.display = "none";
+  
+  // Append to body for maximum z-index control
   document.body.appendChild(dropdown);
 
   // Clear search function (now that dropdown and g are defined)
@@ -3697,7 +3789,8 @@ document.addEventListener("DOMContentLoaded", () => {
         dropdown.appendChild(option);
       });
       
-      // Position dropdown after content is added (small delay to ensure DOM update)
+      // Position dropdown immediately and after a small delay to ensure DOM update
+      positionDropdown();
       setTimeout(positionDropdown, 0);
     } else {
       dropdown.style.display = "none";
@@ -3775,10 +3868,42 @@ document.addEventListener("DOMContentLoaded", () => {
   // Function to position dropdown relative to search input
   const positionDropdown = () => {
     if (dropdown.style.display === "block") {
-      const searchInputRect = searchInput.getBoundingClientRect();
-      dropdown.style.top = `${searchInputRect.bottom + window.scrollY}px`;
-      dropdown.style.left = `${searchInputRect.left + window.scrollX}px`;
-      dropdown.style.width = `${searchInputRect.width}px`;
+      const inputRect = searchInput.getBoundingClientRect();
+      
+      console.log('Input rect for positioning:', inputRect);
+      console.log('Dropdown will be positioned at:', {
+        top: `${inputRect.bottom + 2}px`,
+        left: `${inputRect.left}px`,
+        width: `${inputRect.width}px`
+      });
+      
+      // Use fixed positioning to escape the body's transform stacking context
+      const inputRectFixed = searchInput.getBoundingClientRect();
+      
+      // Position fixed relative to viewport, accounting for the body's scale transform
+      const scale = 0.75; // The body's scale transform
+      const adjustedTop = (inputRectFixed.bottom + 2) / scale;
+      const adjustedLeft = inputRectFixed.left / scale; // No offset - align with input edge
+      const adjustedWidth = inputRectFixed.width / scale;
+      
+      console.log('Fixed positioning with scale compensation:', {
+        originalRect: inputRectFixed,
+        scale: scale,
+        adjustedTop: adjustedTop,
+        adjustedLeft: adjustedLeft,
+        adjustedWidth: adjustedWidth
+      });
+      
+      // Position fixed to escape stacking context
+      dropdown.style.position = 'fixed';
+      dropdown.style.top = `${adjustedTop}px`;
+      dropdown.style.left = `${adjustedLeft}px`;
+      dropdown.style.width = `${adjustedWidth}px`;
+      dropdown.style.minWidth = `${adjustedWidth}px`;
+      dropdown.style.zIndex = '999999'; // Very high z-index
+      
+      // Append to body to escape the transform stacking context
+      document.body.appendChild(dropdown);
     }
   };
 
