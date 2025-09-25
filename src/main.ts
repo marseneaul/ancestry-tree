@@ -1870,6 +1870,72 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
+    // Calculate new statistics: Average Age at Birth and Generational Gaps
+    const ageAtBirthData: number[] = [];
+    const generationalGaps: number[] = [];
+    
+    allNodes.forEach(node => {
+      // Calculate age at birth (parent's age when child was born)
+      if (node.data.parents && node.data.parents.length > 0 && node.data.birthDate) {
+        node.data.parents.forEach(parent => {
+          if (parent && parent.birthDate && parent.birthDate !== "Unknown" && parent.birthDate !== "UNKNOWN") {
+            const parentBirthYear = extractBirthYear(parent.birthDate);
+            const childBirthYear = extractBirthYear(node.data.birthDate);
+            
+            if (parentBirthYear && childBirthYear && childBirthYear > parentBirthYear) {
+              const ageAtBirth = childBirthYear - parentBirthYear;
+              // Reasonable age range for having children (15-60 years old)
+              if (ageAtBirth >= 15 && ageAtBirth <= 60) {
+                ageAtBirthData.push(ageAtBirth);
+              }
+            }
+          }
+        });
+      }
+      
+      // Calculate generational gaps (time between generations)
+      if (node.data.parents && node.data.parents.length > 0 && node.data.birthDate) {
+        node.data.parents.forEach(parent => {
+          if (parent && parent.birthDate && parent.birthDate !== "Unknown" && parent.birthDate !== "UNKNOWN") {
+            const parentBirthYear = extractBirthYear(parent.birthDate);
+            const childBirthYear = extractBirthYear(node.data.birthDate);
+            
+            if (parentBirthYear && childBirthYear && childBirthYear > parentBirthYear) {
+              const generationalGap = childBirthYear - parentBirthYear;
+              // Reasonable generational gap (15-50 years)
+              if (generationalGap >= 15 && generationalGap <= 50) {
+                generationalGaps.push(generationalGap);
+              }
+            }
+          }
+        });
+      }
+    });
+    
+    // Calculate averages
+    const averageAgeAtBirth = ageAtBirthData.length > 0 
+      ? Math.round(ageAtBirthData.reduce((sum, age) => sum + age, 0) / ageAtBirthData.length)
+      : null;
+    
+    const averageGenerationalGap = generationalGaps.length > 0
+      ? Math.round(generationalGaps.reduce((sum, gap) => sum + gap, 0) / generationalGaps.length)
+      : null;
+
+    // Calculate average lifespan
+    const lifespanData: number[] = [];
+    allNodes.forEach(node => {
+      if (node.data.birthDate && node.data.deathDate && node.data.deathDate !== "N/A" && node.data.deathDate !== "Unknown" && node.data.deathDate !== "UNKNOWN") {
+        const age = calculateAgeAtDate(node.data.birthDate, node.data.deathDate);
+        if (age !== null && age > 0 && age <= 120) { // Reasonable lifespan range
+          lifespanData.push(age);
+        }
+      }
+    });
+    
+    const averageLifespan = lifespanData.length > 0
+      ? Math.round(lifespanData.reduce((sum, age) => sum + age, 0) / lifespanData.length)
+      : null;
+
     // Create dashboard HTML
     statsDashboard.innerHTML = `
       <div class="stats-title">📊 Family Tree Statistics</div>
@@ -1896,9 +1962,17 @@ document.addEventListener("DOMContentLoaded", () => {
           <div class="stat-item">
             <div class="stat-value">${birthYears.length > 0 ? Math.min(...birthYears) : 'N/A'}</div>
             <div class="stat-label">Earliest Birth</div>
-            </div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">${averageGenerationalGap ? averageGenerationalGap + ' years' : 'N/A'}</div>
+            <div class="stat-label">Avg Gen Gap</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">${averageLifespan ? averageLifespan + ' years' : 'N/A'}</div>
+            <div class="stat-label">Avg Lifespan</div>
           </div>
         </div>
+      </div>
       </div>
 
       <div class="stats-section">
