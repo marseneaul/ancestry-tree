@@ -5,7 +5,7 @@ export const maryZeilingerConfig = {
     name: "Mary Barbara Zeilinger",
     sex: "Female",
     birthPlace: "Tuscola, Tuscola Township, Tuscola, Michigan, United States",
-    deathPlace: "Denmark Township, Tuscola County, Michigan",
+    deathPlace: "Denmark Township, Tuscola County, Michigan, United States",
     birthDate: "13 November 1874",
     deathDate: "30 June 1945",
     parents: [

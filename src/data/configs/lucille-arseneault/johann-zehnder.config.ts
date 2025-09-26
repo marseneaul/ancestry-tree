@@ -35,7 +35,7 @@ export const johannZehnderConfig = {
                     name: "Christoph Zehender",
                     sex: "Male",
                     birthPlace: "Bürglein, Heilsbronn, Ansbach, Bavaria, Germany",
-                    deathPlace: "Bonnhof, Ansbach, Bayern, Deutschland",
+                    deathPlace: "Bonnhof, Ansbach, Bayern, Germany",
                     birthDate: "30 January 1692",
                     deathDate: "4 July 1779",
                     parents: [

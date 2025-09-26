@@ -51,7 +51,7 @@ export const jacobMichaelFranksConfig = {
                 {
                     name: "Mary Mueller",
                     sex: "Female",
-                    birthPlace: "Alsace-Lorraine, German",
+                    birthPlace: "Alsace-Lorraine, Germany",
                     deathPlace: "Chester, Pennsylvania Colony, United States",
                     birthDate: "1720",
                     deathDate: "1756"

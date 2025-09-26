@@ -20,9 +20,9 @@ export const charlesDupontConfig = {
         	name: "Charles Louis Du Pont",
         	sex: "Male",
         	birthPlace: "Aquitaine, France",
-        	deathPlace: "1515",
+        	deathPlace: "Mortagne-sur-Sèvre, Vendee, Pays de la Loire, France",
         	birthDate: "1486",
-        	deathDate: "Mortagne-sur-Sèvre, Vendee, Pays de la Loire, France",
+        	deathDate: "1515",
             parents: [
                 {
                 	name: "Marie Hervy",

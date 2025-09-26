@@ -45,6 +45,14 @@ const LOCATION_COORDINATES: Record<string, [number, number]> = {
   'France': [2.2137, 46.2276],
   'Normandy, France': [-0.3707, 49.1829],
   'Arles, France': [4.6284, 43.6769],
+  'Blois, Loir-et-Cher, Centre, France': [1.3333, 47.5833],
+  'Marche, Limousin, Poitou, France': [1.1667, 46.1667],
+  
+  // Spain
+  'Spain': [-3.7492, 40.4637],
+  'Barcelona, Spain': [2.1734, 41.3851],
+  'Madrid, Spain': [-3.7038, 40.4168],
+  'Seville, Spain': [-5.9845, 37.3891],
   
   // Canada
   'Canada': [-106.3468, 56.1304],
@@ -68,12 +76,27 @@ const LOCATION_COORDINATES: Record<string, [number, number]> = {
   
   // Scotland
   'Scotland': [-4.2026, 56.4907],
+  'Scotland, United Kingdom': [-4.2026, 56.4907],
+  'England, United Kingdom': [-3.4359, 55.3781],
+  'Burghead, Moray, Scotland, United Kingdom': [-3.4833, 57.7000],
+  'Angus, Scotland, United Kingdom': [-2.8333, 56.6667],
+  'Fettercairn, Mearns, Scotland, United Kingdom': [-2.5667, 56.8500],
+  'Perthshire, Scotland, United Kingdom': [-3.5000, 56.5000],
+  'Galloway, Scotland, United Kingdom': [-4.0000, 55.0000],
+  'Vlurn, Scotland, United Kingdom': [-3.0000, 56.0000],
+  'Dunfother, Scotland, United Kingdom': [-3.0000, 56.0000],
   
   // England
   'England': [-3.4359, 55.3781],
+  'United Kingdom': [-3.4359, 55.3781],
+  'London, London, England, United Kingdom': [-0.1276, 51.5074],
   
   // Netherlands
   'Netherlands': [5.2913, 52.1326],
+  'Holland': [4.9041, 52.3676],
+  'Winkel, West, Friesland, Netherlands': [5.0833, 52.7500],
+  'Amsterdam, Netherlands': [4.9041, 52.3676],
+  'Rotterdam, Netherlands': [4.4777, 51.9244],
   
   // Switzerland
   'Switzerland': [8.2275, 46.8182],
@@ -90,11 +113,24 @@ const LOCATION_COORDINATES: Record<string, [number, number]> = {
   // Italy
   'Italy': [12.5674, 41.8719],
   
+  // Greece
+  'Greece': [21.8243, 39.0742],
+  'Nikaia, Attiki, Attiki, Greece': [23.6419, 37.9755],
+  
+  // Palestine/Israel
+  'Palestine': [35.2332, 31.9522],
+  'Ramla (Ramleh), Palestine': [34.8667, 31.9167],
+  'Israel': [34.8516, 31.0461],
+  
   // Norway
   'Norway': [8.4689, 60.4720],
   
   // Luxembourg
   'Luxembourg': [6.1296, 49.8153],
+  
+  // Tunisia
+  'Tunisia': [9.5375, 33.8869],
+  'Tunis, Tunisia': [10.1815, 36.8065],
   
   // Unknown/Generic locations
   'Unknown': [0, 0],
@@ -112,12 +148,17 @@ function extractCountry(location: string): string {
   // Check for specific countries
   if (locationLower.includes('germany')) return 'Germany';
   if (locationLower.includes('france')) return 'France';
+  if (locationLower.includes('spain')) return 'Spain';
+  if (locationLower.includes('palestine')) return 'Palestine';
+  if (locationLower.includes('israel')) return 'Israel';
   if (locationLower.includes('canada')) return 'Canada';
   if (locationLower.includes('united states') || locationLower.includes('usa')) return 'United States';
   if (locationLower.includes('ireland')) return 'Ireland';
   if (locationLower.includes('scotland')) return 'Scotland';
   if (locationLower.includes('england')) return 'England';
-  if (locationLower.includes('netherlands')) return 'Netherlands';
+  if (locationLower.includes('united kingdom') || locationLower.includes('uk')) return 'United Kingdom';
+  if (locationLower.includes('greece') || locationLower.includes('greek')) return 'Greece';
+  if (locationLower.includes('netherlands') || locationLower.includes('holland')) return 'Netherlands';
   if (locationLower.includes('switzerland')) return 'Switzerland';
   if (locationLower.includes('belgium')) return 'Belgium';
   if (locationLower.includes('austria')) return 'Austria';
@@ -125,6 +166,7 @@ function extractCountry(location: string): string {
   if (locationLower.includes('italy')) return 'Italy';
   if (locationLower.includes('norway')) return 'Norway';
   if (locationLower.includes('luxembourg')) return 'Luxembourg';
+  if (locationLower.includes('tunisia') || locationLower.includes('tunis')) return 'Tunisia';
   
   return 'Unknown';
 }

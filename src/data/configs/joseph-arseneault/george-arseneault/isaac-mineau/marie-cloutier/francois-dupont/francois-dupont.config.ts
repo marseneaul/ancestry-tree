@@ -2249,7 +2249,7 @@ export const francoisDupontConfig = {
 																																																					name: "Torcato de Anjou",
 																																																					sex: "Male",
 																																																					birthPlace: "France",
-																																																					deathPlace: "Rennes, Ille-et-Vilaine, Bretagne, Franc",
+																																																					deathPlace: "Rennes, Ille-et-Vilaine, Bretagne, France",
 																																																					birthDate: "800",
 																																																					deathDate: "853",
 																																																					parents: [

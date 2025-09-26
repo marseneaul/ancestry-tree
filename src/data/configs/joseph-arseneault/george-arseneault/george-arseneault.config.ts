@@ -11,7 +11,7 @@ export const georgeArseneaultConfig = {
     name: "George Louis Arseneault",
     sex: "Male",
     birthPlace: "St-Etienne-Des-Gras, St-Maurice, PQ, Canada",
-    deathPlace: "Flint, Genesee, Michigan",
+    deathPlace: "Flint, Genesee, Michigan, United States",
     birthDate: "31 May 1863",
     deathDate: "4 March 1931",
     imageUrl: "./images/george-louis-arseneault.jpg",
@@ -94,10 +94,10 @@ export const georgeArseneaultConfig = {
                                                                 {
                                                                     name: "Marie Louise Ayotte",
                                                                     sex: "Female",
-                                                                    birthPlace: "29 April 1664",
-                                                                    deathPlace: "26 March 1720",
-                                                                    birthDate: "Sillery, Quebec, Canada",
-                                                                    deathDate: "Champlain, Quebec, Canada",
+                                                                    birthPlace: "Sillery, Quebec, Canada",
+                                                                    deathPlace: "Champlain, Quebec, Canada",
+                                                                    birthDate: "29 April 1664",
+                                                                    deathDate: "26 March 1720",
                                                                 },
                                                                 {
                                                                     name: "Daniel Normandin",

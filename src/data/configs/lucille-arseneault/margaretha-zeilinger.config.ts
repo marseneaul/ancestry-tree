@@ -3,7 +3,7 @@ export const margarethaZeiligerConfig = {
     name: "Margaretha Barbara Zeilinger",
     sex: "Female",
     birthPlace: "Ebersdorf, Dietenhofen, Ansbach, Bavaria, Germany",
-    deathPlace: "East Saginaw, Saginaw, Michigan",
+    deathPlace: "East Saginaw, Saginaw, Michigan, United States",
     birthDate: "3 April 1801",
     deathDate: "8 SEP 1870",
     parents: [
@@ -63,7 +63,7 @@ export const margarethaZeiligerConfig = {
                             name: "Katharina Arnold",
                             sex: "Female",
                             birthPlace: "Höfstetten, Bürglein, Ansbach, Bayern, Germany",
-                            deathPlace: "Dietenhofen, Ansbach, Bayern, Deutschland",
+                            deathPlace: "Dietenhofen, Ansbach, Bayern, Germany",
                             birthDate: "~1685",
                             deathDate: "11 September 1749",
                             parents: [
