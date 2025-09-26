@@ -193,7 +193,6 @@ function getCoordinates(location: string): [number, number] {
 
 // Extract migration patterns from ancestry tree
 export function extractMigrationPatterns(rootPerson: Person): MigrationPatterns {
-  console.log('Extracting migration patterns from:', rootPerson);
   const locationCounts = new Map<string, number>();
   const routes = new Map<string, MigrationRoute>();
   

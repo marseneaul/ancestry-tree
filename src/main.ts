@@ -3131,12 +3131,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Initialize migration content in stats section
   function initializeMigrationContent() {
-    console.log('Initializing migration content...');
     // Only initialize if not already done
     const mapContainer = document.getElementById('migration-map');
-    console.log('Map container found:', !!mapContainer);
     if (!mapContainer || mapContainer.innerHTML.trim() !== '') {
-      console.log('Map container already initialized or not found');
       return;
     }
 
@@ -3145,7 +3142,6 @@ document.addEventListener("DOMContentLoaded", () => {
       import('./utils/migration-visualization.js').then(({ MigrationMapVisualization }) => {
         // Extract migration patterns from the current tree data
         const patterns = extractMigrationPatterns(root.data);
-        console.log('Extracted migration patterns:', patterns);
         
         // Update the migration stats in the stats section
         const locationsCountEl = document.getElementById('migration-locations-count');

@@ -65,7 +65,6 @@ export class MigrationMapVisualization {
       .attr('viewBox', `0 0 ${this.width} ${this.height}`)
       .style('background', colors.background)
       .style('border-radius', '0.75rem')
-      .style('box-shadow', `0 4px 12px ${colors.shadow}`)
       .style('border', `1px solid ${colors.borders}`);
     
     // Create main group
@@ -91,9 +90,13 @@ export class MigrationMapVisualization {
   }
 
   private setupZoom(): void {
-    // Create zoom behavior
+    // Create zoom behavior with performance optimizations
     this.zoom = d3.zoom<SVGSVGElement, unknown>()
-      .scaleExtent([0.5, 8]) // Allow zoom from 0.5x to 8x
+      .scaleExtent([0.5, 4]) // Reduced max zoom for better performance
+      .filter((event) => {
+        // Only allow zoom on left mouse button and wheel
+        return !event.ctrlKey && !event.button;
+      })
       .on('zoom', (event) => {
         const { transform } = event;
         
@@ -261,22 +264,17 @@ export class MigrationMapVisualization {
         throw new Error('Response is not JSON');
       }
       this.worldData = await response.json();
-      console.log('World data loaded successfully:', this.worldData);
-      console.log('Number of features:', this.worldData.features?.length);
-      console.log('First feature sample:', this.worldData.features?.[0]);
       
       
       this.render();
     } catch (error) {
       console.error('Failed to load world data:', error);
-      console.log('Creating fallback map...');
       // Create a simple fallback
       this.createFallbackMap();
     }
   }
 
   private createFallbackMap(): void {
-    console.log('Creating fallback map...');
     
     // Clear any existing content
     this.g.selectAll('*').remove();
@@ -358,37 +356,28 @@ export class MigrationMapVisualization {
       });
     }
     
-    console.log('Fallback map created with', this.patterns?.points.length || 0, 'migration points');
   }
 
   public updatePatterns(patterns: MigrationPatterns): void {
-    console.log('Updating migration patterns:', patterns);
     this.patterns = patterns;
     this.render();
   }
 
   private render(): void {
-    console.log('Rendering map...', { worldData: !!this.worldData, patterns: !!this.patterns });
-    
     // Clear existing content
     this.g.selectAll('*').remove();
     
     // Always render something - either world map or fallback
     if (this.worldData) {
-      console.log('Rendering world map...');
       this.renderWorldMap();
       
       // Render migration data if available
       if (this.patterns) {
-        console.log('Rendering migration data...');
         this.renderMigrationData();
       }
     } else {
-      console.log('Rendering fallback map...');
       this.createFallbackMap();
     }
-    
-    console.log('Map render complete');
   }
 
   private renderWorldMap(): void {
@@ -402,16 +391,19 @@ export class MigrationMapVisualization {
       .center([0, 0])
       .translate([this.width / 2, this.height / 2]);
     
-    console.log('Projection settings:', {
-      scale: this.projection.scale(),
-      center: this.projection.center(),
-      translate: this.projection.translate()
+    
+    // Render countries - filter out very small features for performance
+    const countriesGroup = this.g.append('g').attr('class', 'countries');
+    const filteredFeatures = this.worldData.features.filter((feature: any) => {
+      // Only render features that are large enough to be visible
+      const bounds = this.path.bounds(feature);
+      const width = bounds[1][0] - bounds[0][0];
+      const height = bounds[1][1] - bounds[0][1];
+      return width > 2 && height > 2; // Only render features larger than 2x2 pixels
     });
     
-    // Render countries
-    const countriesGroup = this.g.append('g').attr('class', 'countries');
     const paths = countriesGroup.selectAll('path')
-      .data(this.worldData.features)
+      .data(filteredFeatures)
       .enter()
       .append('path')
       .attr('d', this.path)
@@ -420,7 +412,6 @@ export class MigrationMapVisualization {
       .attr('stroke-width', 0.5)
       .style('opacity', 0.8);
     
-    console.log('Rendered', paths.size(), 'country paths');
   }
 
   private renderMigrationData(): void {
@@ -439,8 +430,13 @@ export class MigrationMapVisualization {
     const colors = this.getThemeColors();
     const routesGroup = this.g.append('g').attr('class', 'migration-routes');
     
+    // Limit routes for performance (show top 30 most significant)
+    const sortedRoutes = this.patterns.routes
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 30);
+    
     routesGroup.selectAll('path')
-      .data(this.patterns.routes)
+      .data(sortedRoutes)
       .enter()
       .append('path')
       .attr('d', (route: MigrationRoute) => {
@@ -449,19 +445,14 @@ export class MigrationMapVisualization {
         
         if (!x1 || !y1 || !x2 || !y2) return '';
         
-        // Create curved path
-        const midX = (x1 + x2) / 2;
-        const midY = (y1 + y2) / 2;
-        const controlY = midY - Math.abs(x2 - x1) * 0.3;
-        
-        return `M ${x1} ${y1} Q ${midX} ${controlY} ${x2} ${y2}`;
+        // Use simple straight line for better performance
+        return `M ${x1} ${y1} L ${x2} ${y2}`;
       })
       .attr('fill', 'none')
       .attr('stroke', colors.accent)
       .attr('stroke-width', (route: MigrationRoute) => Math.max(1, Math.min(5, route.count * 0.5)))
       .attr('stroke-opacity', 0.7)
-      .attr('stroke-dasharray', '5,5')
-      .style('filter', `drop-shadow(0 1px 2px ${colors.shadow})`);
+      .attr('stroke-dasharray', '5,5');
   }
 
   private renderPoints(): void {
@@ -470,9 +461,14 @@ export class MigrationMapVisualization {
     const colors = this.getThemeColors();
     const pointsGroup = this.g.append('g').attr('class', 'migration-points');
     
+    // Limit the number of points for performance (show top 50 most significant)
+    const sortedPoints = this.patterns.points
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 50);
+    
     // Create point circles
     const circles = pointsGroup.selectAll('circle')
-      .data(this.patterns.points)
+      .data(sortedPoints)
       .enter()
       .append('circle')
       .attr('cx', (point: MigrationPoint) => {
@@ -483,27 +479,25 @@ export class MigrationMapVisualization {
         const [, y] = this.projection(point.coordinates);
         return y || 0;
       })
-      .attr('r', (point: MigrationPoint) => Math.max(3, Math.min(12, point.count * 2)))
+      .attr('r', (point: MigrationPoint) => Math.max(2, Math.min(8, point.count * 1.5)))
       .attr('fill', colors.accent)
       .attr('stroke', colors.background)
-      .attr('stroke-width', 2)
-      .style('filter', `drop-shadow(0 2px 4px ${colors.shadow})`)
+      .attr('stroke-width', 1)
+      .style('opacity', 0.8)
       .style('cursor', 'pointer');
     
-    // Add hover effects
+    // Add simplified hover effects for better performance
     circles
       .on('mouseover', function(event: MouseEvent, point: MigrationPoint) {
-        const colors = this.getThemeColors();
         d3.select(this)
-          .attr('r', Math.max(5, Math.min(15, point.count * 2.5)))
-          .attr('fill', colors.accentHover);
-      }.bind(this))
+          .style('opacity', 1)
+          .attr('r', Math.max(3, Math.min(10, point.count * 1.8)));
+      })
       .on('mouseout', function(event: MouseEvent, point: MigrationPoint) {
-        const colors = this.getThemeColors();
         d3.select(this)
-          .attr('r', Math.max(3, Math.min(12, point.count * 2)))
-          .attr('fill', colors.accent);
-      }.bind(this));
+          .style('opacity', 0.8)
+          .attr('r', Math.max(2, Math.min(8, point.count * 1.5)));
+      });
     
     // Add tooltips
     const tooltip = d3.select('body').append('div')
@@ -515,7 +509,6 @@ export class MigrationMapVisualization {
       .style('padding', '0.5rem 0.75rem')
       .style('font-size', '0.875rem')
       .style('color', colors.text)
-      .style('box-shadow', `0 4px 12px ${colors.shadow}`)
       .style('pointer-events', 'none')
       .style('opacity', 0)
       .style('z-index', 1000);
