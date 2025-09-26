@@ -502,7 +502,7 @@ export class MigrationMapVisualization {
     // Add tooltips
     const tooltip = d3.select('body').append('div')
       .attr('class', 'migration-tooltip')
-      .style('position', 'absolute')
+      .style('position', 'fixed')
       .style('background', colors.background)
       .style('border', `1px solid ${colors.borders}`)
       .style('border-radius', '0.5rem')
@@ -528,8 +528,8 @@ export class MigrationMapVisualization {
               ${point.country}
             </div>
           `)
-          .style('left', (event.pageX + 10) + 'px')
-          .style('top', (event.pageY - 10) + 'px');
+          .style('left', (event.pageX / 0.75 + 10) + 'px')
+          .style('top', (event.pageY / 0.75 - 28) + 'px');
       })
       .on('mouseout', function() {
         tooltip.style('opacity', 0);
