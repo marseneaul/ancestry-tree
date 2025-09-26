@@ -487,7 +487,7 @@ export const georgeArseneaultConfig = {
                                                                     name: "Louise Desgranges",
                                                                     sex: "Female",
                                                                     birthPlace: "Montmorency, val-d’oise, Ile-de-France, France",
-                                                                    deathPlace: "Neuville, Capitale-Nationale Region, Quebec",
+                                                                    deathPlace: "Neuville, Capitale-Nationale Region, Quebec, Canada",
                                                                     birthDate: "5 November 1648",
                                                                     deathDate: "11 November 1721",
                                                                     parents: [] // https://www.ancestry.com/family-tree/person/tree/90282466/person/322669828468/facts

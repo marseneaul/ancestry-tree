@@ -2,7 +2,7 @@
 export const johannHommesConfig = {
     name: "Johann Hommes",
     sex: "Male",
-    birthPlace: "Bruttig, Treis, Cochem, Rhineland, Prussia",
+    birthPlace: "Bruttig, Treis, Cochem, Rhineland, Prussia, Germany",
     birthDate: "12 February 1681",
     deathDate: "UNKNOWN",
     parents: [
@@ -16,35 +16,35 @@ export const johannHommesConfig = {
                 {
                     name: "Irmina Marsily",
                     sex: "Female",
-                    birthPlace: "Bruttig, Cochem, Rhineland, Prussia",
+                    birthPlace: "Bruttig, Cochem, Rhineland, Prussia, Germany",
                     birthDate: "16 February 1631",
                     deathDate: "UNKNOWN",
                     parents: [
                         {
                             name: "Maria or Catharina",
                             sex: "Female",
-                            birthPlace: "Bruttig, Cochem, Rhineland, Prussia",
+                            birthPlace: "Bruttig, Cochem, Rhineland, Prussia, Germany",
                             birthDate: "~1604",
                             deathDate: "UNKNOWN"
                         },
                         {
                             name: "Gottfried Marsily",
                             sex: "Male",
-                            birthPlace: "Bruttig, Cochem, Rhineland, Prussia",
+                            birthPlace: "Bruttig, Cochem, Rhineland, Prussia, Germany",
                             birthDate: "~1600",
                             deathDate: "UNKNOWN",
                             parents: [
                                 {
                                     name: "Elisabeth Geringer",
                                     sex: "Female",
-                                    birthPlace: "Bruttig, Cochem, Rhineland, Prussia",
+                                    birthPlace: "Bruttig, Cochem, Rhineland, Prussia, Germany",
                                     birthDate: "~1572",
                                     deathDate: "UNKNOWN",
                                 },
                                 {
                                     name: "Johann Marsily",
                                     sex: "Male",
-                                    birthPlace: "Bruttig, Cochem, Rhineland, Prussia",
+                                    birthPlace: "Bruttig, Cochem, Rhineland, Prussia, Germany",
                                     birthDate: "~1568",
                                     deathDate: "UNKNOWN"
                                 }
@@ -55,21 +55,21 @@ export const johannHommesConfig = {
                 {
                     name: "Jacob Lentz",
                     sex: "Male",
-                    birthPlace: "Bruttig, Cochem, Rhineland, Prussia",
+                    birthPlace: "Bruttig, Cochem, Rhineland, Prussia, Germany",
                     birthDate: "11 April 1626",
                     deathDate: "~1663-1665",
                     parents: [
                         {
                             name: "Barbara",
                             sex: "Female",
-                            birthPlace: "Bruttig, Cochem, Rhineland, Prussia",
+                            birthPlace: "Bruttig, Cochem, Rhineland, Prussia, Germany",
                             birthDate: "~1602",
                             deathDate: "UNKNOWN"
                         },
                         {
                             name: "Johann Lentz",
                             sex: "Male",
-                            birthPlace: "Bruttig, Cochem, Rhineland, Prussia",
+                            birthPlace: "Bruttig, Cochem, Rhineland, Prussia, Germany",
                             birthDate: "~1598",
                             deathDate: "UNKNOWN"
                         }
@@ -80,7 +80,7 @@ export const johannHommesConfig = {
         {
             name: "Johann Hommes",
             sex: "Male",
-            birthPlace: "Ellenz, Cochem, Rhineland, Prussia",
+            birthPlace: "Ellenz, Cochem, Rhineland, Prussia, Germany",
             birthDate: "19 May 1652",
             deathDate: "UNKNOWN",
             parents: [

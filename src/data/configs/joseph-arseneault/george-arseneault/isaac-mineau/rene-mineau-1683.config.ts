@@ -49,7 +49,7 @@ export const reneMineau1683Config = {
                     name: "Jean Celestin Migneault dit Chatillon",
                     sex: "Male",
                     birthPlace: "Châtillon-sous-Bagneux auj. Châtillon, France",
-                    deathPlace: "Château-Richer, La Côte-de-Beaupré, Quebec",
+                    deathPlace: "Château-Richer, La Côte-de-Beaupré, Quebec, Canada",
                     birthDate: "20 April 1622-1627",
                     deathDate: ">26 February 1679",
                     parents: [

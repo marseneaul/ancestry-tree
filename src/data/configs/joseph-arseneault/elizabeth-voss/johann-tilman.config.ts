@@ -6,21 +6,21 @@ import { susanneCochemConfig } from "./susanne-cochem.config";
 export const johannTilmanConfig = {
     name: "Johann Peter Tilman",
     sex: "Male",
-    birthPlace: "Ernst, Cochem, Rhineland, Prussia",
+    birthPlace: "Ernst, Cochem, Rhineland, Prussia, Germany",
     birthDate: "1 October 1742",
     deathDate: "UNKNOWN",
     parents: [
         {
             name: "Anna Christina Hommes",
             sex: "Female",
-            birthPlace: "Fankel, Cochem, Rhineland, Prussia",
+            birthPlace: "Fankel, Cochem, Rhineland, Prussia, Germany",
             birthDate: "~1708",
             deathDate: "24 April 1784",
             parents: [
                 {
                     name: "Annae Mariae Graas",
                     sex: "Female",
-                    birthPlace: "Fankel, Cochem, Rhineland, Prussia",
+                    birthPlace: "Fankel, Cochem, Rhineland, Prussia, Germany",
                     birthDate: "~1687",
                     deathDate: "UNKNOWN"
                 },
@@ -30,7 +30,7 @@ export const johannTilmanConfig = {
         {
             name: "Peter Nikolaus Tilman",
             sex: "Male",
-            birthPlace: "Ernst, Cochem, Rhineland, Prussia",
+            birthPlace: "Ernst, Cochem, Rhineland, Prussia, Germany",
             birthDate: "1 March 1709",
             deathDate: "UNKNOWN",
             parents: [

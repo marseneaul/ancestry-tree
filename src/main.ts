@@ -256,6 +256,14 @@ document.addEventListener("DOMContentLoaded", () => {
               </svg>
               <span class="btn-label">Filters</span>
             </button>
+            
+            <button class="header-btn" id="migration-toggle-btn" title="Migration Patterns">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+              <span class="btn-label">Migration</span>
+            </button>
           </div>
           
           <div class="control-group">
@@ -321,10 +329,16 @@ document.addEventListener("DOMContentLoaded", () => {
   timelinePanel.className = "timeline-panel hidden";
   timelinePanel.id = "timeline-panel";
 
+  // Create Migration Patterns Panel
+  const migrationPanel = document.createElement("div");
+  migrationPanel.className = "migration-panel hidden";
+  migrationPanel.id = "migration-panel";
+
   // Add panels to left sidebar (only one visible at a time)
   leftSidebar.appendChild(filterPanel);
   leftSidebar.appendChild(statsDashboard);
   leftSidebar.appendChild(timelinePanel);
+  leftSidebar.appendChild(migrationPanel);
 
   // Create Main Content Area
   const mainContent = document.createElement("div");
@@ -452,6 +466,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const statsToggleBtn = document.getElementById("stats-toggle-btn") as HTMLButtonElement;
   const timelineToggleBtn = document.getElementById("timeline-toggle-btn") as HTMLButtonElement;
   const filterToggleBtn = document.getElementById("filter-toggle-btn") as HTMLButtonElement;
+  const migrationToggleBtn = document.getElementById("migration-toggle-btn") as HTMLButtonElement;
   const exportBtn = document.getElementById("export-btn") as HTMLButtonElement;
   const themeToggleBtn = document.getElementById("theme-toggle-btn") as HTMLButtonElement;
   const legendToggleBtn = document.getElementById("legend-toggle-btn") as HTMLButtonElement;
@@ -1710,6 +1725,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Statistics dashboard state
   let isStatsDashboardVisible = false;
   let isTimelinePanelVisible = false;
+  let isMigrationPanelVisible = false;
   let lifespanByGeneration = new Map<number, number[]>();
   let dnaBreakdown: Array<{generation: number, count: number, dnaPercent: number}> = [];
 
@@ -2958,7 +2974,8 @@ document.addEventListener("DOMContentLoaded", () => {
   function updateGridLayout() {
     const leftPanelVisible = !filterPanel.classList.contains("hidden") || 
                             !statsDashboard.classList.contains("hidden") || 
-                            !timelinePanel.classList.contains("hidden");
+                            !timelinePanel.classList.contains("hidden") ||
+                            !migrationPanel.classList.contains("hidden");
     const rightPanelVisible = !legend.classList.contains("hidden");
     
     let gridColumns;
@@ -2980,8 +2997,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // Hide other panels first
     filterPanel.classList.add("hidden");
     timelinePanel.classList.add("hidden");
+    migrationPanel.classList.add("hidden");
     filterToggleBtn.classList.remove("active");
     timelineToggleBtn.classList.remove("active");
+    migrationToggleBtn.classList.remove("active");
     
     // Toggle stats panel
     isStatsDashboardVisible = !isStatsDashboardVisible;
@@ -3093,6 +3112,90 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
   }
 
+  // Initialize migration panel
+  function initializeMigrationPanel() {
+    // Import the migration utilities
+    import('./utils/migration-patterns.js').then(({ extractMigrationPatterns }) => {
+      import('./utils/migration-visualization.js').then(({ MigrationMapVisualization }) => {
+        // Extract migration patterns from the current tree data
+        const patterns = extractMigrationPatterns(root.data);
+        
+        // Create migration panel content
+        migrationPanel.innerHTML = `
+          <div class="migration-title">🗺️ Migration Patterns</div>
+          <div class="migration-content">
+            <div class="migration-stats">
+              <div class="stat-item">
+                <div class="stat-number">${patterns.points.length}</div>
+                <div class="stat-label">Locations</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-number">${patterns.routes.length}</div>
+                <div class="stat-label">Migration Routes</div>
+              </div>
+            </div>
+            <div class="migration-map-container" id="migration-map"></div>
+            <div class="migration-legend">
+              <div class="legend-item">
+                <div class="legend-dot migration-point"></div>
+                <span>Birth/Death Locations</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-line migration-route"></div>
+                <span>Migration Routes</span>
+              </div>
+            </div>
+          </div>
+        `;
+        
+        // Create the migration map visualization
+        const mapContainer = document.getElementById('migration-map');
+        if (mapContainer && patterns.points.length > 0) {
+          const mapViz = new MigrationMapVisualization({
+            width: 400,
+            height: 300,
+            container: mapContainer,
+            showRoutes: true,
+            showPoints: true
+          });
+          
+          // Update the map with migration patterns
+          mapViz.updatePatterns(patterns);
+        } else if (mapContainer) {
+          mapContainer.innerHTML = `
+            <div class="no-migration-data">
+              <div class="no-data-icon">📍</div>
+              <div class="no-data-text">No migration data available</div>
+              <div class="no-data-subtext">Add birth and death locations to see migration patterns</div>
+            </div>
+          `;
+        }
+      }).catch(error => {
+        console.error('Failed to load migration visualization:', error);
+        migrationPanel.innerHTML = `
+          <div class="migration-title">🗺️ Migration Patterns</div>
+          <div class="migration-content">
+            <div class="migration-error">
+              <div class="error-icon">⚠️</div>
+              <div class="error-text">Failed to load migration visualization</div>
+            </div>
+          </div>
+        `;
+      });
+    }).catch(error => {
+      console.error('Failed to load migration patterns:', error);
+      migrationPanel.innerHTML = `
+        <div class="migration-title">🗺️ Migration Patterns</div>
+        <div class="migration-content">
+          <div class="migration-error">
+            <div class="error-icon">⚠️</div>
+            <div class="error-text">Failed to load migration data</div>
+          </div>
+        </div>
+      `;
+    });
+  }
+
   // Close statistics dashboard when clicking outside
   document.addEventListener("click", (event) => {
     if (isStatsDashboardVisible && 
@@ -3105,6 +3208,11 @@ document.addEventListener("DOMContentLoaded", () => {
         !timelineToggleBtn.contains(event.target as Node)) {
       closeTimelinePanel();
     }
+    if (isMigrationPanelVisible && 
+        !migrationPanel.contains(event.target as Node) && 
+        !migrationToggleBtn.contains(event.target as Node)) {
+      closeMigrationPanel();
+    }
   });
 
   // Close timeline panel function
@@ -3114,13 +3222,22 @@ document.addEventListener("DOMContentLoaded", () => {
     timelineToggleBtn.classList.remove("active");
   }
 
+  // Close migration panel function
+  function closeMigrationPanel() {
+    isMigrationPanelVisible = false;
+    migrationPanel.classList.add("hidden");
+    migrationToggleBtn.classList.remove("active");
+  }
+
   // Toggle timeline panel visibility
   timelineToggleBtn.addEventListener("click", () => {
     // Hide other panels first
     filterPanel.classList.add("hidden");
     statsDashboard.classList.add("hidden");
+    migrationPanel.classList.add("hidden");
     filterToggleBtn.classList.remove("active");
     statsToggleBtn.classList.remove("active");
+    migrationToggleBtn.classList.remove("active");
     
     // Toggle timeline panel
     isTimelinePanelVisible = !isTimelinePanelVisible;
@@ -3145,8 +3262,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // Hide other panels first
     statsDashboard.classList.add("hidden");
     timelinePanel.classList.add("hidden");
+    migrationPanel.classList.add("hidden");
     statsToggleBtn.classList.remove("active");
     timelineToggleBtn.classList.remove("active");
+    migrationToggleBtn.classList.remove("active");
     
     // Toggle filter panel
     isFilterPanelVisible = !isFilterPanelVisible;
@@ -3164,6 +3283,34 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Set initial active state for filter button since panel is open by default
   filterToggleBtn.classList.add("active");
+
+  // Toggle migration panel visibility
+  migrationToggleBtn.addEventListener("click", () => {
+    // Hide other panels first
+    filterPanel.classList.add("hidden");
+    statsDashboard.classList.add("hidden");
+    timelinePanel.classList.add("hidden");
+    filterToggleBtn.classList.remove("active");
+    statsToggleBtn.classList.remove("active");
+    timelineToggleBtn.classList.remove("active");
+    
+    // Toggle migration panel
+    isMigrationPanelVisible = !isMigrationPanelVisible;
+    migrationPanel.classList.toggle("hidden", !isMigrationPanelVisible);
+    migrationToggleBtn.classList.toggle("active", isMigrationPanelVisible);
+    
+    // Update grid layout
+    updateGridLayout();
+    
+    // On mobile, toggle the left sidebar visibility
+    if (window.innerWidth <= 768) {
+      leftSidebar.classList.toggle('active', isMigrationPanelVisible);
+    }
+    
+    if (isMigrationPanelVisible) {
+      initializeMigrationPanel();
+    }
+  });
 
   // Theme management
   let currentTheme = localStorage.getItem('theme') || 'light';

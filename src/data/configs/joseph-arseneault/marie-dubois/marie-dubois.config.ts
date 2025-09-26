@@ -17,7 +17,7 @@ export const marieDuboisConfig = {
             name: "Sophie Marie Therrien dit Landry",
             sex: "Female",
             birthPlace: "Baie-du-Febvre, Nicolet-Yamaska, Quebec, Canada",
-            deathPlace: "Gentilly, Nicolet, Quebec",
+            deathPlace: "Gentilly, Nicolet, Quebec, Canada",
             birthDate: "23 February 1838",
             deathDate: "9 October 1915",
             imageUrl: "./images/sophie-landry.jpg",
