@@ -56,20 +56,72 @@ const LOCATION_COORDINATES: Record<string, [number, number]> = {
   
   // Canada
   'Canada': [-106.3468, 56.1304],
-  'Quebec, Canada': [-73.5491, 52.9399],
+  'Quebec, Canada': [-71.2374, 46.8139],
+  'Ontario, Canada': [-79.3832, 43.6532],
   'Montreal, Quebec, Canada': [-73.5673, 45.5017],
   'Trois-Rivières, Quebec, Canada': [-72.5449, 46.3432],
+  'Maskinonge, Quebec, Canada': [-73.0192, 46.2286],
+  'Louiseville, Maskinonge, Quebec, Canada': [-73.0192, 46.2286],
+  'St-Antoine-de-Riviere-du-Loup, Louisevillle, Maskinonge, Quebec, Canada': [-73.0192, 46.2286],
+  'Yamachiche, Québec, Canada': [-72.8333, 46.2667],
+  'Richelieu, Québec, Canada': [-73.2500, 45.4500],
   
   // United States
   'United States': [-95.7129, 37.0902],
+  'Pennsylvania, United States': [-77.1945, 41.2033],
+  'Maryland, United States': [-76.8021, 39.0458],
+  'Virginia, United States': [-78.1694, 37.7693],
+  'Fayette, Pennsylvania, United States': [-79.6420, 39.9201],
+  'German Township, Fayette, Pennsylvania, United States': [-79.6420, 39.9201],
+  'Berks, Pennsylvania, United States': [-75.9269, 40.3357],
+  'Chester, Pennsylvania, United States': [-75.6107, 39.9612],
+  'Philadelphia, Philadelphia, Pennsylvania, United States': [-75.1652, 39.9526],
+  'Lancaster, Lancaster, Pennsylvania, United States': [-76.3055, 40.0379],
+  'Dauphin County, Pennsylvania, United States': [-76.8494, 40.3701],
+  'Northampton, Northampton, Pennsylvania, United States': [-75.3079, 40.6884],
+  'Cumberland, Pennsylvania, United States': [-77.0090, 40.1635],
+  'Westmoreland, Pennsylvania, United States': [-79.5459, 40.3106],
+  'Hempfield Township, Westmoreland, Pennsylvania, United States': [-79.5459, 40.3106],
+  'Fayette City, Fayette, Pennsylvania, United States': [-79.8420, 40.1001],
+  'Yorks Run, Fayette, Pennsylvania, United States': [-79.6420, 39.9201],
+  'Block House, Pennsylvania, United States': [-79.6420, 39.9201],
   'Michigan, United States': [-84.5467, 43.3266],
+  'Detroit, Michigan, United States': [-83.0458, 42.3314],
+  'Detroit, Wayne, Michigan, United States': [-83.0458, 42.3314],
+  'Flint, Genesee, Michigan, United States': [-83.6875, 43.0125],
+  'Flint, Genesee County, Michigan, United States': [-83.6875, 43.0125],
+  'Portland, Ionia, Michigan, United States': [-84.9031, 42.8692],
+  'Orange, Ionia, Michigan, United States': [-84.9031, 42.8692],
+  'Mount Pleasant, Isabelle, Michigan, United States': [-84.7678, 43.5978],
+  'Hancock, Houghton County, Michigan, United States': [-88.5809, 47.1269],
+  'East Saginaw, Saginaw, Michigan, United States': [-83.9877, 43.4195],
+  'Tuscola, Tuscola Township, Tuscola, Michigan, United States': [-83.6833, 43.4167],
+  'Denmark Township, Tuscola County, Michigan, United States': [-83.6833, 43.4167],
+  'Blumfield Township, Saginaw County, Michigan, United States': [-83.9877, 43.4195],
+  'Traverse City, Grand Traverse, Michigan, United States': [-85.6206, 44.7631],
+  'Frankenmuth, Saginaw, Michigan, United States': [-83.7406, 43.3317],
+  'Richville, Michigan, United States': [-83.6833, 43.4167],
+  'Richville, Tuscola, Michigan, United States': [-83.6833, 43.4167],
   'Ohio, United States': [-82.7649, 40.3888],
   'Columbus, Franklin, Ohio, United States': [-82.9988, 39.9612],
+  'Wayne, Ohio, United States': [-81.8880, 40.8292],
+  'Wayne Township, Ohio, United States': [-81.8880, 40.8292],
+  'East Union Township, Wayne, Ohio, United States': [-81.8880, 40.8292],
+  'East Union, Wayne, Ohio, United States': [-81.8880, 40.8292],
+  'Union Township, Wayne, Ohio, United States': [-81.8880, 40.8292],
+  'Smithville, Wayne, Ohio, United States': [-81.8880, 40.8292],
+  'Apple Creek, East Union, Wayne, Ohio, United States': [-81.8880, 40.8292],
+  'Steubenville, Jefferson, Ohio, United States': [-80.6189, 40.3698],
+  'Wooster, Wayne, Ohio, United States': [-81.9351, 40.8056],
+  'West Brookfield, Stark County, Ohio, United States': [-81.3332, 40.8134],
+  'Seneca, Seneca, Ohio, United States': [-82.9988, 39.9612],
+  'West Millgrove, Wood, Ohio, United States': [-83.4916, 41.3442],
+  'New Vienna, Ohio, United States': [-83.6916, 39.3231],
+  'Licking, Ohio, United States': [-82.3985, 40.0912],
   'Oscoda, Iosco, Michigan, United States': [-83.3308, 44.4200],
   'Cheboygan, Cheboygan, Michigan, United States': [-84.4747, 45.6469],
   'Onaway, Presque Isle, Michigan, USA': [-84.2278, 45.3575],
   'Richville Township, Tuscola, Michigan, United States': [-83.6833, 43.4167],
-  'Licking, Ohio, United States': [-82.3985, 40.0912],
   
   // Ireland
   'Ireland': [-8.2439, 53.4129],
@@ -196,53 +248,95 @@ export function extractMigrationPatterns(rootPerson: Person): MigrationPatterns 
   const locationCounts = new Map<string, number>();
   const routes = new Map<string, MigrationRoute>();
   
+  // Function to normalize location to country/region level
+  function normalizeLocation(location: string): string {
+    if (!location || location === 'Unknown' || location === 'UNKNOWN') {
+      return 'Unknown';
+    }
+    
+    // Extract country from location string
+    const country = extractCountry(location);
+    
+    // For US locations, group by state
+    if (country === 'United States') {
+      if (location.includes('Pennsylvania')) return 'Pennsylvania, United States';
+      if (location.includes('Ohio')) return 'Ohio, United States';
+      if (location.includes('Michigan')) return 'Michigan, United States';
+      if (location.includes('Maryland')) return 'Maryland, United States';
+      if (location.includes('Virginia')) return 'Virginia, United States';
+      return 'United States';
+    }
+    
+    // For Canada, group by province
+    if (country === 'Canada') {
+      if (location.includes('Quebec')) return 'Quebec, Canada';
+      if (location.includes('Ontario')) return 'Ontario, Canada';
+      return 'Canada';
+    }
+    
+    // For other countries, use the country name
+    return country;
+  }
+  
   // Recursively traverse the tree to collect location data
   function traversePerson(person: Person, depth: number = 0) {
     if (!person) return;
     
-    // Count birth places
+    // Count birth places (normalized to country/region level)
     if (person.birthPlace && person.birthPlace !== 'Unknown' && person.birthPlace !== 'UNKNOWN') {
-      console.log('Found birth place:', person.birthPlace, 'for person:', person.name);
-      const count = locationCounts.get(person.birthPlace) || 0;
-      locationCounts.set(person.birthPlace, count + 1);
+      const normalizedLocation = normalizeLocation(person.birthPlace);
+      if (normalizedLocation !== 'Unknown') {
+        const count = locationCounts.get(normalizedLocation) || 0;
+        locationCounts.set(normalizedLocation, count + 1);
+      }
     }
     
-    // Count death places
+    // Count death places (normalized to country/region level)
     if (person.deathPlace && person.deathPlace !== 'Unknown' && person.deathPlace !== 'UNKNOWN') {
-      const count = locationCounts.get(person.deathPlace) || 0;
-      locationCounts.set(person.deathPlace, count + 1);
+      const normalizedLocation = normalizeLocation(person.deathPlace);
+      if (normalizedLocation !== 'Unknown') {
+        const count = locationCounts.get(normalizedLocation) || 0;
+        locationCounts.set(normalizedLocation, count + 1);
+      }
     }
     
-    // Track migration routes (birth to death)
+    // Track migration routes (birth to death) - normalized
     if (person.birthPlace && person.deathPlace && 
-        person.birthPlace !== person.deathPlace &&
         person.birthPlace !== 'Unknown' && person.birthPlace !== 'UNKNOWN' &&
         person.deathPlace !== 'Unknown' && person.deathPlace !== 'UNKNOWN') {
       
-      const routeKey = `${person.birthPlace} -> ${person.deathPlace}`;
-      const existingRoute = routes.get(routeKey);
+      const fromLocation = normalizeLocation(person.birthPlace);
+      const toLocation = normalizeLocation(person.deathPlace);
       
-      if (existingRoute) {
-        existingRoute.count++;
-      } else {
-        const fromCoords = getCoordinates(person.birthPlace);
-        const toCoords = getCoordinates(person.deathPlace);
+      // Only create routes between different locations
+      if (fromLocation !== toLocation && fromLocation !== 'Unknown' && toLocation !== 'Unknown') {
+        const routeKey = `${fromLocation} -> ${toLocation}`;
+        const existingRoute = routes.get(routeKey);
         
-        routes.set(routeKey, {
-          from: {
-            name: person.birthPlace,
-            coordinates: fromCoords,
-            country: extractCountry(person.birthPlace),
+        if (existingRoute) {
+          existingRoute.count++;
+        } else {
+          const fromCoords = getCoordinates(fromLocation);
+          const toCoords = getCoordinates(toLocation);
+          
+          routes.set(routeKey, {
+            from: {
+              name: fromLocation,
+              coordinates: fromCoords,
+              country: extractCountry(fromLocation),
+              count: 1,
+              timePeriod: 'Historical'
+            },
+            to: {
+              name: toLocation,
+              coordinates: toCoords,
+              country: extractCountry(toLocation),
+              count: 1,
+              timePeriod: 'Historical'
+            },
             count: 1
-          },
-          to: {
-            name: person.deathPlace,
-            coordinates: toCoords,
-            country: extractCountry(person.deathPlace),
-            count: 1
-          },
-          count: 1
-        });
+          });
+        }
       }
     }
     
@@ -268,11 +362,15 @@ export function extractMigrationPatterns(rootPerson: Person): MigrationPatterns 
     };
   });
   
-  console.log('Extracted migration points:', points);
-  console.log('Extracted migration routes:', Array.from(routes.values()));
+  // Filter routes to only include those where both endpoints have points on the map
+  const validRoutes: MigrationRoute[] = Array.from(routes.values()).filter(route => {
+    const fromHasPoint = points.some(point => point.name === route.from.name);
+    const toHasPoint = points.some(point => point.name === route.to.name);
+    return fromHasPoint && toHasPoint;
+  });
   
-  // Convert routes to array
-  const routeArray: MigrationRoute[] = Array.from(routes.values());
+  // Use the filtered routes
+  const routesArray: MigrationRoute[] = validRoutes;
   
   // Calculate bounds
   const allCoords = points.map(p => p.coordinates).filter(([lng, lat]) => lng !== 0 || lat !== 0);
@@ -294,7 +392,7 @@ export function extractMigrationPatterns(rootPerson: Person): MigrationPatterns 
   
   return {
     points,
-    routes: routeArray,
+    routes: routesArray,
     bounds
   };
 }
