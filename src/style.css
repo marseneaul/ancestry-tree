@@ -2457,7 +2457,7 @@ body {
   }
 
   .migration-stats .stat-number {
-    font-size: var(--font-size-2xl);
+    font-size: var(--font-size-lg);
     font-weight: var(--font-weight-bold);
     color: var(--accent-primary);
     line-height: 1;
@@ -2838,7 +2838,7 @@ body {
   }
 
   .stats-section .migration-stats .stat-number {
-    font-size: var(--font-size-2xl);
+    font-size: var(--font-size-lg);
     font-weight: var(--font-weight-bold);
     color: var(--accent-primary);
     line-height: 1;
@@ -3852,7 +3852,7 @@ body {
     }
 
     .migration-stats .stat-number {
-      font-size: var(--font-size-xl);
+      font-size: var(--font-size-lg);
     }
 
     /* Mobile pie chart legend */
