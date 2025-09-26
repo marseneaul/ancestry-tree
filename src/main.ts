@@ -257,13 +257,6 @@ document.addEventListener("DOMContentLoaded", () => {
               <span class="btn-label">Filters</span>
             </button>
             
-            <button class="header-btn" id="migration-toggle-btn" title="Migration Patterns">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                <circle cx="12" cy="10" r="3"/>
-              </svg>
-              <span class="btn-label">Migration</span>
-            </button>
           </div>
           
           <div class="control-group">
@@ -329,16 +322,11 @@ document.addEventListener("DOMContentLoaded", () => {
   timelinePanel.className = "timeline-panel hidden";
   timelinePanel.id = "timeline-panel";
 
-  // Create Migration Patterns Panel
-  const migrationPanel = document.createElement("div");
-  migrationPanel.className = "migration-panel hidden";
-  migrationPanel.id = "migration-panel";
 
   // Add panels to left sidebar (only one visible at a time)
   leftSidebar.appendChild(filterPanel);
   leftSidebar.appendChild(statsDashboard);
   leftSidebar.appendChild(timelinePanel);
-  leftSidebar.appendChild(migrationPanel);
 
   // Create Main Content Area
   const mainContent = document.createElement("div");
@@ -466,7 +454,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const statsToggleBtn = document.getElementById("stats-toggle-btn") as HTMLButtonElement;
   const timelineToggleBtn = document.getElementById("timeline-toggle-btn") as HTMLButtonElement;
   const filterToggleBtn = document.getElementById("filter-toggle-btn") as HTMLButtonElement;
-  const migrationToggleBtn = document.getElementById("migration-toggle-btn") as HTMLButtonElement;
   const exportBtn = document.getElementById("export-btn") as HTMLButtonElement;
   const themeToggleBtn = document.getElementById("theme-toggle-btn") as HTMLButtonElement;
   const legendToggleBtn = document.getElementById("legend-toggle-btn") as HTMLButtonElement;
@@ -1030,8 +1017,7 @@ document.addEventListener("DOMContentLoaded", () => {
   
   let root = buildHierarchy(rootPerson);
 
-  // Pre-load migration panel after tree is created
-  preloadMigrationPanel();
+  // Migration content will be initialized when stats dashboard is opened
 
   const treeLayout = d3.tree<Person>().size([width, height - 120]).nodeSize([180, 200]);  // Increased horizontal spacing to prevent text overlap
 
@@ -1727,7 +1713,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // Statistics dashboard state
   let isStatsDashboardVisible = false;
   let isTimelinePanelVisible = false;
-  let isMigrationPanelVisible = false;
   let lifespanByGeneration = new Map<number, number[]>();
   let dnaBreakdown: Array<{generation: number, count: number, dnaPercent: number}> = [];
 
@@ -2133,23 +2118,49 @@ document.addEventListener("DOMContentLoaded", () => {
           🌍 Migration Patterns <span class="collapse-icon" onclick="event.stopPropagation(); toggleSection('migration');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
         </div>
         <div class="stats-section-content" id="migration">
-          <div class="dna-breakdown">
-            ${(() => {
-              const migrationEntries = Array.from(migrationPatterns.entries())
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, 6);
-              const maxCount = migrationEntries.length > 0 ? Math.max(...migrationEntries.map(([, count]) => count)) : 1;
-              
-              return migrationEntries.map(([migration, count]) => `
-                <div class="dna-item">
-                  <span class="dna-label">${migration}</span>
-                  <div class="dna-bar">
-                    <div class="dna-fill" style="width: ${(count / maxCount) * 100}%"></div>
-                  </div>
-                  <span class="dna-percent">${count}</span>
-                </div>
-              `).join('');
-            })()}
+          <div class="migration-content">
+            <div class="migration-stats">
+              <div class="stat-item">
+                <div class="stat-number" id="migration-locations-count">-</div>
+                <div class="stat-label">Locations</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-number" id="migration-routes-count">-</div>
+                <div class="stat-label">Migration Routes</div>
+              </div>
+            </div>
+            <div class="migration-map-container" id="migration-map"></div>
+            <div class="migration-legend">
+              <div class="legend-item">
+                <div class="legend-dot migration-point"></div>
+                <span>Birth/Death Locations</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-line migration-route"></div>
+                <span>Migration Routes</span>
+              </div>
+            </div>
+            <div class="migration-patterns-breakdown">
+              <h4>Migration Pattern Breakdown</h4>
+              <div class="dna-breakdown">
+                ${(() => {
+                  const migrationEntries = Array.from(migrationPatterns.entries())
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 6);
+                  const maxCount = migrationEntries.length > 0 ? Math.max(...migrationEntries.map(([, count]) => count)) : 1;
+                  
+                  return migrationEntries.map(([migration, count]) => `
+                    <div class="dna-item">
+                      <span class="dna-label">${migration}</span>
+                      <div class="dna-bar">
+                        <div class="dna-fill" style="width: ${(count / maxCount) * 100}%"></div>
+                      </div>
+                      <span class="dna-percent">${count}</span>
+                    </div>
+                  `).join('');
+                })()}
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -2976,8 +2987,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function updateGridLayout() {
     const leftPanelVisible = !filterPanel.classList.contains("hidden") || 
                             !statsDashboard.classList.contains("hidden") || 
-                            !timelinePanel.classList.contains("hidden") ||
-                            !migrationPanel.classList.contains("hidden");
+                            !timelinePanel.classList.contains("hidden");
     const rightPanelVisible = !legend.classList.contains("hidden");
     
     let gridColumns;
@@ -2999,10 +3009,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // Hide other panels first
     filterPanel.classList.add("hidden");
     timelinePanel.classList.add("hidden");
-    migrationPanel.classList.add("hidden");
     filterToggleBtn.classList.remove("active");
     timelineToggleBtn.classList.remove("active");
-    migrationToggleBtn.classList.remove("active");
     
     // Toggle stats panel
     isStatsDashboardVisible = !isStatsDashboardVisible;
@@ -3033,6 +3041,10 @@ document.addEventListener("DOMContentLoaded", () => {
         renderDnaInheritanceChart();
         // Also populate the DNA inheritance stats section
         const dnaStatsElement = document.getElementById('dna-inheritance-stats');
+        
+        // Initialize migration content when stats dashboard is opened
+        console.log('Initializing migration content...');
+        initializeMigrationContent();
         if (dnaStatsElement) {
           dnaStatsElement.innerHTML = generateDnaInheritanceStats();
         }
@@ -3117,10 +3129,11 @@ document.addEventListener("DOMContentLoaded", () => {
   // Global migration visualization instance
   let migrationMapViz: any = null;
 
-  // Initialize migration panel (pre-load the map)
-  function initializeMigrationPanel() {
+  // Initialize migration content in stats section
+  function initializeMigrationContent() {
     // Only initialize if not already done
-    if (migrationPanel.innerHTML.trim() !== '') {
+    const mapContainer = document.getElementById('migration-map');
+    if (!mapContainer || mapContainer.innerHTML.trim() !== '') {
       return;
     }
 
@@ -3130,36 +3143,14 @@ document.addEventListener("DOMContentLoaded", () => {
         // Extract migration patterns from the current tree data
         const patterns = extractMigrationPatterns(root.data);
         
-        // Create migration panel content
-        migrationPanel.innerHTML = `
-          <div class="migration-title">🗺️ Migration Patterns</div>
-          <div class="migration-content">
-            <div class="migration-stats">
-              <div class="stat-item">
-                <div class="stat-number">${patterns.points.length}</div>
-                <div class="stat-label">Locations</div>
-              </div>
-              <div class="stat-item">
-                <div class="stat-number">${patterns.routes.length}</div>
-                <div class="stat-label">Migration Routes</div>
-              </div>
-            </div>
-            <div class="migration-map-container" id="migration-map"></div>
-            <div class="migration-legend">
-              <div class="legend-item">
-                <div class="legend-dot migration-point"></div>
-                <span>Birth/Death Locations</span>
-              </div>
-              <div class="legend-item">
-                <div class="legend-line migration-route"></div>
-                <span>Migration Routes</span>
-              </div>
-            </div>
-          </div>
-        `;
+        // Update the migration stats in the stats section
+        const locationsCountEl = document.getElementById('migration-locations-count');
+        const routesCountEl = document.getElementById('migration-routes-count');
+        
+        if (locationsCountEl) locationsCountEl.textContent = patterns.points.length.toString();
+        if (routesCountEl) routesCountEl.textContent = patterns.routes.length.toString();
         
         // Create the migration map visualization
-        const mapContainer = document.getElementById('migration-map');
         if (mapContainer && patterns.points.length > 0) {
           migrationMapViz = new MigrationMapVisualization({
             width: 400,
@@ -3182,52 +3173,45 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }).catch(error => {
         console.error('Failed to load migration visualization:', error);
-        migrationPanel.innerHTML = `
-          <div class="migration-title">🗺️ Migration Patterns</div>
-          <div class="migration-content">
+        if (mapContainer) {
+          mapContainer.innerHTML = `
             <div class="migration-error">
               <div class="error-icon">⚠️</div>
               <div class="error-text">Failed to load migration visualization</div>
             </div>
-          </div>
-        `;
+          `;
+        }
       });
     }).catch(error => {
       console.error('Failed to load migration patterns:', error);
-      migrationPanel.innerHTML = `
-        <div class="migration-title">🗺️ Migration Patterns</div>
-        <div class="migration-content">
+      if (mapContainer) {
+        mapContainer.innerHTML = `
           <div class="migration-error">
             <div class="error-icon">⚠️</div>
             <div class="error-text">Failed to load migration data</div>
           </div>
-        </div>
-      `;
+        `;
+      }
     });
   }
 
-  // Pre-load migration panel after tree is initialized
-  function preloadMigrationPanel() {
-    // Wait a bit for the tree to be fully loaded, then pre-load migration panel
-    setTimeout(() => {
-      if (root && root.data) {
-        initializeMigrationPanel();
-      }
-    }, 1000);
-  }
 
   // Refresh migration data when tree is updated
   function refreshMigrationData() {
-    if (migrationMapViz && root && root.data) {
+    if (root && root.data) {
       import('./utils/migration-patterns.js').then(({ extractMigrationPatterns }) => {
         const patterns = extractMigrationPatterns(root.data);
-        migrationMapViz.updatePatterns(patterns);
         
-        // Update stats
-        const statNumbers = document.querySelectorAll('.migration-stats .stat-number');
-        if (statNumbers.length >= 2) {
-          statNumbers[0].textContent = patterns.points.length.toString();
-          statNumbers[1].textContent = patterns.routes.length.toString();
+        // Update the migration stats in the stats section
+        const locationsCountEl = document.getElementById('migration-locations-count');
+        const routesCountEl = document.getElementById('migration-routes-count');
+        
+        if (locationsCountEl) locationsCountEl.textContent = patterns.points.length.toString();
+        if (routesCountEl) routesCountEl.textContent = patterns.routes.length.toString();
+        
+        // Update the map visualization if it exists
+        if (migrationMapViz) {
+          migrationMapViz.updatePatterns(patterns);
         }
       });
     }
@@ -3245,11 +3229,6 @@ document.addEventListener("DOMContentLoaded", () => {
         !timelineToggleBtn.contains(event.target as Node)) {
       closeTimelinePanel();
     }
-    if (isMigrationPanelVisible && 
-        !migrationPanel.contains(event.target as Node) && 
-        !migrationToggleBtn.contains(event.target as Node)) {
-      closeMigrationPanel();
-    }
   });
 
   // Close timeline panel function
@@ -3259,22 +3238,14 @@ document.addEventListener("DOMContentLoaded", () => {
     timelineToggleBtn.classList.remove("active");
   }
 
-  // Close migration panel function
-  function closeMigrationPanel() {
-    isMigrationPanelVisible = false;
-    migrationPanel.classList.add("hidden");
-    migrationToggleBtn.classList.remove("active");
-  }
 
   // Toggle timeline panel visibility
   timelineToggleBtn.addEventListener("click", () => {
     // Hide other panels first
     filterPanel.classList.add("hidden");
     statsDashboard.classList.add("hidden");
-    migrationPanel.classList.add("hidden");
     filterToggleBtn.classList.remove("active");
     statsToggleBtn.classList.remove("active");
-    migrationToggleBtn.classList.remove("active");
     
     // Toggle timeline panel
     isTimelinePanelVisible = !isTimelinePanelVisible;
@@ -3299,10 +3270,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // Hide other panels first
     statsDashboard.classList.add("hidden");
     timelinePanel.classList.add("hidden");
-    migrationPanel.classList.add("hidden");
     statsToggleBtn.classList.remove("active");
     timelineToggleBtn.classList.remove("active");
-    migrationToggleBtn.classList.remove("active");
     
     // Toggle filter panel
     isFilterPanelVisible = !isFilterPanelVisible;
@@ -3321,34 +3290,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // Set initial active state for filter button since panel is open by default
   filterToggleBtn.classList.add("active");
 
-  // Toggle migration panel visibility
-  migrationToggleBtn.addEventListener("click", () => {
-    // Hide other panels first
-    filterPanel.classList.add("hidden");
-    statsDashboard.classList.add("hidden");
-    timelinePanel.classList.add("hidden");
-    filterToggleBtn.classList.remove("active");
-    statsToggleBtn.classList.remove("active");
-    timelineToggleBtn.classList.remove("active");
-    
-    // Toggle migration panel
-    isMigrationPanelVisible = !isMigrationPanelVisible;
-    migrationPanel.classList.toggle("hidden", !isMigrationPanelVisible);
-    migrationToggleBtn.classList.toggle("active", isMigrationPanelVisible);
-    
-    // Update grid layout
-    updateGridLayout();
-    
-    // On mobile, toggle the left sidebar visibility
-    if (window.innerWidth <= 768) {
-      leftSidebar.classList.toggle('active', isMigrationPanelVisible);
-    }
-    
-    if (isMigrationPanelVisible) {
-      // Panel is already pre-loaded, just show it
-      // No need to re-initialize
-    }
-  });
 
   // Theme management
   let currentTheme = localStorage.getItem('theme') || 'light';
@@ -3572,6 +3513,13 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log('Expanding section...');
       content.style.display = 'block';
       icon.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg>';
+      
+      // Initialize migration content when migration section is expanded
+      if (sectionId === 'migration') {
+        setTimeout(() => {
+          initializeMigrationContent();
+        }, 100);
+      }
     } else {
       console.log('Collapsing section...');
       content.style.display = 'none';

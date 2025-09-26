@@ -2816,6 +2816,80 @@ body {
     gap: 12px;
   }
 
+  /* Migration content within stats section */
+  .stats-section .migration-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .stats-section .migration-stats {
+    display: flex;
+    gap: var(--space-4);
+    justify-content: space-around;
+  }
+
+  .stats-section .migration-stats .stat-item {
+    text-align: center;
+    padding: var(--space-3);
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-primary);
+  }
+
+  .stats-section .migration-stats .stat-number {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--accent-primary);
+    line-height: 1;
+  }
+
+  .stats-section .migration-stats .stat-label {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    margin-top: var(--space-1);
+  }
+
+  .stats-section .migration-map-container {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .stats-section .migration-legend {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-3);
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-primary);
+  }
+
+  .stats-section .migration-legend .legend-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+  }
+
+  .stats-section .migration-patterns-breakdown {
+    margin-top: var(--space-4);
+  }
+
+  .stats-section .migration-patterns-breakdown h4 {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+    margin-bottom: var(--space-2);
+  }
+
   .migration-pattern {
     background: var(--bg-tertiary);
     border-radius: 8px;
@@ -3127,7 +3201,6 @@ body {
     .stats-toggle-btn,
     .timeline-toggle-btn,
     .filter-toggle-btn,
-    .migration-toggle-btn,
     .theme-toggle-btn {
       min-height: 44px;
       min-width: 44px;
