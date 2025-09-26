@@ -193,6 +193,7 @@ function getCoordinates(location: string): [number, number] {
 
 // Extract migration patterns from ancestry tree
 export function extractMigrationPatterns(rootPerson: Person): MigrationPatterns {
+  console.log('Extracting migration patterns from:', rootPerson);
   const locationCounts = new Map<string, number>();
   const routes = new Map<string, MigrationRoute>();
   
@@ -202,6 +203,7 @@ export function extractMigrationPatterns(rootPerson: Person): MigrationPatterns 
     
     // Count birth places
     if (person.birthPlace && person.birthPlace !== 'Unknown' && person.birthPlace !== 'UNKNOWN') {
+      console.log('Found birth place:', person.birthPlace, 'for person:', person.name);
       const count = locationCounts.get(person.birthPlace) || 0;
       locationCounts.set(person.birthPlace, count + 1);
     }
@@ -266,6 +268,9 @@ export function extractMigrationPatterns(rootPerson: Person): MigrationPatterns 
       timePeriod: 'Historical' // Could be enhanced with actual date parsing
     };
   });
+  
+  console.log('Extracted migration points:', points);
+  console.log('Extracted migration routes:', Array.from(routes.values()));
   
   // Convert routes to array
   const routeArray: MigrationRoute[] = Array.from(routes.values());

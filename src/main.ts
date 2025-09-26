@@ -2117,7 +2117,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="stats-section-title collapsible" onclick="toggleSection('migration')">
           🌍 Migration Patterns <span class="collapse-icon" onclick="event.stopPropagation(); toggleSection('migration');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
         </div>
-        <div class="stats-section-content" id="migration">
+        <div class="stats-section-content" id="migration" style="display: block;">
           <div class="migration-content">
             <div class="migration-stats">
               <div class="stat-item">
@@ -3131,9 +3131,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Initialize migration content in stats section
   function initializeMigrationContent() {
+    console.log('Initializing migration content...');
     // Only initialize if not already done
     const mapContainer = document.getElementById('migration-map');
+    console.log('Map container found:', !!mapContainer);
     if (!mapContainer || mapContainer.innerHTML.trim() !== '') {
+      console.log('Map container already initialized or not found');
       return;
     }
 
@@ -3142,11 +3145,13 @@ document.addEventListener("DOMContentLoaded", () => {
       import('./utils/migration-visualization.js').then(({ MigrationMapVisualization }) => {
         // Extract migration patterns from the current tree data
         const patterns = extractMigrationPatterns(root.data);
+        console.log('Extracted migration patterns:', patterns);
         
         // Update the migration stats in the stats section
         const locationsCountEl = document.getElementById('migration-locations-count');
         const routesCountEl = document.getElementById('migration-routes-count');
         
+        console.log('Stats elements found:', { locationsCountEl: !!locationsCountEl, routesCountEl: !!routesCountEl });
         if (locationsCountEl) locationsCountEl.textContent = patterns.points.length.toString();
         if (routesCountEl) routesCountEl.textContent = patterns.routes.length.toString();
         

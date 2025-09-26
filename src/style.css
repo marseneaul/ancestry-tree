@@ -2890,6 +2890,20 @@ body {
     margin-bottom: var(--space-2);
   }
 
+  /* Migration map zoom controls */
+  .zoom-controls {
+    pointer-events: all;
+  }
+
+  .zoom-control {
+    transition: opacity 0.2s ease;
+  }
+
+  .zoom-control text {
+    user-select: none;
+    pointer-events: none;
+  }
+
   .migration-pattern {
     background: var(--bg-tertiary);
     border-radius: 8px;

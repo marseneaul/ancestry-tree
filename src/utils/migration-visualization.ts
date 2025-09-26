@@ -21,6 +21,24 @@ export class MigrationMapVisualization {
   private height: number;
   private patterns: MigrationPatterns | null = null;
   private worldData: any = null;
+  private zoom: d3.ZoomBehavior<SVGSVGElement, unknown>;
+  private initialScale: number = 1;
+  private initialCenter: [number, number] = [0, 0];
+
+  private getThemeColors() {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    return {
+      background: isDark ? '#1e293b' : '#ffffff',
+      countries: isDark ? '#475569' : '#e2e8f0',
+      borders: isDark ? '#64748b' : '#cbd5e1',
+      accent: isDark ? '#60a5fa' : '#3b82f6',
+      accentHover: isDark ? '#3b82f6' : '#2563eb',
+      text: isDark ? '#f8fafc' : '#1e293b',
+      textSecondary: isDark ? '#cbd5e1' : '#475569',
+      textTertiary: isDark ? '#94a3b8' : '#64748b',
+      shadow: isDark ? 'rgba(0, 0, 0, 0.4)' : 'rgba(15, 23, 42, 0.08)'
+    };
+  }
 
   constructor(config: MigrationMapConfig) {
     this.width = config.width;
@@ -39,56 +57,237 @@ export class MigrationMapVisualization {
     container.innerHTML = '';
     
     // Create SVG
+    const colors = this.getThemeColors();
     this.svg = d3.select(container)
       .append('svg')
       .attr('width', this.width)
       .attr('height', this.height)
       .attr('viewBox', `0 0 ${this.width} ${this.height}`)
-      .style('background', 'var(--bg-primary)')
-      .style('border-radius', 'var(--radius-lg)')
-      .style('box-shadow', '0 4px 12px var(--shadow-light)');
+      .style('background', colors.background)
+      .style('border-radius', '0.75rem')
+      .style('box-shadow', `0 4px 12px ${colors.shadow}`)
+      .style('border', `1px solid ${colors.borders}`);
     
     // Create main group
     this.g = this.svg.append('g');
     
     // Set up projection (Mercator)
     this.projection = d3.geoMercator()
-      .scale(1)
+      .scale(100)
+      .center([0, 0])
       .translate([this.width / 2, this.height / 2]);
     
     this.path = d3.geoPath().projection(this.projection);
     
-    // Load world data
+    // Set up zoom functionality
+    this.setupZoom();
+    
+    
+    // Always create a fallback map first to ensure something is visible
+    this.createFallbackMap();
+    
+    // Then try to load world data
     this.loadWorldData();
+  }
+
+  private setupZoom(): void {
+    // Create zoom behavior
+    this.zoom = d3.zoom<SVGSVGElement, unknown>()
+      .scaleExtent([0.5, 8]) // Allow zoom from 0.5x to 8x
+      .on('zoom', (event) => {
+        const { transform } = event;
+        
+        // Apply zoom transform to the main group - this is much more efficient
+        this.g.attr('transform', transform);
+      });
+    
+    // Apply zoom behavior to SVG
+    this.svg.call(this.zoom);
+    
+    // Add zoom controls
+    this.addZoomControls();
+  }
+
+  private addZoomControls(): void {
+    const colors = this.getThemeColors();
+    const controlsGroup = this.svg.append('g')
+      .attr('class', 'zoom-controls')
+      .attr('transform', `translate(${this.width - 45}, 10)`);
+    
+    // Zoom in button
+    const zoomInBtn = controlsGroup.append('g')
+      .attr('class', 'zoom-control zoom-in')
+      .style('cursor', 'pointer')
+      .style('opacity', 0.8)
+      .on('click', () => {
+        this.svg.transition().duration(200).call(
+          this.zoom.scaleBy, 1.5
+        );
+      })
+      .on('mouseover', function() {
+        d3.select(this).style('opacity', 1);
+      })
+      .on('mouseout', function() {
+        d3.select(this).style('opacity', 0.8);
+      });
+    
+    zoomInBtn.append('rect')
+      .attr('width', 25)
+      .attr('height', 12)
+      .attr('fill', colors.background)
+      .attr('stroke', colors.borders)
+      .attr('stroke-width', 1)
+      .attr('rx', 2);
+    
+    zoomInBtn.append('text')
+      .attr('x', 12.5)
+      .attr('y', 8)
+      .attr('text-anchor', 'middle')
+      .attr('fill', colors.text)
+      .style('font-size', '9px')
+      .style('font-weight', 'bold')
+      .text('+');
+    
+    // Zoom out button
+    const zoomOutBtn = controlsGroup.append('g')
+      .attr('class', 'zoom-control zoom-out')
+      .attr('transform', 'translate(0, 15)')
+      .style('cursor', 'pointer')
+      .style('opacity', 0.8)
+      .on('click', () => {
+        this.svg.transition().duration(200).call(
+          this.zoom.scaleBy, 1 / 1.5
+        );
+      })
+      .on('mouseover', function() {
+        d3.select(this).style('opacity', 1);
+      })
+      .on('mouseout', function() {
+        d3.select(this).style('opacity', 0.8);
+      });
+    
+    zoomOutBtn.append('rect')
+      .attr('width', 25)
+      .attr('height', 12)
+      .attr('fill', colors.background)
+      .attr('stroke', colors.borders)
+      .attr('stroke-width', 1)
+      .attr('rx', 2);
+    
+    zoomOutBtn.append('text')
+      .attr('x', 12.5)
+      .attr('y', 8)
+      .attr('text-anchor', 'middle')
+      .attr('fill', colors.text)
+      .style('font-size', '9px')
+      .style('font-weight', 'bold')
+      .text('−');
+    
+    // Reset button
+    const resetBtn = controlsGroup.append('g')
+      .attr('class', 'zoom-control reset')
+      .attr('transform', 'translate(0, 30)')
+      .style('cursor', 'pointer')
+      .style('opacity', 0.8)
+      .on('click', () => {
+        this.resetZoom();
+      })
+      .on('mouseover', function() {
+        d3.select(this).style('opacity', 1);
+      })
+      .on('mouseout', function() {
+        d3.select(this).style('opacity', 0.8);
+      });
+    
+    resetBtn.append('rect')
+      .attr('width', 25)
+      .attr('height', 12)
+      .attr('fill', colors.background)
+      .attr('stroke', colors.borders)
+      .attr('stroke-width', 1)
+      .attr('rx', 2);
+    
+    resetBtn.append('text')
+      .attr('x', 12.5)
+      .attr('y', 8)
+      .attr('text-anchor', 'middle')
+      .attr('fill', colors.text)
+      .style('font-size', '7px')
+      .style('font-weight', 'bold')
+      .text('⌂');
+  }
+
+  private resetZoom(): void {
+    this.svg.transition().duration(500).call(
+      this.zoom.transform,
+      d3.zoomIdentity
+    );
   }
 
   private async loadWorldData(): Promise<void> {
     try {
-      const response = await fetch('./world-110m.json');
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      console.log('Loading world data...');
+      // Try multiple possible paths for the world data
+      const possiblePaths = [
+        './world-110m.json',
+        '/world-110m.json',
+        './public/world-110m.json',
+        '/public/world-110m.json',
+        '/dist/world-110m.json',
+        './dist/world-110m.json'
+      ];
+      
+      let response = null;
+      for (const path of possiblePaths) {
+        try {
+          console.log(`Trying path: ${path}`);
+          response = await fetch(path);
+          if (response.ok) {
+            console.log(`Successfully loaded from: ${path}`);
+            break;
+          }
+        } catch (e) {
+          console.log(`Failed to load from: ${path}`);
+          continue;
+        }
       }
+      
+      if (!response || !response.ok) {
+        throw new Error(`Could not load world data from any path`);
+      }
+      
       const contentType = response.headers.get('content-type');
       if (!contentType || !contentType.includes('application/json')) {
         throw new Error('Response is not JSON');
       }
       this.worldData = await response.json();
+      console.log('World data loaded successfully:', this.worldData);
+      console.log('Number of features:', this.worldData.features?.length);
+      console.log('First feature sample:', this.worldData.features?.[0]);
+      
+      
       this.render();
     } catch (error) {
       console.error('Failed to load world data:', error);
+      console.log('Creating fallback map...');
       // Create a simple fallback
       this.createFallbackMap();
     }
   }
 
   private createFallbackMap(): void {
+    console.log('Creating fallback map...');
+    
+    // Clear any existing content
+    this.g.selectAll('*').remove();
+    
     // Create a simple rectangular background as fallback
     this.g.append('rect')
       .attr('width', this.width)
       .attr('height', this.height)
-      .attr('fill', 'var(--bg-tertiary)')
-      .attr('stroke', 'var(--border-primary)')
-      .attr('stroke-width', 1);
+      .attr('fill', '#f8f9fa')
+      .attr('stroke', '#dee2e6')
+      .attr('stroke-width', 2);
     
     // Set up a simple projection for fallback
     this.projection
@@ -100,13 +299,13 @@ export class MigrationMapVisualization {
     const centerX = this.width / 2;
     const centerY = this.height / 2;
     
-    // Simple continents as rectangles
+    // Simple continents as rectangles with better styling
     const continents = [
-      { x: centerX - 80, y: centerY - 20, width: 40, height: 60, name: 'Europe' },
-      { x: centerX - 20, y: centerY - 30, width: 60, height: 50, name: 'Asia' },
-      { x: centerX - 100, y: centerY + 10, width: 50, height: 40, name: 'Americas' },
-      { x: centerX + 20, y: centerY + 20, width: 40, height: 30, name: 'Australia' },
-      { x: centerX - 30, y: centerY + 40, width: 80, height: 20, name: 'Africa' }
+      { x: centerX - 80, y: centerY - 20, width: 40, height: 60, name: 'Europe', color: '#6c757d' },
+      { x: centerX - 20, y: centerY - 30, width: 60, height: 50, name: 'Asia', color: '#6c757d' },
+      { x: centerX - 100, y: centerY + 10, width: 50, height: 40, name: 'Americas', color: '#6c757d' },
+      { x: centerX + 20, y: centerY + 20, width: 40, height: 30, name: 'Australia', color: '#6c757d' },
+      { x: centerX - 30, y: centerY + 40, width: 80, height: 20, name: 'Africa', color: '#6c757d' }
     ];
     
     continents.forEach(continent => {
@@ -115,75 +314,113 @@ export class MigrationMapVisualization {
         .attr('y', continent.y)
         .attr('width', continent.width)
         .attr('height', continent.height)
-        .attr('fill', 'var(--bg-quaternary)')
-        .attr('stroke', 'var(--border-secondary)')
-        .attr('stroke-width', 0.5)
-        .style('opacity', 0.8);
+        .attr('fill', continent.color)
+        .attr('stroke', '#495057')
+        .attr('stroke-width', 1)
+        .style('opacity', 0.7);
     });
     
+    // Add title
     this.g.append('text')
       .attr('x', centerX)
-      .attr('y', centerY - 50)
+      .attr('y', centerY - 60)
       .attr('text-anchor', 'middle')
-      .attr('fill', 'var(--text-primary)')
-      .style('font-size', '16px')
-      .style('font-weight', 'var(--font-weight-semibold)')
+      .attr('fill', '#212529')
+      .style('font-size', '18px')
+      .style('font-weight', 'bold')
       .text('Migration Patterns Map');
     
+    // Add status text
     this.g.append('text')
       .attr('x', centerX)
-      .attr('y', centerY + 80)
+      .attr('y', centerY + 90)
       .attr('text-anchor', 'middle')
-      .attr('fill', 'var(--text-secondary)')
-      .style('font-size', '12px')
-      .text('World map data loading...');
+      .attr('fill', '#6c757d')
+      .style('font-size', '14px')
+      .text('Loading detailed world map...');
+    
+    // Add some sample migration points if we have patterns
+    if (this.patterns && this.patterns.points.length > 0) {
+      console.log('Adding sample migration points to fallback map');
+      this.patterns.points.forEach((point, index) => {
+        // Place points randomly on the map for now
+        const x = centerX + (Math.random() - 0.5) * 200;
+        const y = centerY + (Math.random() - 0.5) * 100;
+        
+        this.g.append('circle')
+          .attr('cx', x)
+          .attr('cy', y)
+          .attr('r', Math.max(3, Math.min(8, point.count)))
+          .attr('fill', '#007bff')
+          .attr('stroke', '#ffffff')
+          .attr('stroke-width', 2)
+          .style('opacity', 0.8);
+      });
+    }
+    
+    console.log('Fallback map created with', this.patterns?.points.length || 0, 'migration points');
   }
 
   public updatePatterns(patterns: MigrationPatterns): void {
+    console.log('Updating migration patterns:', patterns);
     this.patterns = patterns;
     this.render();
   }
 
   private render(): void {
+    console.log('Rendering map...', { worldData: !!this.worldData, patterns: !!this.patterns });
+    
     // Clear existing content
     this.g.selectAll('*').remove();
     
-    // Render world map if available
+    // Always render something - either world map or fallback
     if (this.worldData) {
+      console.log('Rendering world map...');
       this.renderWorldMap();
+      
+      // Render migration data if available
+      if (this.patterns) {
+        console.log('Rendering migration data...');
+        this.renderMigrationData();
+      }
     } else {
+      console.log('Rendering fallback map...');
       this.createFallbackMap();
     }
     
-    // Render migration data if available
-    if (this.patterns) {
-      this.renderMigrationData();
-    }
+    console.log('Map render complete');
   }
 
   private renderWorldMap(): void {
     if (!this.worldData) return;
     
-    // Calculate appropriate scale and translation
-    const { center, zoom } = this.getMapTransform();
+    const colors = this.getThemeColors();
     
+    // Use a simple fixed scale for now to ensure visibility
     this.projection
-      .scale(zoom * 100)
-      .center(center)
+      .scale(100)
+      .center([0, 0])
       .translate([this.width / 2, this.height / 2]);
     
+    console.log('Projection settings:', {
+      scale: this.projection.scale(),
+      center: this.projection.center(),
+      translate: this.projection.translate()
+    });
+    
     // Render countries
-    this.g.append('g')
-      .attr('class', 'countries')
-      .selectAll('path')
+    const countriesGroup = this.g.append('g').attr('class', 'countries');
+    const paths = countriesGroup.selectAll('path')
       .data(this.worldData.features)
       .enter()
       .append('path')
       .attr('d', this.path)
-      .attr('fill', 'var(--bg-quaternary)')
-      .attr('stroke', 'var(--border-secondary)')
+      .attr('fill', colors.countries)
+      .attr('stroke', colors.borders)
       .attr('stroke-width', 0.5)
       .style('opacity', 0.8);
+    
+    console.log('Rendered', paths.size(), 'country paths');
   }
 
   private renderMigrationData(): void {
@@ -199,6 +436,7 @@ export class MigrationMapVisualization {
   private renderRoutes(): void {
     if (!this.patterns || this.patterns.routes.length === 0) return;
     
+    const colors = this.getThemeColors();
     const routesGroup = this.g.append('g').attr('class', 'migration-routes');
     
     routesGroup.selectAll('path')
@@ -219,16 +457,17 @@ export class MigrationMapVisualization {
         return `M ${x1} ${y1} Q ${midX} ${controlY} ${x2} ${y2}`;
       })
       .attr('fill', 'none')
-      .attr('stroke', 'var(--accent-primary)')
+      .attr('stroke', colors.accent)
       .attr('stroke-width', (route: MigrationRoute) => Math.max(1, Math.min(5, route.count * 0.5)))
       .attr('stroke-opacity', 0.7)
       .attr('stroke-dasharray', '5,5')
-      .style('filter', 'drop-shadow(0 1px 2px rgba(0,0,0,0.1))');
+      .style('filter', `drop-shadow(0 1px 2px ${colors.shadow})`);
   }
 
   private renderPoints(): void {
     if (!this.patterns || this.patterns.points.length === 0) return;
     
+    const colors = this.getThemeColors();
     const pointsGroup = this.g.append('g').attr('class', 'migration-points');
     
     // Create point circles
@@ -245,36 +484,38 @@ export class MigrationMapVisualization {
         return y || 0;
       })
       .attr('r', (point: MigrationPoint) => Math.max(3, Math.min(12, point.count * 2)))
-      .attr('fill', 'var(--accent-primary)')
-      .attr('stroke', 'var(--bg-secondary)')
+      .attr('fill', colors.accent)
+      .attr('stroke', colors.background)
       .attr('stroke-width', 2)
-      .style('filter', 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))')
+      .style('filter', `drop-shadow(0 2px 4px ${colors.shadow})`)
       .style('cursor', 'pointer');
     
     // Add hover effects
     circles
       .on('mouseover', function(event: MouseEvent, point: MigrationPoint) {
+        const colors = this.getThemeColors();
         d3.select(this)
           .attr('r', Math.max(5, Math.min(15, point.count * 2.5)))
-          .attr('fill', 'var(--accent-hover)');
-      })
+          .attr('fill', colors.accentHover);
+      }.bind(this))
       .on('mouseout', function(event: MouseEvent, point: MigrationPoint) {
+        const colors = this.getThemeColors();
         d3.select(this)
           .attr('r', Math.max(3, Math.min(12, point.count * 2)))
-          .attr('fill', 'var(--accent-primary)');
-      });
+          .attr('fill', colors.accent);
+      }.bind(this));
     
     // Add tooltips
     const tooltip = d3.select('body').append('div')
       .attr('class', 'migration-tooltip')
       .style('position', 'absolute')
-      .style('background', 'var(--bg-secondary)')
-      .style('border', '1px solid var(--border-primary)')
-      .style('border-radius', 'var(--radius-md)')
-      .style('padding', 'var(--space-2) var(--space-3)')
-      .style('font-size', 'var(--font-size-sm)')
-      .style('color', 'var(--text-primary)')
-      .style('box-shadow', '0 4px 12px var(--shadow-medium)')
+      .style('background', colors.background)
+      .style('border', `1px solid ${colors.borders}`)
+      .style('border-radius', '0.5rem')
+      .style('padding', '0.5rem 0.75rem')
+      .style('font-size', '0.875rem')
+      .style('color', colors.text)
+      .style('box-shadow', `0 4px 12px ${colors.shadow}`)
       .style('pointer-events', 'none')
       .style('opacity', 0)
       .style('z-index', 1000);
@@ -284,13 +525,13 @@ export class MigrationMapVisualization {
         tooltip
           .style('opacity', 1)
           .html(`
-            <div style="font-weight: var(--font-weight-semibold); margin-bottom: var(--space-1);">
+            <div style="font-weight: 600; margin-bottom: 0.25rem;">
               ${point.name}
             </div>
-            <div style="color: var(--text-secondary); font-size: var(--font-size-xs);">
+            <div style="color: ${colors.textSecondary}; font-size: 0.75rem;">
               ${point.count} ancestor${point.count !== 1 ? 's' : ''}
             </div>
-            <div style="color: var(--text-tertiary); font-size: var(--font-size-xs);">
+            <div style="color: ${colors.textTertiary}; font-size: 0.75rem;">
               ${point.country}
             </div>
           `)
@@ -304,14 +545,18 @@ export class MigrationMapVisualization {
 
   private getMapTransform(): { center: [number, number]; zoom: number } {
     if (!this.patterns || this.patterns.points.length === 0) {
-      return { center: [0, 0], zoom: 1 };
+      this.initialCenter = [0, 0];
+      this.initialScale = 100;
+      return { center: this.initialCenter, zoom: this.initialScale };
     }
     
     // Calculate bounds
     const validPoints = this.patterns.points.filter(p => p.coordinates[0] !== 0 || p.coordinates[1] !== 0);
     
     if (validPoints.length === 0) {
-      return { center: [0, 0], zoom: 1 };
+      this.initialCenter = [0, 0];
+      this.initialScale = 100;
+      return { center: this.initialCenter, zoom: this.initialScale };
     }
     
     const lngs = validPoints.map(p => p.coordinates[0]);
@@ -336,11 +581,15 @@ export class MigrationMapVisualization {
     const lngRange = bounds.east - bounds.west + padding * 2;
     const maxRange = Math.max(latRange, lngRange);
     
-    let zoom = 1;
-    if (maxRange < 10) zoom = 3;
-    else if (maxRange < 20) zoom = 2.5;
-    else if (maxRange < 40) zoom = 2;
-    else if (maxRange < 80) zoom = 1.5;
+    let zoom = 100;
+    if (maxRange < 10) zoom = 300;
+    else if (maxRange < 20) zoom = 250;
+    else if (maxRange < 40) zoom = 200;
+    else if (maxRange < 80) zoom = 150;
+    
+    // Store initial values for zoom behavior
+    this.initialCenter = center;
+    this.initialScale = zoom;
     
     return { center, zoom };
   }
@@ -355,6 +604,12 @@ export class MigrationMapVisualization {
       .attr('viewBox', `0 0 ${this.width} ${this.height}`);
     
     this.projection.translate([this.width / 2, this.height / 2]);
+    
+    // Update zoom controls position if they exist
+    const zoomControls = this.svg.select('.zoom-controls');
+    if (!zoomControls.empty()) {
+      zoomControls.attr('transform', `translate(${this.width - 45}, 10)`);
+    }
     
     this.render();
   }
