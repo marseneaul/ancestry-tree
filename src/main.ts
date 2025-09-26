@@ -1030,6 +1030,8 @@ document.addEventListener("DOMContentLoaded", () => {
   
   let root = buildHierarchy(rootPerson);
 
+  // Pre-load migration panel after tree is created
+  preloadMigrationPanel();
 
   const treeLayout = d3.tree<Person>().size([width, height - 120]).nodeSize([180, 200]);  // Increased horizontal spacing to prevent text overlap
 
@@ -3112,8 +3114,16 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
   }
 
-  // Initialize migration panel
+  // Global migration visualization instance
+  let migrationMapViz: any = null;
+
+  // Initialize migration panel (pre-load the map)
   function initializeMigrationPanel() {
+    // Only initialize if not already done
+    if (migrationPanel.innerHTML.trim() !== '') {
+      return;
+    }
+
     // Import the migration utilities
     import('./utils/migration-patterns.js').then(({ extractMigrationPatterns }) => {
       import('./utils/migration-visualization.js').then(({ MigrationMapVisualization }) => {
@@ -3151,7 +3161,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Create the migration map visualization
         const mapContainer = document.getElementById('migration-map');
         if (mapContainer && patterns.points.length > 0) {
-          const mapViz = new MigrationMapVisualization({
+          migrationMapViz = new MigrationMapVisualization({
             width: 400,
             height: 300,
             container: mapContainer,
@@ -3160,7 +3170,7 @@ document.addEventListener("DOMContentLoaded", () => {
           });
           
           // Update the map with migration patterns
-          mapViz.updatePatterns(patterns);
+          migrationMapViz.updatePatterns(patterns);
         } else if (mapContainer) {
           mapContainer.innerHTML = `
             <div class="no-migration-data">
@@ -3194,6 +3204,33 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
       `;
     });
+  }
+
+  // Pre-load migration panel after tree is initialized
+  function preloadMigrationPanel() {
+    // Wait a bit for the tree to be fully loaded, then pre-load migration panel
+    setTimeout(() => {
+      if (root && root.data) {
+        initializeMigrationPanel();
+      }
+    }, 1000);
+  }
+
+  // Refresh migration data when tree is updated
+  function refreshMigrationData() {
+    if (migrationMapViz && root && root.data) {
+      import('./utils/migration-patterns.js').then(({ extractMigrationPatterns }) => {
+        const patterns = extractMigrationPatterns(root.data);
+        migrationMapViz.updatePatterns(patterns);
+        
+        // Update stats
+        const statNumbers = document.querySelectorAll('.migration-stats .stat-number');
+        if (statNumbers.length >= 2) {
+          statNumbers[0].textContent = patterns.points.length.toString();
+          statNumbers[1].textContent = patterns.routes.length.toString();
+        }
+      });
+    }
   }
 
   // Close statistics dashboard when clicking outside
@@ -3308,7 +3345,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     
     if (isMigrationPanelVisible) {
-      initializeMigrationPanel();
+      // Panel is already pre-loaded, just show it
+      // No need to re-initialize
     }
   });
 
