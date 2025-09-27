@@ -1,62 +1,9 @@
 import { AncestralGroup, AncestralTube } from '../interfaces/ancestral-tubes';
-import { ANCESTRAL_GROUPS, EUROPEAN_SUBGROUPS } from '../data/ancestral-groups';
+// import { ANCESTRAL_GROUPS, EUROPEAN_SUBGROUPS } from '../data/ancestral-groups';
 
 export function detectAncestralGroups(nodes: any[]): AncestralGroup[] {
-  const groups: AncestralGroup[] = [];
-  const groupMap = new Map<string, any[]>();
-
-  // Group nodes by their ancestral origin
-  nodes.forEach(node => {
-    const country = getCountryFromNode(node);
-    const groupId = getGroupIdFromCountry(country);
-    
-    if (!groupMap.has(groupId)) {
-      groupMap.set(groupId, []);
-    }
-    groupMap.get(groupId)!.push(node);
-  });
-
-  // Create ancestral groups
-  groupMap.forEach((nodeList, groupId) => {
-    if (nodeList.length === 0) return;
-
-    const groupConfig = ANCESTRAL_GROUPS.find(g => g.id === groupId);
-    if (!groupConfig) return;
-
-    // Calculate bounds
-    const xCoords = nodeList.map(n => n.x).filter(x => x !== undefined);
-    const yCoords = nodeList.map(n => n.y).filter(y => y !== undefined);
-    
-    if (xCoords.length === 0 || yCoords.length === 0) return;
-
-    const minX = Math.min(...xCoords);
-    const maxX = Math.max(...xCoords);
-    const minY = Math.min(...yCoords);
-    const maxY = Math.max(...yCoords);
-
-    // Calculate DNA contribution
-    const dnaContribution = nodeList.reduce((sum, node) => {
-      return sum + (100 / Math.pow(2, node.depth));
-    }, 0);
-
-    groups.push({
-      id: groupId,
-      name: groupConfig.name,
-      color: groupConfig.color,
-      nodes: nodeList,
-      bounds: {
-        x: minX,
-        y: minY,
-        width: maxX - minX,
-        height: maxY - minY
-      },
-      parentGroup: groupConfig.parentGroup,
-      childGroups: groupConfig.childGroups,
-      dnaContribution
-    });
-  });
-
-  return groups;
+  // TODO: This function is temporarily disabled due to missing ancestral-groups.ts file
+  return [];
 }
 
 export function createAncestralTubes(groups: AncestralGroup[]): AncestralTube[] {
