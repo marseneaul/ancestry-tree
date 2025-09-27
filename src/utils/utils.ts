@@ -117,7 +117,7 @@ export function getCountry(birthPlace?: string): string {
     if (place.includes("france") || place.includes("french")) return "France";
     if (place.includes("united kingdom") || place.includes("england") || place.includes("british")) return "United Kingdom";
     if (place.includes("ireland") || place.includes("irish")) return "Ireland";
-    if (place.includes("germany") || place.includes("german") || place.includes("prussia") || place.includes("deutschland")) return "Germany";
+    if (place.includes("germany") || place.includes("prussia") || place.includes("deutschland")) return "Germany";
     if (place.includes("nipissing nation")) return "Nipissing Nation";
     if (place.includes("mi'kmaq") || place.includes("micmac") || place.includes("mikmaq")) return "Mi'kmaq Nation";
     if (place.includes("canada") || place.includes("canadian")) return "Canada";
