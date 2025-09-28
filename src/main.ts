@@ -10,6 +10,7 @@ import { createModal, showPersonModal, closeModal, setupGlobalModalFunctions } f
 import { extendWithNeanderthal } from "./utils/neanderthal-extension";
 import { createDashboard, addButtonInteractions } from "./components/dashboard";
 import { StatsDashboard } from "./components/stats-dashboard";
+import { TimelinePanel } from "./components/timeline-panel";
 import { createViewControls, setupViewControlListeners } from "./components/view-controls";
 import { setupSearchFunctionality, setupSearchKeyboardShortcuts, setupSearchInputInteractions } from "./components/search";
 
@@ -1319,7 +1320,10 @@ document.addEventListener("DOMContentLoaded", () => {
   // Statistics dashboard state
   let isStatsDashboardVisible = false;
   let statsDashboardInstance: StatsDashboard | null = null;
+  
+  // Timeline panel state
   let isTimelinePanelVisible = false;
+  let timelinePanelInstance: TimelinePanel | null = null;
 
   // Initialize statistics dashboard
   function initializeStatsDashboard() {
@@ -1393,76 +1397,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Initialize timeline panel
   function initializeTimelinePanel() {
-    const allNodes = root.descendants();
-    
-    // Extract birth years and create timeline data
-    const timelineData = allNodes
-      .map(node => {
-        if (!node.data.birthDate || node.data.birthDate === "Unknown" || node.data.birthDate === "UNKNOWN") return null;
-        
-        // Extract year from birth date
-        const yearMatch = node.data.birthDate.match(/\b(19|20)\d{2}\b/) || node.data.birthDate.match(/\b\d{4}\b/);
-        if (!yearMatch) return null;
-        
-        const year = parseInt(yearMatch[0]);
-        if (year < 1000 || year > 2100) return null; // Filter out unreasonable years
-        
-        return {
-          year,
-          name: node.data.name,
-          birthDate: node.data.birthDate,
-          deathDate: node.data.deathDate,
-          deathPlace: node.data.deathPlace,
-          birthPlace: node.data.birthPlace,
-          sex: node.data.sex,
-          depth: node.depth,
-          country: getCountry(node.data.birthPlace),
-          imageUrl: node.data.imageUrl,
-          largeImageUrl: (node.data as any).largeImageUrl,
-          story: node.data.story
-        };
-      })
-      .filter(item => item !== null)
-      .sort((a, b) => b!.year - a!.year);
-
-    // Group by decade for better visualization
-    const decadeGroups = new Map<number, any[]>();
-    timelineData.forEach(item => {
-      const decade = Math.floor(item!.year / 10) * 10;
-      if (!decadeGroups.has(decade)) {
-        decadeGroups.set(decade, []);
-      }
-      decadeGroups.get(decade)!.push(item);
-    });
-
-    // Create timeline HTML
-    timelinePanel.innerHTML = `
-      <div class="timeline-title">📅 Family Timeline</div>
-      <div class="timeline-content">
-        ${Array.from(decadeGroups.entries())
-          .sort((a, b) => b[0] - a[0])
-          .map(([decade, people]) => `
-            <div class="timeline-decade">
-              <div class="decade-header">${decade}s</div>
-              <div class="decade-people">
-                ${people.slice(0, 10).map(person => {
-                  const cleanName = cleanUnknown(person.name);
-                  const cleanBirthPlace = cleanUnknown(person.birthPlace);
-                  return `
-                  <div class="timeline-person" onclick="showPersonModal(${JSON.stringify(person).replace(/"/g, '&quot;')}, ${person.depth})">
-                    <div class="person-year">${person.year}</div>
-                    <div class="person-name">${cleanName || "Name not available"}</div>
-                    ${cleanBirthPlace ? `<div class="person-place">${cleanBirthPlace}</div>` : ""}
-                    <div class="person-country">${person.country}</div>
-                  </div>
-                `;
-                }).join('')}
-                ${people.length > 10 ? `<div class="more-people">+${people.length - 10} more</div>` : ''}
-              </div>
-            </div>
-          `).join('')}
-      </div>
-    `;
+    if (!timelinePanelInstance) {
+      timelinePanelInstance = new TimelinePanel(timelinePanel, {
+        root: root
+      });
+    }
+    timelinePanelInstance.initialize();
   }
 
   // Global migration visualization instance
