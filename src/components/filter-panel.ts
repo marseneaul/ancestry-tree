@@ -203,22 +203,25 @@ export class FilterPanel {
               <h4 class="filter-group-title">Birth Year Range</h4>
               <div class="filter-group-description">Filter by birth year</div>
             </div>
-            <div class="range-inputs">
-              <div class="range-input-group">
-                <label for="birth-year-min">From</label>
-                <input type="number" id="birth-year-min" class="range-input" 
-                       min="${this.filterState.originalBirthYearRange.min}" 
-                       max="${this.filterState.originalBirthYearRange.max}" 
-                       value="${this.filterState.birthYearRange.min}"
-                       onchange="updateBirthYearRange()">
-              </div>
-              <div class="range-input-group">
-                <label for="birth-year-max">To</label>
-                <input type="number" id="birth-year-max" class="range-input" 
-                       min="${this.filterState.originalBirthYearRange.min}" 
-                       max="${this.filterState.originalBirthYearRange.max}" 
-                       value="${this.filterState.birthYearRange.max}"
-                       onchange="updateBirthYearRange()">
+            <div class="range-container">
+              <div class="range-row">
+                <div class="range-field">
+                  <label class="range-label">From</label>
+                  <input type="number" class="modern-input" id="birth-year-min" 
+                         value="${this.filterState.birthYearRange.min}" 
+                         min="${this.filterState.originalBirthYearRange.min}" 
+                         max="${this.filterState.originalBirthYearRange.max}" 
+                         onchange="updateBirthYearRange()">
+                </div>
+                <div class="range-to">to</div>
+                <div class="range-field">
+                  <label class="range-label">To</label>
+                  <input type="number" class="modern-input" id="birth-year-max" 
+                         value="${this.filterState.birthYearRange.max}" 
+                         min="${this.filterState.originalBirthYearRange.min}" 
+                         max="${this.filterState.originalBirthYearRange.max}" 
+                         onchange="updateBirthYearRange()">
+                </div>
               </div>
             </div>
           </div>
@@ -228,18 +231,21 @@ export class FilterPanel {
               <h4 class="filter-group-title">Lifespan Range</h4>
               <div class="filter-group-description">Filter by age at death</div>
             </div>
-            <div class="range-inputs">
-              <div class="range-input-group">
-                <label for="lifespan-min">Min Age</label>
-                <input type="number" id="lifespan-min" class="range-input" 
-                       min="0" max="120" value="${this.filterState.lifespanFilter.min}"
-                       onchange="updateLifespanFilter()">
-              </div>
-              <div class="range-input-group">
-                <label for="lifespan-max">Max Age</label>
-                <input type="number" id="lifespan-max" class="range-input" 
-                       min="0" max="120" value="${this.filterState.lifespanFilter.max}"
-                       onchange="updateLifespanFilter()">
+            <div class="range-container">
+              <div class="range-row">
+                <div class="range-field">
+                  <label class="range-label">Min Age</label>
+                  <input type="number" class="modern-input" id="lifespan-min" 
+                         value="${this.filterState.lifespanFilter.min}" 
+                         min="0" max="120" onchange="updateLifespanFilter()">
+                </div>
+                <div class="range-to">to</div>
+                <div class="range-field">
+                  <label class="range-label">Max Age</label>
+                  <input type="number" class="modern-input" id="lifespan-max" 
+                         value="${this.filterState.lifespanFilter.max}" 
+                         min="0" max="120" onchange="updateLifespanFilter()">
+                </div>
               </div>
             </div>
           </div>
@@ -437,8 +443,8 @@ export class FilterPanel {
       </div>
       
       <div class="filter-footer">
-        <button class="filter-reset-btn" onclick="resetAllFilters()">
-          <span class="btn-icon">🔄</span>
+        <button class="action-btn primary" onclick="resetAllFilters()">
+          <span class="btn-icon">↺</span>
           Reset All Filters
         </button>
         <div class="filter-stats" id="filter-stats">

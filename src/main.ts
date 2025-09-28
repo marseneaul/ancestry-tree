@@ -14,6 +14,7 @@ import { TimelinePanel } from "./components/timeline-panel";
 import { FilterPanel } from "./components/filter-panel";
 import { createViewControls, setupViewControlListeners } from "./components/view-controls";
 import { setupSearchFunctionality, setupSearchKeyboardShortcuts, setupSearchInputInteractions } from "./components/search";
+import { TreeVisualization, TreeVisualizationConfig } from "./visualization/tree-visualization";
 
 
 
@@ -145,281 +146,45 @@ document.addEventListener("DOMContentLoaded", () => {
     colorLegend?.appendChild(li);
   });
 
-  // Responsive SVG
+  // Responsive dimensions
   let width = window.innerWidth * 0.8;
   let height = window.innerHeight;
-  const margin = { top: 50, right: 150, bottom: 50, left: 150 };
 
-  const svg = d3.select("#tree-container").append("svg")
-    .attr("width", "100%")
-    .attr("height", height)
-    .attr("viewBox", `${-margin.left} ${-margin.top} ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
-    .attr("preserveAspectRatio", "xMidYMid meet");
+  // Initialize Tree Visualization
+  const treeVizConfig: TreeVisualizationConfig = {
+    container: "#tree-container",
+    width,
+    height,
+    countrySvgs,
+    originalPersonData: migratedMaxArseneaultConfig,
+    onNodeClick: (person, depth) => {
+      // Clear any pending hover timeout to prevent conflicts
+      if (hoverTimeout) {
+        clearTimeout(hoverTimeout);
+        hoverTimeout = null;
+      }
+      showPersonModal(person, depth);
+    },
+    onNodeHover: (person, depth, element, event) => {
+      showPersonTooltip(person, depth, element, event);
+    },
+    onNodeHoverOut: () => {
+      hidePersonTooltip();
+    }
+  };
 
-  const g = svg.append("g");
+  const treeVisualization = new TreeVisualization(treeVizConfig);
+  treeVisualization.initialize();
 
-  // Defs for patterns (for images and now country SVGs)
-  const defs = svg.append("defs");  // Moved up here so it's global
+  // Get references to the visualization elements
+  const svg = treeVisualization.getSVG();
+  const g = svg.select("g");
+  const zoom = treeVisualization.getZoom();
+  let currentTransform = treeVisualization.getCurrentTransform();
 
-  // Define country SVG patterns once
-  Object.entries(countrySvgs).forEach(([country, url]) => {
-    const patternId = `country-pattern-${slugify(country)}`;
-    const href = url ?? `./svgs/${slugify(country)}.svg`;
+  // Minimap is now handled by TreeVisualization class
 
-    const pattern = defs.append("pattern")
-      .attr("id", patternId)
-      .attr("width", 1)
-      .attr("height", 1)
-      .attr("patternContentUnits", "objectBoundingBox");
-    pattern.append("image")
-      .attr("xlink:href", href)
-      .attr("width", 1)
-      .attr("height", 1)
-      .attr("preserveAspectRatio", "xMidYMid slice");
-  });
-
-  // Minimap needs access to the current zoom transform:
-  let currentTransform = d3.zoomIdentity;
-
-  const zoom = d3.zoom().on("zoom", (event) => {
-    currentTransform = event.transform;
-    g.attr("transform", currentTransform.toString());
-    updateMinimapViewport(); // keep minimap viewport in sync
-  });
-
-  svg.call(zoom);
-
-    // ───────────────── MINIMAP: setup ─────────────────
-  const miniW = 280;
-  const miniH = 200;
-  const miniPad = 12;
-
-  // Container (fixed, bottom-right). Style here so you don't need to touch CSS.
-  const miniWrap = document.createElement("div");
-  miniWrap.id = "minimap";
-  miniWrap.className = "minimap-container";
-  Object.assign(miniWrap.style, {
-    position: "fixed",
-    right: "20px",
-    bottom: "20px",
-    width: `${miniW + 2 * miniPad}px`,
-    height: `${miniH + 2 * miniPad}px`,
-    border: "1px solid var(--border-secondary)",
-    background: "var(--bg-secondary)",
-    borderRadius: "12px",
-    boxShadow: "0 8px 24px var(--shadow-medium), 0 2px 8px var(--shadow-light)",
-    zIndex: "1000",
-    userSelect: "none",
-    transition: "all 0.3s ease",
-    backdropFilter: "blur(10px)",
-    WebkitBackdropFilter: "blur(10px)",
-  });
-  app.appendChild(miniWrap);
-
-  const miniSvg = d3
-    .select(miniWrap)
-    .append("svg")
-    .attr("width", miniW + 2 * miniPad)
-    .attr("height", miniH + 2 * miniPad);
-
-  const miniG = miniSvg.append("g").attr("transform", `translate(${miniPad},${miniPad})`);
-  
-  // Add simple background rect (no pattern for performance)
-  miniG.append("rect")
-    .attr("width", miniW + 2 * miniPad)
-    .attr("height", miniH + 2 * miniPad)
-    .attr("x", -miniPad)
-    .attr("y", -miniPad)
-    .attr("fill", "var(--bg-tertiary)")
-    .attr("opacity", 0.3)
-    .attr("rx", 8)
-    .attr("ry", 8);
-
-  // Clean minimap view - no title or legend for performance
-  
-  const miniLinksG = miniG.append("g").attr("class", "minimap-links");
-  const miniNodesG = miniG.append("g").attr("class", "minimap-nodes");
-  
-  const miniViewport = miniG
-    .append("rect")
-    .attr("class", "minimap-viewport")
-    .attr("fill", "rgba(74, 158, 255, 0.1)")
-    .attr("stroke", "var(--accent-primary)")
-    .attr("stroke-width", 2)
-    .attr("stroke-dasharray", "4,2")
-    .attr("pointer-events", "all");
-
-  // Bounds/scales for minimap
-  let treeBounds = { x0: 0, y0: 0, x1: 1, y1: 1 };
-  let miniScaleX = 1;
-  let miniScaleY = 1;
-
-  // Helpers to map main coords → minimap coords
-  const mx = (x: number) => (x - treeBounds.x0) * miniScaleX;
-  const my = (y: number) => (y - treeBounds.y0) * miniScaleY;
-
-  // Drag to pan main view from the minimap
-  const dragViewport = d3
-    .drag<SVGRectElement, unknown>()
-    .on("drag", (event) => {
-      // convert minimap rect top-left back to main coords
-      const x0 = event.x; // in minimap group coords (already inside miniG with translate)
-      const y0 = event.y;
-
-      const mainX0 = x0 / miniScaleX + treeBounds.x0;
-      const mainY0 = y0 / miniScaleY + treeBounds.y0;
-
-      const k = currentTransform.k;
-      const tx = -mainX0 * k;
-      const ty = -mainY0 * k;
-
-      svg.call(zoom.transform, d3.zoomIdentity.translate(tx, ty).scale(k));
-    });
-  miniViewport.call(dragViewport);
-
-  // Add click-to-center functionality on the minimap background (throttled for performance)
-  let clickTimeout: number | null = null;
-  miniG.on("click", (event) => {
-    if (clickTimeout) return; // Throttle clicks
-    
-    clickTimeout = window.setTimeout(() => {
-      clickTimeout = null;
-    }, 100);
-    
-    const rect = miniG.node()?.getBoundingClientRect();
-    if (!rect) return;
-    
-    const x = event.offsetX;
-    const y = event.offsetY;
-    
-    // Get the current offset values from the minimap
-    const scaledWidth = treeBounds.x1 - treeBounds.x0;
-    const scaledHeight = treeBounds.y1 - treeBounds.y0;
-    const offsetX = (miniW - scaledWidth * miniScaleX) / 2;
-    const offsetY = (miniH - scaledHeight * miniScaleY) / 2;
-    
-    // Convert minimap coords to main coords
-    const mainX = (x - offsetX) / miniScaleX + treeBounds.x0;
-    const mainY = (y - offsetY) / miniScaleY + treeBounds.y0;
-    
-    // Center the main view on this point
-    const k = currentTransform.k;
-    const tx = -mainX * k + width / 2;
-    const ty = -mainY * k + height / 2;
-    
-    svg.call(zoom.transform, d3.zoomIdentity.translate(tx, ty).scale(k));
-  });
-
-  // Add tooltip (simplified hover effects for performance)
-  miniWrap.title = "Click to center view • Drag viewport to pan • Drag tree to navigate";
-
-  // Draw/update minimap content
-  function updateMinimap() {
-    // Compute tree bounds from current layout (after you assign d.x/d.y)
-    const nodes = root.descendants();
-    const xs = nodes.map((d) => d.x);
-    const ys = nodes.map((d) => d.y);
-
-    const x0 = Math.min(...xs);
-    const x1 = Math.max(...xs);
-    const y0 = Math.min(...ys);
-    const y1 = Math.max(...ys);
-
-    // pad bounds slightly
-    const pad = 30;
-    treeBounds = { x0: x0 - pad, x1: x1 + pad, y0: y0 - pad, y1: y1 + pad };
-
-    const bw = treeBounds.x1 - treeBounds.x0;
-    const bh = treeBounds.y1 - treeBounds.y0;
-
-    // Calculate scale to fill the entire minimap area (stretched/distorted)
-    const scaleX = miniW / Math.max(bw, 1);
-    const scaleY = miniH / Math.max(bh, 1);
-    
-    // Use separate scales for X and Y to fill the entire minimap (distorted view)
-    miniScaleX = scaleX * 0.95; // 95% to add minimal padding
-    miniScaleY = scaleY * 0.95;
-    
-    // Center the tree in the minimap
-    const scaledWidth = bw * miniScaleX;
-    const scaledHeight = bh * miniScaleY;
-    const offsetX = (miniW - scaledWidth) / 2;
-    const offsetY = (miniH - scaledHeight) / 2;
-    
-    // Update the transform to center the content (no scaling here - done in coordinate functions)
-    miniG.attr("transform", `translate(${miniPad + offsetX},${miniPad + offsetY})`);
-
-    // Links (draw as straight lines; simple & fast)
-    const miniLinks = miniLinksG
-      .selectAll<SVGLineElement, any>("line")
-      .data(root.links(), (d: any) => `${d.source.data.name}-${d.target.data.name}`);
-
-    miniLinks
-      .join(
-        (enter) =>
-          enter
-            .append("line")
-            .attr("x1", (d) => mx(d.source.x))
-            .attr("y1", (d) => my(d.source.y))
-            .attr("x2", (d) => mx(d.target.x))
-            .attr("y2", (d) => my(d.target.y))
-            .attr("stroke", "var(--text-tertiary)")
-            .attr("stroke-width", 1.5)
-            .attr("opacity", 0.6),
-        (update) =>
-          update
-            .attr("x1", (d) => mx(d.source.x))
-            .attr("y1", (d) => my(d.source.y))
-            .attr("x2", (d) => mx(d.target.x))
-            .attr("y2", (d) => my(d.target.y)),
-        (exit) => exit.remove()
-      );
-
-    // Nodes (simplified for performance - all circles, no gender distinction)
-    const miniNodes = miniNodesG
-      .selectAll<SVGCircleElement, any>("circle")
-      .data(nodes, (d: any) => d.data.id || d.data.name + d.depth);
-
-    miniNodes
-      .join(
-        (enter) =>
-          enter
-            .append("circle")
-            .attr("r", 1.5)
-            .attr("cx", (d) => mx(d.x))
-            .attr("cy", (d) => my(d.y))
-            .attr("fill", (d) => countryColors[getCountry(d.data.birthPlace)] || "#808080"),
-        (update) => update
-          .attr("cx", (d) => mx(d.x))
-          .attr("cy", (d) => my(d.y))
-          .attr("fill", (d) => countryColors[getCountry(d.data.birthPlace)] || "#808080"),
-        (exit) => exit.remove()
-      );
-
-    updateMinimapViewport(); // sync viewport rect
-  }
-
-  // Update the viewport rectangle in the minimap
-  function updateMinimapViewport() {
-    // visible region in content coords (approximate: use layout width/height)
-    const k = currentTransform.k;
-    const x0 = -currentTransform.x / k; // top-left in main coords
-    const y0 = -currentTransform.y / k;
-    const vw = width / k;
-    const vh = height / k;
-
-    // Convert to minimap coords
-    const rx = mx(x0);
-    const ry = my(y0);
-    const rw = vw * miniScaleX;
-    const rh = vh * miniScaleY;
-
-    miniViewport
-      .attr("x", rx)
-      .attr("y", ry)
-      .attr("width", Math.max(10, rw)) // keep visible
-      .attr("height", Math.max(10, rh));
-  }
+  // Minimap functions are now handled by TreeVisualization class
 
   let rootPerson = migratedMaxArseneaultConfig;
   
@@ -615,11 +380,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // Update the root reference
     root = newRoot;
     
-    // Clear existing tree
-    g.selectAll("*").remove();
-    
-    // Update tree layout and render
-    updateTree();
+    // Update tree visualization
+    treeVisualization.updateTree(newRoot);
   }
   
   
@@ -627,7 +389,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Migration content will be initialized when stats dashboard is opened
 
-  const treeLayout = d3.tree<Person>().size([width, height - 120]).nodeSize([180, 200]);  // Increased horizontal spacing to prevent text overlap
+  // Tree layout is now handled by TreeVisualization class
 
   // Filter state
   let maxGeneration = 0;
@@ -933,14 +695,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   
   function updateMinimapTheme() {
-    // Update minimap viewport stroke color
-    if (miniViewport) {
-      miniViewport.attr("stroke", "var(--text-primary)");
-    }
-    
-    // Update minimap links stroke color
-    miniLinksG.selectAll("line")
-      .attr("stroke", "var(--text-tertiary)");
+    // Minimap theme updates are now handled by TreeVisualization class
+    // This function is kept for compatibility but does nothing
   }
   
   function updateThemeButton() {
@@ -1153,255 +909,7 @@ document.addEventListener("DOMContentLoaded", () => {
   (window as any).closeStatsDashboard = closeStatsDashboard;
 
   function updateTree() {
-    treeLayout(root);
-
-    // Flip Y for Root at Bottom (invert coordinates)
-    root.descendants().forEach(d => {
-      d.y = height - d.y!;  // Invert y: root now at bottom
-    });
-
-    // Center the tree horizontally within the viewport
-    const horizontalCenter = width / 2;
-    const rootXShift = horizontalCenter - (root.x ?? 0);
-    
-    // Add vertical offset to ensure root is visible (shift up by 20px)
-    const verticalOffset = -20;
-    
-    root.descendants().forEach(d => {
-      d.x = (d.x ?? 0) + rootXShift;
-      d.y = (d.y ?? 0) + verticalOffset;
-    });
-
-    // Links
-    const links = g.selectAll(".link")
-      .data(root.links(), (d: any) => `${(d.source as any).id || (d.source as any).data.name}-${(d.target as any).id || (d.target as any).data.name}`);
-
-    links.enter().append("path")
-      .attr("class", "link")
-      .attr("d", d3.linkVertical<any, any>().x((d: any) => d.x ?? 0).y((d: any) => d.y ?? 0))
-      .attr("opacity", 0)
-      .transition().duration(300).attr("opacity", 1);
-
-    links.transition().duration(300)
-      .attr("d", d3.linkVertical<any, any>().x((d: any) => d.x ?? 0).y((d: any) => d.y ?? 0));
-
-    links.exit().transition().duration(300).attr("opacity", 0).remove();
-
-    // Nodes
-    const nodes = g.selectAll(".node")
-      .data(root.descendants(), d => (d as any).id || (d as any).data.name);
-
-    const nodeEnter = nodes.enter().append("g")
-      .attr("class", d => d.depth === 0 ? "node root-node" : "node")
-      .attr("transform", d => `translate(${d.x ?? 0},${d.y ?? 0})`)
-      .attr("opacity", 0)
-      .on("click", (_, d) => {
-        // Clear any pending hover timeout to prevent conflicts
-        if (hoverTimeout) {
-          clearTimeout(hoverTimeout);
-          hoverTimeout = null;
-        }
-        showPersonModal((d as any).data, (d as any).depth);
-      })
-      .on("mouseover", function(event, d) {
-        showPersonTooltip((d as any).data, (d as any).depth, this, event);
-      })
-      .on("mouseout", function() {
-        hidePersonTooltip();
-      });
-
-    nodeEnter.transition().duration(300).attr("opacity", 1);
-
-    nodes.transition().duration(300)
-      .attr("transform", d => `translate(${d.x ?? 0},${d.y ?? 0})`);
-
-    nodes.exit().transition().duration(300).attr("opacity", 0).remove();
-
-    // Shapes (Scaled by DNA %)
-    const scaleFactor = (depth: number) => 10 + (10 / Math.pow(2, depth));  // Larger for closer gens
-
-    const males = nodeEnter.filter(d => d.data.sex === "Male");
-    males.each(function(d) {
-      const size = scaleFactor(d.depth) * 2;
-      const halfSize = scaleFactor(d.depth);  // For centering: x/y = -halfSize
-      const country = getCountry(d.data.birthPlace);
-      const svgUrl = countrySvgs[country];
-      const patternId = `country-pattern-${slugify(country)}`;
-      if (d.data.imageUrl) {
-        // For rects, use clipPath to clip image to square
-        const clipId = `clip-${d.data.name.replace(/[^a-zA-Z0-9-]/g, "")}`;
-        defs.append("clipPath")
-          .attr("id", clipId)
-          .append("rect")
-          .attr("x", -halfSize)
-          .attr("y", -halfSize)
-          .attr("width", size)
-          .attr("height", size);
-      
-        d3.select(this).append("image")
-          .attr("xlink:href", d.data.imageUrl)
-          .attr("x", -halfSize)
-          .attr("y", -halfSize)
-          .attr("width", size)
-          .attr("height", size)
-          .attr("preserveAspectRatio", "xMidYMid slice")
-          .attr("clip-path", `url(#${clipId})`);
-      
-        // Add rect stroke on top
-        d3.select(this).append("rect")
-          .attr("x", -halfSize)
-          .attr("y", -halfSize)
-          .attr("width", size)
-          .attr("height", size)
-          .attr("fill", "none")
-          .attr("stroke", "black");
-      } else {
-        d3.select(this).append("rect")
-          .attr("class", "node-circle")
-          .attr("width", size)
-          .attr("height", size)
-          .attr("x", -halfSize)
-          .attr("y", -halfSize)
-          .attr("fill", svgUrl ? `url(#${patternId})` : countryColors[country] || "gray")
-          .attr("stroke", "black");
-      }
-    });
-
-    const nonMales = nodeEnter.filter(d => d.data.sex !== "Male");
-    nonMales.each(function(d) {
-      const radius = scaleFactor(d.depth);
-      const country = getCountry(d.data.birthPlace);
-      const svgUrl = countrySvgs[country];
-      const patternId = `country-pattern-${slugify(country)}`;
-      if (d.data.imageUrl) {
-        // For circles, use clipPath to clip image to circle
-        const clipId = `clip-${d.data.name.replace(/[^a-zA-Z0-9-]/g, "")}`;
-        defs.append("clipPath")
-          .attr("id", clipId)
-          .append("circle")
-          .attr("r", radius);
-
-        d3.select(this).append("image")
-          .attr("xlink:href", d.data.imageUrl)
-          .attr("x", -radius)
-          .attr("y", -radius)
-          .attr("width", radius * 2)
-          .attr("height", radius * 2)
-          .attr("preserveAspectRatio", "xMidYMid slice")
-          .attr("clip-path", `url(#${clipId})`);
-
-        // Add circle stroke on top
-        d3.select(this).append("circle")
-          .attr("r", radius)
-          .attr("fill", "none")
-          .attr("stroke", "black");
-      } else {
-        d3.select(this).append("circle")
-          .attr("class", "node-circle")
-          .attr("r", radius)
-          .attr("fill", svgUrl ? `url(#${patternId})` : countryColors[country] || "gray")
-          .attr("stroke", "black");
-      }
-    });
-
-    // Text Labels with background and wrapping
-    const textGroups = nodeEnter.append("g")
-      .attr("class", "text-group");
-    
-    // Add background rectangle for text
-    textGroups.append("rect")
-      .attr("class", "text-background")
-      .attr("x", -60) // Half of max text width
-      .attr("y", d => scaleFactor(d.depth) + 7)
-      .attr("width", 120) // Increased width to show more names
-      .attr("height", 16) // Reduced height for more compact look
-      .attr("rx", 8) // Increased border radius for more aesthetic rounded corners
-      .attr("fill", "rgba(255, 255, 255, 0.9)")
-      .attr("stroke", "rgba(0, 0, 0, 0.1)")
-      .style("fill", "var(--bg-secondary)")
-      .style("stroke", "var(--border-secondary)")
-      .attr("stroke-width", 0.5);
-    
-    // Add text with truncation for long names - perfectly centered in background
-    textGroups.append("text")
-      .attr("dy", d => scaleFactor(d.depth) + 15) // Center of the 16px high background (7 + 16/2 = 15)
-      .attr("x", 0)
-      .attr("text-anchor", "middle")
-      .attr("dominant-baseline", "central") // Perfect vertical centering
-      .attr("class", "node-text")
-      .text(d => {
-        const name = d.data.name || "Unknown";
-        // Truncate names that would exceed the 120px box width (roughly 16-18 characters)
-        return name.length > 18 ? name.substring(0, 15) + "..." : name;
-      });
-
-
-    // Clean Modern Generation Headers
-    g.selectAll(".generation-header").remove();
-    g.selectAll(".generation-separator").remove();
-    
-    const gens = getGenerations(root);
-    
-    // Create clean generation headers
-    gens.forEach((info, depth) => {
-      const nodesAtDepth = root.descendants().filter(d => d.depth === depth);
-      if (nodesAtDepth.length === 0) return;
-      const y = nodesAtDepth[0].y ?? 0;
-      
-      // Create generation header group
-      const headerGroup = g.append("g")
-        .attr("class", `generation-header generation-${depth}`)
-        .attr("transform", `translate(${horizontalCenter}, ${y - 80})`);
-      
-      // Generation names
-      const generationNames = ["You", "Parents", "Grandparents", "Great-Grandparents", "2nd Great-Grandparents", "3rd Great-Grandparents"];
-      const genName = generationNames[depth] || `${depth}th Generation`;
-      
-      // Main title
-      headerGroup.append("text")
-        .attr("class", "generation-title")
-        .attr("y", 0)
-        .text(genName);
-      
-      // Subtitle with stats
-      headerGroup.append("text")
-        .attr("class", "generation-subtitle")
-        .attr("y", 20)
-        .text(`${info.count} of ${(2**depth).toLocaleString()} ancestors • ${info.dnaPercentEach.toFixed(1)}% DNA each • ${info.probOfSharingDna.toFixed(1)}% chance of sharing`);
-      
-      // Add subtle separator line below the header
-      if (depth > 0) {
-        g.append("line")
-          .attr("class", "generation-separator")
-          .attr("x1", 0)
-          .attr("y1", y - 50)
-          .attr("x2", width)
-          .attr("y2", y - 50);
-      }
-    });
-
-    // Lineages
-    const patrilinealNames = tracePatrilineal(migratedMaxArseneaultConfig);
-    const matrilinealNames = traceMatrilineal(migratedMaxArseneaultConfig);
-
-    g.selectAll(".link")
-      .attr("stroke", "#ccc")
-      .attr("stroke-dasharray", null)
-      .attr("stroke-width", 2);
-
-    g.selectAll(".link")
-      .filter(d => patrilinealNames.includes((d as any).source.data.name) && patrilinealNames.includes((d as any).target.data.name))
-      .attr("stroke", "blue")
-      .attr("stroke-dasharray", "5,5")
-      .attr("stroke-width", 3);
-
-    g.selectAll(".link")
-      .filter(d => matrilinealNames.includes((d as any).source.data.name) && matrilinealNames.includes((d as any).target.data.name))
-      .attr("stroke", "pink")
-      .attr("stroke-dasharray", "5,5")
-      .attr("stroke-width", 3);
-
-    updateMinimap();
+    treeVisualization.updateTree(root);
   }
 
   updateTree();
@@ -1927,7 +1435,7 @@ document.addEventListener("DOMContentLoaded", () => {
         width = rect.width;
         height = Math.max(rect.height, 400);
         
-        svg.attr('width', width).attr('height', height);
+        treeVisualization.updateDimensions(width, height);
         updateTree();
       }
     }, 100);
@@ -1943,7 +1451,7 @@ document.addEventListener("DOMContentLoaded", () => {
           width = rect.width;
           height = Math.max(rect.height, 400);
           
-          svg.attr('width', width).attr('height', height);
+          treeVisualization.updateDimensions(width, height);
           updateTree();
         }
       }, 100);
