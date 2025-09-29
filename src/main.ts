@@ -15,6 +15,7 @@ import { FilterPanel } from "./components/filter-panel";
 import { createViewControls, setupViewControlListeners } from "./components/view-controls";
 import { setupSearchFunctionality, setupSearchKeyboardShortcuts, setupSearchInputInteractions } from "./components/search";
 import { TreeVisualization, TreeVisualizationConfig } from "./visualization/tree-visualization";
+import { TooltipSystem } from "./visualization/tooltips";
 
 
 
@@ -188,192 +189,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let rootPerson = migratedMaxArseneaultConfig;
   
-  // Helper function to determine if a color is light or dark
-  function isColorLight(color: string): boolean {
-    // Convert hex to RGB
-    const hex = color.replace('#', '');
-    const r = parseInt(hex.substr(0, 2), 16);
-    const g = parseInt(hex.substr(2, 2), 16);
-    const b = parseInt(hex.substr(4, 2), 16);
-    
-    // Calculate luminance
-    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-    return luminance > 0.5;
-  }
   
-  // Beautiful hover tooltip functions
-  let tooltipTimeout: number | null = null;
-  let currentTooltip: HTMLElement | null = null;
-  let currentPerson: Person | null = null;
+  // Tooltip system
+  const tooltipSystem = new TooltipSystem();
   
   function showPersonTooltip(person: Person, depth: number, element: any, event?: any) {
-    hidePersonTooltip(); // Remove any existing tooltip
-    currentPerson = person;
-    createTooltip(person, depth, element, event);
+    tooltipSystem.showPersonTooltip(person, depth, element, event);
   }
   
-  function createTooltip(person: Person, depth: number, element: any, event?: any) {
-    const tooltip = document.createElement('div');
-    tooltip.className = 'person-tooltip';
-    currentTooltip = tooltip;
-    
-    const initials = getInitials(person?.name);
-    const isDeceased = person.deathDate !== "N/A";
-    const age = isDeceased 
-      ? calculateAgeAtDate(person.birthDate ?? "", person.deathDate ?? "") 
-      : calculateAgeAtDate(person.birthDate ?? "");
-    
-    // Get country for color coding
-    const country = getCountry(person.birthPlace);
-    const countryColor = countryColors[country] || "#808080";
-    
-    // Calculate relationship
-    let relation = "";
-    if (depth === 0) {
-      relation = "You";
-    } else if (depth === 1) {
-      relation = person.sex === "Female" ? "Mother" : "Father";
-    } else if (depth === 2) {
-      relation = person.sex === "Female" ? "Grandmother" : "Grandfather";
-    } else {
-      const ordinal = getOrdinalFromNumber(depth - 2);
-      const greats = `${depth === 3 ? "" : ordinal + " "}Great-`;
-      relation = `${greats}Grand${person.sex === "Female" ? "mother" : "father"}`;
-    }
-    
-    // Clean up data for display
-    const cleanName = cleanUnknown(person.name);
-    const cleanBirthDate = cleanUnknown(person.birthDate);
-    const cleanBirthPlace = cleanUnknown(person.birthPlace);
-    const cleanDeathDate = cleanUnknown(person.deathDate);
-    const cleanStory = cleanUnknown(person.story);
-    
-    // Calculate DNA contribution
-    const dnaContribution = depth === 0 ? 100 : (100 / Math.pow(2, depth));
-    
-    // Determine text color for better readability on country background
-    const isLight = isColorLight(countryColor);
-    const headerTextColor = isLight ? '#000000' : '#ffffff';
-    const headerIconBg = isLight ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.2)';
-    
-    tooltip.innerHTML = `
-      <div class="tooltip-header" style="background-color: ${countryColor}; color: ${headerTextColor}; padding: 8px 12px; border-radius: 8px 8px 0 0; display: flex; align-items: center; gap: 8px;">
-        <div style="width: 24px; height: 24px; background: ${headerIconBg}; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600;">
-          ${initials}
-        </div>
-        <div>
-          <div style="font-weight: 600; font-size: 14px;">${cleanName || "Unknown"}</div>
-          <div style="font-size: 11px; opacity: 0.9;">${relation}</div>
-        </div>
-      </div>
-      <div class="tooltip-content" style="padding: 12px; background: var(--bg-secondary); border: 1px solid var(--border-secondary); border-radius: 0 0 8px 8px; max-width: 250px;">
-        ${cleanBirthDate || cleanBirthPlace ? `
-          <div style="margin-bottom: 8px;">
-            <div style="font-size: 11px; font-weight: 600; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">Birth</div>
-            <div style="font-size: 13px; color: var(--text-primary);">
-              ${cleanBirthDate ? `<strong>${cleanBirthDate}</strong>` : ""}
-              ${cleanBirthPlace ? `<br><span style="color: var(--text-secondary);">${cleanBirthPlace}</span>` : ""}
-            </div>
-          </div>
-        ` : ""}
-        
-        <div style="margin-bottom: 8px;">
-          <div style="font-size: 11px; font-weight: 600; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">Death</div>
-          <div style="font-size: 13px; color: var(--text-primary);">
-            <strong>${cleanDeathDate || "—"}</strong>
-            ${age !== null && isDeceased ? `<br><span style="color: var(--text-secondary);">Age ${age}</span>` : ""}
-            ${age !== null && !isDeceased ? `<br><span style="color: var(--success);">Currently ${age} years old</span>` : ""}
-          </div>
-        </div>
-        
-        <div style="margin-bottom: 8px;">
-          <div style="font-size: 11px; font-weight: 600; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">DNA Contribution</div>
-          <div style="font-size: 13px; color: var(--text-primary);">
-            <strong>${dnaContribution.toFixed(2)}%</strong>
-            <span style="color: var(--text-secondary); font-size: 11px;"> (${depth === 0 ? 'You' : depth === 1 ? 'Parent' : depth === 2 ? 'Grandparent' : `${depth} generations back`})</span>
-          </div>
-        </div>
-        
-        ${cleanStory ? `
-          <div style="border-top: 1px solid var(--border-primary); padding-top: 8px;">
-            <div style="font-size: 11px; font-weight: 600; color: var(--accent-primary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Story</div>
-            <div style="font-size: 12px; color: var(--text-primary); line-height: 1.4; font-style: italic;">
-              ${cleanStory.length > 100 ? cleanStory.substring(0, 100) + "..." : cleanStory}
-            </div>
-          </div>
-        ` : ""}
-      </div>
-    `;
-    
-    // Set tooltip styles for mouse following
-    tooltip.style.position = 'fixed';
-    tooltip.style.zIndex = '10000';
-    tooltip.style.pointerEvents = 'none';
-    tooltip.style.opacity = '0';
-    tooltip.style.transition = 'opacity 0.2s ease';
-    
-    // Add to DOM
-    document.body.appendChild(tooltip);
-    
-    // Position tooltip based on mouse coordinates
-    if (event && event.clientX !== undefined && event.clientY !== undefined) {
-      // Account for the CSS zoom transform (scale 0.75)
-      const scale = 0.75;
-      const scaledX = event.clientX / scale;
-      const scaledY = event.clientY / scale;
-      
-      // Position tooltip upper-left corner to the right of mouse cursor
-      let left = scaledX + 20; // 20px gap from cursor (scaled)
-      let top = scaledY - 15;  // 15px above cursor (scaled)
-      
-      // Get tooltip dimensions after it's in the DOM
-      const tooltipRect = tooltip.getBoundingClientRect();
-      
-      // Adjust if tooltip would go off screen (use scaled viewport)
-      const scaledViewportWidth = window.innerWidth / scale;
-      const scaledViewportHeight = window.innerHeight / scale;
-      
-      if (left + tooltipRect.width > scaledViewportWidth) {
-        left = scaledX - tooltipRect.width - 20; // Position to the left instead
-      }
-      if (top < 0) {
-        top = scaledY + 20; // Position below cursor if not enough space above
-      }
-      
-      tooltip.style.left = `${left}px`;
-      tooltip.style.top = `${top}px`;
-    } else {
-      // Fallback positioning if no event coordinates
-      tooltip.style.left = '10px';
-      tooltip.style.top = '10px';
-    }
-    
-    // Show tooltip
-    requestAnimationFrame(() => {
-      if (currentTooltip) {
-        currentTooltip.style.opacity = '1';
-      }
-    });
-  }
   
   function hidePersonTooltip() {
-    // Clear any pending tooltip timeout
-    if (tooltipTimeout) {
-      clearTimeout(tooltipTimeout);
-      tooltipTimeout = null;
-    }
-    
-    if (currentTooltip) {
-      // Fade out and remove
-      currentTooltip.style.opacity = '0';
-      setTimeout(() => {
-        if (currentTooltip && currentTooltip.parentNode) {
-          currentTooltip.parentNode.removeChild(currentTooltip);
-        }
-        currentTooltip = null;
-        currentPerson = null;
-      }, 200);
-    }
+    tooltipSystem.hidePersonTooltip();
   }
   
   function updateTreeWithNewData(newRoot: any) {
