@@ -1007,6 +1007,7 @@ export class StatsDashboard {
       .append("g")
       .attr("class", "arc");
     
+    
     // Add pie slices
     arcs.append("path")
       .attr("d", (d: any) => arc(d) as string)
@@ -1014,8 +1015,8 @@ export class StatsDashboard {
       .attr("stroke", "var(--bg-secondary)")
       .attr("stroke-width", 2)
       .style("cursor", "pointer")
-      .on("mouseover", function(event, d) {
-        d3.select(this)
+      .on("mouseover", (event, d) => {
+        d3.select(event.currentTarget)
           .attr("stroke-width", 3)
           .attr("stroke", "var(--accent-primary)");
         
@@ -1035,9 +1036,9 @@ export class StatsDashboard {
         `)
           .style("left", (event.pageX / 0.75 + 10) + "px")
           .style("top", (event.pageY / 0.75 - 28) + "px");
-      }.bind(this))
-      .on("mouseout", function(event, d) {
-        d3.select(this)
+      })
+      .on("mouseout", (event, d) => {
+        d3.select(event.currentTarget)
           .attr("stroke-width", 2)
           .attr("stroke", "var(--bg-secondary)");
         

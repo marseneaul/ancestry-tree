@@ -3512,8 +3512,8 @@ body {
   /* Enhanced Statistics Dashboard Styles */
   .chart-tooltip {
     position: absolute;
-    background: rgba(0, 0, 0, 0.9);
-    color: white;
+    background: var(--bg-primary);
+    color: var(--text-primary);
     padding: 8px 12px;
     border-radius: 6px;
     font-size: 12px;
@@ -3521,7 +3521,7 @@ body {
     pointer-events: none;
     z-index: 1300;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border-primary);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     max-width: 200px;
@@ -3529,7 +3529,7 @@ body {
   }
 
   .chart-tooltip strong {
-    color: #4a9eff;
+    color: var(--accent-primary);
     font-weight: 600;
   }
 
@@ -3733,19 +3733,6 @@ body {
     opacity: 0.6;
   }
 
-  .chart-tooltip {
-    position: absolute;
-    background: var(--bg-primary);
-    border: 1px solid var(--border-primary);
-    border-radius: var(--radius-md);
-    padding: var(--space-2);
-    font-size: var(--font-size-sm);
-    color: var(--text-primary);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    z-index: 1000;
-    pointer-events: none;
-    white-space: nowrap;
-  }
 
   .chart-tooltip div {
     margin-bottom: 2px;
