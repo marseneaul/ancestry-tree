@@ -114,6 +114,7 @@ export class FilterPanel {
 
     const sortedCountries = Array.from(countryCounts.entries())
       .sort((a, b) => b[1] - a[1])
+      .slice(0, 8)
       .map(([country]) => country);
 
     this.container.innerHTML = `

@@ -203,7 +203,7 @@ body {
     grid-area: sidebar-left;
     background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
     border-right: 1px solid var(--border-primary);
-    overflow-y: auto;
+    overflow: hidden;
     z-index: 100;
     box-shadow: 2px 0 8px var(--shadow-light);
     /* Ensure the sidebar fills the available height */
@@ -1208,9 +1208,10 @@ body {
 
   /* Filter Content */
   .filter-content {
-    max-height: calc(100vh - 280px);
+    flex: 1;
     overflow-y: auto;
     padding: var(--space-6);
+    min-height: 0;
   }
 
   .filter-tab-content {
@@ -1586,6 +1587,7 @@ body {
 
   /* Filter Footer */
   .filter-footer {
+    flex-shrink: 0;
     padding: var(--space-4) var(--space-6);
     border-top: 1px solid var(--border-primary);
     background: var(--bg-tertiary);
@@ -1822,8 +1824,10 @@ body {
     }
 
     .filter-content {
-      max-height: calc(100vh - 200px);
+      flex: 1;
+      overflow-y: auto;
       padding: var(--space-4);
+      min-height: 0;
     }
 
     .country-grid {
@@ -1972,7 +1976,10 @@ body {
     }
 
     .filter-content {
+      flex: 1;
+      overflow-y: auto;
       padding: var(--space-4);
+      min-height: 0;
     }
 
     .filter-group {
@@ -2078,7 +2085,9 @@ body {
     }
 
     .filter-content {
-      max-height: calc(133.33vh - 180px); /* Compensate for the 0.75 scale */
+      flex: 1;
+      overflow-y: auto;
+      min-height: 0;
     }
 
     .modal-content {
