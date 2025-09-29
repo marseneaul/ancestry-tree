@@ -167,12 +167,8 @@ export class FilterPanel {
           
           <div class="filter-group">
             <div class="filter-group-header">
-              <h4 class="filter-group-title">Countries</h4>
-              <div class="filter-group-description">Filter by birth country</div>
-              <div class="filter-group-actions">
-                <button class="filter-action-btn" onclick="selectAllCountries()">All</button>
-                <button class="filter-action-btn" onclick="selectNoCountries()">None</button>
-              </div>
+              <h4 class="filter-group-title">Countries of Origin</h4>
+              <div class="filter-group-description">Filter by birth countries</div>
             </div>
             <div class="country-grid">
               ${sortedCountries.map(country => `
@@ -192,6 +188,16 @@ export class FilterPanel {
                   </label>
                 </div>
               `).join('')}
+            </div>
+            <div class="country-actions">
+              <button class="action-btn secondary" onclick="selectAllCountries()">
+                <span class="btn-icon">✓</span>
+                Select All
+              </button>
+              <button class="action-btn secondary" onclick="selectNoCountries()">
+                <span class="btn-icon">✗</span>
+                Clear All
+              </button>
             </div>
           </div>
         </div>
@@ -323,7 +329,7 @@ export class FilterPanel {
           </div>
         </div>
         
-        <!-- Lineage Filters Tab -->
+        <!-- Lineage & Research Tab -->
         <div class="filter-tab-content" id="tab-lineage" role="tabpanel" aria-labelledby="tab-lineage" aria-hidden="true">
           <div class="filter-group">
             <div class="filter-group-header">
@@ -337,7 +343,7 @@ export class FilterPanel {
                   <div class="checkbox-icon">👤</div>
                   <div class="checkbox-text">
                     <div class="checkbox-title">Direct Line Only</div>
-                    <div class="checkbox-description">Show only direct ancestors</div>
+                    <div class="checkbox-description">Direct ancestors only</div>
                   </div>
                 </label>
               </div>
@@ -367,7 +373,7 @@ export class FilterPanel {
                   <div class="checkbox-icon">🌍</div>
                   <div class="checkbox-text">
                     <div class="checkbox-title">Migration Patterns</div>
-                    <div class="checkbox-description">Show migration between countries</div>
+                    <div class="checkbox-description">Cross-country movements</div>
                   </div>
                 </label>
               </div>
@@ -403,7 +409,7 @@ export class FilterPanel {
                   <div class="checkbox-icon">❓</div>
                   <div class="checkbox-text">
                     <div class="checkbox-title">Research Gaps</div>
-                    <div class="checkbox-description">Areas needing research</div>
+                    <div class="checkbox-description">Missing information</div>
                   </div>
                 </label>
               </div>
@@ -412,8 +418,8 @@ export class FilterPanel {
                 <label class="checkbox-label" for="missing-data">
                   <div class="checkbox-icon">⚠️</div>
                   <div class="checkbox-text">
-                    <div class="checkbox-title">Missing Data</div>
-                    <div class="checkbox-description">Incomplete information</div>
+                    <div class="checkbox-title">Missing Critical Data</div>
+                    <div class="checkbox-description">Essential info missing</div>
                   </div>
                 </label>
               </div>
@@ -423,7 +429,7 @@ export class FilterPanel {
                   <div class="checkbox-icon">📊</div>
                   <div class="checkbox-text">
                     <div class="checkbox-title">Estimated Dates</div>
-                    <div class="checkbox-description">Calculated birth/death dates</div>
+                    <div class="checkbox-description">Approximate dates only</div>
                   </div>
                 </label>
               </div>
@@ -433,7 +439,7 @@ export class FilterPanel {
                   <div class="checkbox-icon">✅</div>
                   <div class="checkbox-text">
                     <div class="checkbox-title">Well Documented</div>
-                    <div class="checkbox-description">Complete information available</div>
+                    <div class="checkbox-description">Complete information</div>
                   </div>
                 </label>
               </div>
@@ -448,8 +454,7 @@ export class FilterPanel {
           Reset All Filters
         </button>
         <div class="filter-stats" id="filter-stats">
-          <span class="filter-stats-label">Showing:</span>
-          <span class="filter-stats-value" id="filter-stats-value">All people</span>
+          <span class="filter-count">All people visible</span>
         </div>
       </div>
     `;
@@ -727,24 +732,13 @@ export class FilterPanel {
     
     if (activeFilters.length === 0) {
       summary.textContent = "No filters active";
+      stats.textContent = "All people visible";
     } else {
-      summary.textContent = activeFilters.join(", ");
-    }
-    
-    // Update stats
-    const visibleCount = this.getVisibleNodeCount();
-    const totalCount = this.data.root.descendants().length;
-    const statsValue = document.getElementById('filter-stats-value');
-    if (statsValue) {
-      statsValue.textContent = `${visibleCount} of ${totalCount} people`;
+      summary.textContent = `${activeFilters.length} filter${activeFilters.length > 1 ? 's' : ''} active`;
+      stats.textContent = `${activeFilters.join(', ')}`;
     }
   }
 
-  private getVisibleNodeCount(): number {
-    // This would need to be implemented based on the actual filtering logic
-    // For now, return a placeholder
-    return this.data.root.descendants().length;
-  }
 
   public applyFilters(): void {
     const maxGen = parseInt((document.getElementById("generation-slider") as HTMLInputElement)?.value || this.filterState.maxGeneration.toString());

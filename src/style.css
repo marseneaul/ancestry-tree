@@ -1462,10 +1462,14 @@ body {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: var(--space-2);
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .checkbox-card {
     position: relative;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .modern-checkbox {
@@ -1486,6 +1490,9 @@ body {
     background: var(--bg-tertiary);
     min-height: 48px;
     height: 48px;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
   }
 
   .checkbox-label:hover {
