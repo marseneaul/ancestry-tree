@@ -388,7 +388,8 @@ export function setupButtonHandlers(deps: EventHandlerDependencies): void {
 
   // Toggle theme
   deps.themeToggleBtn.addEventListener("click", () => {
-    const newTheme = deps.currentTheme === 'dark' ? 'light' : 'dark';
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
     deps.applyTheme(newTheme);
     deps.updateThemeButton();
   });

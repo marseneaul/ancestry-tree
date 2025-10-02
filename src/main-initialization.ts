@@ -366,7 +366,8 @@ export function initializeMainApplication(): InitializationResult {
   }
 
   function updateThemeButton() {
-    const themeIcon = document.querySelector('#theme-toggle-btn svg path');
+    // Update the SVG icon based on theme
+    const themeIcon = document.querySelector('#theme-toggle-btn .theme-icon');
     if (themeIcon) {
       if (currentTheme === 'dark') {
         // Sun icon for dark mode (to switch to light)
