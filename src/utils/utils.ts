@@ -131,7 +131,7 @@ export function getCountry(birthPlace?: string): string {
     if (place.includes("italy")) return "Italy";
     if (place.includes("hungary")) return "Hungary";
     if (place.includes("unknown")) return "Unknown";
-    return place.split(",").pop()?.trim() || "Unknown";  // Fallback
+    return birthPlace.split(",").pop()?.trim() || "Unknown";  // Fallback
   }
   
 export const countryColors: Record<string, string> = {
