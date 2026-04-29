@@ -227,14 +227,18 @@ export function setupSearchHandlers(deps: EventHandlerDependencies): void {
 export function setupButtonHandlers(deps: EventHandlerDependencies): void {
   // Toggle statistics dashboard visibility
   deps.statsToggleBtn.addEventListener("click", () => {
+    const shouldShowStats = deps.statsDashboard.classList.contains("hidden");
+
     // Hide other panels first
     deps.filterPanel.classList.add("hidden");
     deps.timelinePanel.classList.add("hidden");
     deps.filterToggleBtn.classList.remove("active");
     deps.timelineToggleBtn.classList.remove("active");
+    deps.isFilterPanelVisible = false;
+    deps.isTimelinePanelVisible = false;
     
     // Toggle stats panel
-    deps.isStatsDashboardVisible = !deps.isStatsDashboardVisible;
+    deps.isStatsDashboardVisible = shouldShowStats;
     deps.statsDashboard.classList.toggle("hidden", !deps.isStatsDashboardVisible);
     deps.statsToggleBtn.classList.toggle("active", deps.isStatsDashboardVisible);
     
@@ -257,14 +261,18 @@ export function setupButtonHandlers(deps: EventHandlerDependencies): void {
 
   // Toggle timeline panel visibility
   deps.timelineToggleBtn.addEventListener("click", () => {
+    const shouldShowTimeline = deps.timelinePanel.classList.contains("hidden");
+
     // Hide other panels first
     deps.filterPanel.classList.add("hidden");
     deps.statsDashboard.classList.add("hidden");
     deps.filterToggleBtn.classList.remove("active");
     deps.statsToggleBtn.classList.remove("active");
+    deps.isFilterPanelVisible = false;
+    deps.isStatsDashboardVisible = false;
     
     // Toggle timeline panel
-    deps.isTimelinePanelVisible = !deps.isTimelinePanelVisible;
+    deps.isTimelinePanelVisible = shouldShowTimeline;
     deps.timelinePanel.classList.toggle("hidden", !deps.isTimelinePanelVisible);
     deps.timelineToggleBtn.classList.toggle("active", deps.isTimelinePanelVisible);
     
@@ -283,14 +291,18 @@ export function setupButtonHandlers(deps: EventHandlerDependencies): void {
 
   // Toggle filter panel visibility
   deps.filterToggleBtn.addEventListener("click", () => {
+    const shouldShowFilter = deps.filterPanel.classList.contains("hidden");
+
     // Hide other panels first
     deps.statsDashboard.classList.add("hidden");
     deps.timelinePanel.classList.add("hidden");
     deps.statsToggleBtn.classList.remove("active");
     deps.timelineToggleBtn.classList.remove("active");
+    deps.isStatsDashboardVisible = false;
+    deps.isTimelinePanelVisible = false;
     
     // Toggle filter panel
-    deps.isFilterPanelVisible = !deps.isFilterPanelVisible;
+    deps.isFilterPanelVisible = shouldShowFilter;
     deps.filterPanel.classList.toggle("hidden", !deps.isFilterPanelVisible);
     deps.filterToggleBtn.classList.toggle("active", deps.isFilterPanelVisible);
     
@@ -713,15 +725,17 @@ export function setupViewControlHandlers(deps: EventHandlerDependencies): void {
 export function setupWindowHandlers(deps: EventHandlerDependencies): void {
   // Close statistics dashboard when clicking outside
   document.addEventListener("click", (event) => {
-    if (deps.isStatsDashboardVisible && 
+    if (!deps.statsDashboard.classList.contains("hidden") && 
         !deps.statsDashboard.contains(event.target as Node) && 
         !deps.statsToggleBtn.contains(event.target as Node)) {
       deps.closeStatsDashboard();
+      deps.isStatsDashboardVisible = false;
     }
-    if (deps.isTimelinePanelVisible && 
+    if (!deps.timelinePanel.classList.contains("hidden") && 
         !deps.timelinePanel.contains(event.target as Node) && 
         !deps.timelineToggleBtn.contains(event.target as Node)) {
       deps.closeTimelinePanel();
+      deps.isTimelinePanelVisible = false;
     }
   });
 

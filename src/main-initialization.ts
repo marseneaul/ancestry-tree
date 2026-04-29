@@ -186,7 +186,7 @@ export function initializeMainApplication(): InitializationResult {
   // Get references to the visualization elements
   const svg = treeVisualization.getSVG();
   const g = svg.select("g");
-  const zoom = treeVisualization.getCurrentTransform();
+  const zoom = treeVisualization.getZoom();
 
   let rootPerson = migratedMaxArseneaultConfig;
   

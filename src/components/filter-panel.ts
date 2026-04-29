@@ -747,105 +747,20 @@ export class FilterPanel {
     // Get lineage data for filtering
     const patrilinealNames = tracePatrilineal(this.data.migratedMaxArseneaultConfig);
     const matrilinealNames = traceMatrilineal(this.data.migratedMaxArseneaultConfig);
+    const directLineNames = new Set([...patrilinealNames, ...matrilinealNames]);
     
     // Filter nodes based on all criteria
     this.data.g.selectAll(".node")
       .style("opacity", d => {
-        const node = d as any;
-        const country = getCountry(node.data.birthPlace);
-        
-        // Basic filters
-        const isGenerationVisible = node.depth <= maxGen;
-        const isCountryVisible = this.filterState.selectedCountries.has(country);
-        
-        // Time filters
-        let isBirthYearVisible = true;
-        if (node.data.birthDate && node.data.birthDate !== "Unknown" && node.data.birthDate !== "UNKNOWN") {
-          const yearMatch = node.data.birthDate.match(/\b(19|20)\d{2}\b/) || node.data.birthDate.match(/\b\d{4}\b/);
-          if (yearMatch) {
-            const year = parseInt(yearMatch[0]);
-            isBirthYearVisible = year >= this.filterState.birthYearRange.min && year <= this.filterState.birthYearRange.max;
-          }
-        }
-        
-        // Lifespan filter
-        let isLifespanVisible = true;
-        if (node.data.birthDate && node.data.deathDate && 
-            node.data.birthDate !== "Unknown" && node.data.deathDate !== "Unknown") {
-          const birthYear = node.data.birthDate.match(/\b(19|20)\d{2}\b/) || node.data.birthDate.match(/\b\d{4}\b/);
-          const deathYear = node.data.deathDate.match(/\b(19|20)\d{2}\b/) || node.data.deathDate.match(/\b\d{4}\b/);
-          if (birthYear && deathYear) {
-            const age = parseInt(deathYear[0]) - parseInt(birthYear[0]);
-            isLifespanVisible = age >= this.filterState.lifespanFilter.min && age <= this.filterState.lifespanFilter.max;
-          }
-        }
-        
-        // Data completeness filters
-        let isDataCompletenessVisible = true;
-        if (this.filterState.selectedDataCompleteness.size > 0) {
-          isDataCompletenessVisible = Array.from(this.filterState.selectedDataCompleteness).some(filter => {
-            switch (filter) {
-              case 'has-photo': return node.data.imageUrl;
-              case 'has-story': return node.data.story && node.data.story !== "Stories coming soon...";
-              case 'has-birth-date': return node.data.birthDate && node.data.birthDate !== "Unknown";
-              case 'has-death-date': return node.data.deathDate && node.data.deathDate !== "Unknown";
-              case 'has-birth-place': return node.data.birthPlace && node.data.birthPlace !== "Unknown";
-              case 'has-parents': return node.data.parents && node.data.parents.length > 0;
-              default: return false;
-            }
-          });
-        }
-        
-        // Relationship filters
-        let isRelationshipVisible = true;
-        if (this.filterState.selectedRelationshipFilters.size > 0) {
-          isRelationshipVisible = Array.from(this.filterState.selectedRelationshipFilters).some(filter => {
-            switch (filter) {
-              case 'direct-line-only': return this.filterState.showDirectLineOnly;
-              case 'patrilineal-line': return patrilinealNames.includes(node.data.name);
-              case 'matrilineal-line': return matrilinealNames.includes(node.data.name);
-              case 'migration-patterns': return this.hasMigrationPattern(node);
-              default: return false;
-            }
-          });
-        }
-        
-        // Research filters
-        let isResearchVisible = true;
-        if (this.filterState.selectedResearchFilters.size > 0) {
-          isResearchVisible = Array.from(this.filterState.selectedResearchFilters).some(filter => {
-            switch (filter) {
-              case 'research-gaps': return this.hasResearchGaps(node);
-              case 'missing-data': return this.hasMissingData(node);
-              case 'estimated-dates': return this.hasEstimatedDates(node);
-              case 'well-documented': return this.isWellDocumented(node);
-              default: return false;
-            }
-          });
-        }
-        
-        // DNA contribution filter
-        let isDnaVisible = true;
-        if (this.filterState.minDnaContribution > 0) {
-          const dnaContribution = Math.pow(0.5, node.depth) * 100;
-          isDnaVisible = dnaContribution >= this.filterState.minDnaContribution;
-        }
-        
-        const isVisible = isGenerationVisible && isCountryVisible && isBirthYearVisible && 
-                         isLifespanVisible && isDataCompletenessVisible && isRelationshipVisible && 
-                         isResearchVisible && isDnaVisible;
-        
-        return isVisible ? 1 : 0.1;
+        return this.isNodeVisible(d as any, maxGen, patrilinealNames, matrilinealNames, directLineNames) ? 1 : 0.1;
       });
     
     // Filter links
     this.data.g.selectAll(".link")
       .style("opacity", d => {
         const link = d as any;
-        const sourceCountry = getCountry(link.source.data.birthPlace);
-        const targetCountry = getCountry(link.target.data.birthPlace);
-        const sourceVisible = link.source.depth <= maxGen && this.filterState.selectedCountries.has(sourceCountry);
-        const targetVisible = link.target.depth <= maxGen && this.filterState.selectedCountries.has(targetCountry);
+        const sourceVisible = this.isNodeVisible(link.source, maxGen, patrilinealNames, matrilinealNames, directLineNames);
+        const targetVisible = this.isNodeVisible(link.target, maxGen, patrilinealNames, matrilinealNames, directLineNames);
         return (sourceVisible && targetVisible) ? 1 : 0.1;
       });
     
@@ -853,6 +768,97 @@ export class FilterPanel {
     if (this.data.updateGridLayout) {
       this.data.updateGridLayout();
     }
+  }
+
+  private isNodeVisible(
+    node: any,
+    maxGen: number,
+    patrilinealNames: string[],
+    matrilinealNames: string[],
+    directLineNames: Set<string>
+  ): boolean {
+    const country = getCountry(node.data.birthPlace);
+    
+    // Basic filters
+    const isGenerationVisible = node.depth <= maxGen;
+    const isCountryVisible = this.filterState.selectedCountries.has(country);
+    
+    // Time filters
+    let isBirthYearVisible = true;
+    if (node.data.birthDate && node.data.birthDate !== "Unknown" && node.data.birthDate !== "UNKNOWN") {
+      const yearMatch = node.data.birthDate.match(/\b(19|20)\d{2}\b/) || node.data.birthDate.match(/\b\d{4}\b/);
+      if (yearMatch) {
+        const year = parseInt(yearMatch[0]);
+        isBirthYearVisible = year >= this.filterState.birthYearRange.min && year <= this.filterState.birthYearRange.max;
+      }
+    }
+    
+    // Lifespan filter
+    let isLifespanVisible = true;
+    if (node.data.birthDate && node.data.deathDate && 
+        node.data.birthDate !== "Unknown" && node.data.deathDate !== "Unknown") {
+      const birthYear = node.data.birthDate.match(/\b(19|20)\d{2}\b/) || node.data.birthDate.match(/\b\d{4}\b/);
+      const deathYear = node.data.deathDate.match(/\b(19|20)\d{2}\b/) || node.data.deathDate.match(/\b\d{4}\b/);
+      if (birthYear && deathYear) {
+        const age = parseInt(deathYear[0]) - parseInt(birthYear[0]);
+        isLifespanVisible = age >= this.filterState.lifespanFilter.min && age <= this.filterState.lifespanFilter.max;
+      }
+    }
+    
+    // Data completeness filters
+    let isDataCompletenessVisible = true;
+    if (this.filterState.selectedDataCompleteness.size > 0) {
+      isDataCompletenessVisible = Array.from(this.filterState.selectedDataCompleteness).some(filter => {
+        switch (filter) {
+          case 'has-photo': return node.data.imageUrl;
+          case 'has-story': return node.data.story && node.data.story !== "Stories coming soon...";
+          case 'has-birth-date': return node.data.birthDate && node.data.birthDate !== "Unknown";
+          case 'has-death-date': return node.data.deathDate && node.data.deathDate !== "Unknown";
+          case 'has-birth-place': return node.data.birthPlace && node.data.birthPlace !== "Unknown";
+          case 'has-parents': return node.data.parents && node.data.parents.length > 0;
+          default: return false;
+        }
+      });
+    }
+    
+    // Relationship filters
+    let isRelationshipVisible = true;
+    if (this.filterState.selectedRelationshipFilters.size > 0) {
+      isRelationshipVisible = Array.from(this.filterState.selectedRelationshipFilters).some(filter => {
+        switch (filter) {
+          case 'direct-line-only': return directLineNames.has(node.data.name);
+          case 'patrilineal-line': return patrilinealNames.includes(node.data.name);
+          case 'matrilineal-line': return matrilinealNames.includes(node.data.name);
+          case 'migration-patterns': return this.hasMigrationPattern(node);
+          default: return false;
+        }
+      });
+    }
+    
+    // Research filters
+    let isResearchVisible = true;
+    if (this.filterState.selectedResearchFilters.size > 0) {
+      isResearchVisible = Array.from(this.filterState.selectedResearchFilters).some(filter => {
+        switch (filter) {
+          case 'research-gaps': return this.hasResearchGaps(node);
+          case 'missing-data': return this.hasMissingData(node);
+          case 'estimated-dates': return this.hasEstimatedDates(node);
+          case 'well-documented': return this.isWellDocumented(node);
+          default: return false;
+        }
+      });
+    }
+    
+    // DNA contribution filter
+    let isDnaVisible = true;
+    if (this.filterState.minDnaContribution > 0) {
+      const dnaContribution = Math.pow(0.5, node.depth) * 100;
+      isDnaVisible = dnaContribution >= this.filterState.minDnaContribution;
+    }
+    
+    return isGenerationVisible && isCountryVisible && isBirthYearVisible && 
+           isLifespanVisible && isDataCompletenessVisible && isRelationshipVisible && 
+           isResearchVisible && isDnaVisible;
   }
 
   private hasMigrationPattern(node: any): boolean {
