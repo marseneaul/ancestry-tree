@@ -4795,3 +4795,86 @@ button {
     min-height: 34px;
   }
 }
+
+/* Filter panel scroll and alignment fixes */
+.filter-panel {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.filter-header,
+.filter-tabs,
+.filter-footer {
+  flex: 0 0 auto;
+}
+
+.filter-content {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-bottom: var(--space-6);
+}
+
+.filter-footer {
+  margin-top: 0;
+  padding: var(--space-3) var(--space-5);
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-primary);
+  box-shadow: 0 -8px 16px rgba(17, 24, 39, 0.04);
+}
+
+.filter-footer .action-btn {
+  justify-content: center;
+  width: 100%;
+}
+
+.filter-stats {
+  margin-top: var(--space-2);
+}
+
+.country-card-label {
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-3);
+  height: auto;
+  min-height: 52px;
+  padding: var(--space-3);
+}
+
+.country-checkbox:checked + .country-card-label,
+.modern-checkbox:checked + .checkbox-label {
+  box-shadow: none;
+  outline: 2px solid rgba(36, 84, 166, 0.18);
+  outline-offset: -2px;
+}
+
+.country-info {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.country-name,
+.country-count {
+  line-height: 1.2;
+}
+
+.country-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+@media (max-width: 768px) {
+  .filter-panel {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .filter-content {
+    max-height: none;
+  }
+}
