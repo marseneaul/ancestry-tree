@@ -13,6 +13,7 @@ import { setupAllEventHandlers, EventHandlerDependencies } from "./handlers/even
 import { exportPersonToGEDCOM, downloadGEDCOM } from "./utils/gedcom-export";
 import { measureSync } from "./utils/performance";
 import { createInitialUIState, UIState } from "./state/ui-state";
+import { TreeSearchIndex } from "./utils/search-index";
 
 // Types for initialization
 export interface InitializationConfig {
@@ -413,8 +414,9 @@ export function initializeMainApplication(): InitializationResult {
 
   updateTree();
 
-  // Collect unique names from the tree (run once after updateTree)
-  const allNames = [...new Set(root.descendants().map((d: any) => d.data.name || "Unknown"))];
+  // Build search data once so typing does not repeatedly walk and normalize the tree.
+  const searchIndex = measureSync("search.buildIndex", () => TreeSearchIndex.fromRoot(root));
+  const allNames = searchIndex.getAllNames();
 
   // Initialize Filter Panel
   initializeFilterPanel();
@@ -484,6 +486,7 @@ export function initializeMainApplication(): InitializationResult {
     // Data and functions
     root,
     allNames,
+    searchIndex,
     width,
     height,
     

@@ -2,6 +2,7 @@ import * as d3 from 'd3';
 import { UIState } from '../state/ui-state';
 import { getGEDCOMExportSummary } from '../utils/gedcom-export';
 import type { GEDCOMExportOptions, LivingPersonPrivacy } from '../utils/gedcom-export';
+import type { TreeSearchIndex } from '../utils/search-index';
 
 function setPressed(button: HTMLButtonElement, pressed: boolean): void {
   button.setAttribute('aria-pressed', String(pressed));
@@ -42,6 +43,7 @@ export interface EventHandlerDependencies {
   // Data and functions
   root: any;
   allNames: string[];
+  searchIndex: TreeSearchIndex;
   width: number;
   height: number;
   
@@ -333,10 +335,11 @@ export function setupSearchHandlers(deps: EventHandlerDependencies): void {
 
   // Enhanced Search Functionality with Autocomplete, Results Count, and Zoom
   deps.searchInput.addEventListener("input", (e) => {
-    const query = (e.target as HTMLInputElement).value.toLowerCase();
+    const query = (e.target as HTMLInputElement).value;
+    const hasQuery = query.trim().length > 0;
 
     // Show/hide clear button
-    if (query.length > 0) {
+    if (hasQuery) {
       deps.searchClearBtn.classList.add("visible");
     } else {
       deps.searchClearBtn.classList.remove("visible");
@@ -345,15 +348,12 @@ export function setupSearchHandlers(deps: EventHandlerDependencies): void {
     // Clear existing suggestions
     deps.dropdown.innerHTML = "";
 
-    // Filter names containing the substring (case-insensitive)
-    const suggestions = deps.allNames.filter(name => name.toLowerCase().includes(query));
-    const matchingNodes = deps.root.descendants().filter((d: any) => 
-      query && (d.data.name?.toLowerCase().includes(query) ?? false)
-    );
+    const searchResult = deps.searchIndex.search(query);
+    const matchingNodeSet = new Set(searchResult.matchingNodes);
 
     // Update results count
-    if (query.length > 0) {
-      deps.searchResultsCount.textContent = `${matchingNodes.length} result${matchingNodes.length !== 1 ? 's' : ''}`;
+    if (hasQuery) {
+      deps.searchResultsCount.textContent = `${searchResult.matchingNodes.length} result${searchResult.matchingNodes.length !== 1 ? 's' : ''}`;
       deps.searchResultsCount.classList.add("highlighted");
     } else {
       deps.searchResultsCount.textContent = "";
@@ -361,11 +361,11 @@ export function setupSearchHandlers(deps: EventHandlerDependencies): void {
     }
 
     // Show/hide dropdown
-    if (query.length > 0 && suggestions.length > 0) {
+    if (hasQuery && searchResult.suggestions.length > 0) {
       deps.dropdown.style.display = "block";
       
       // Add up to 10 suggestions
-      suggestions.slice(0, 10).forEach(name => {
+      searchResult.suggestions.forEach(name => {
         const option = document.createElement("div");
         option.className = "dropdown-option";
         option.textContent = name;
@@ -389,7 +389,7 @@ export function setupSearchHandlers(deps: EventHandlerDependencies): void {
 
     // Highlight matching nodes (keep current behavior)
     deps.g.selectAll(".node")
-      .classed("highlighted", (d: any) => query && ((d as any).data.name?.toLowerCase().includes(query) ?? false));
+      .classed("highlighted", (d: any) => matchingNodeSet.has(d));
   });
 
   // On selection (change event fires when picking from datalist)
@@ -397,8 +397,7 @@ export function setupSearchHandlers(deps: EventHandlerDependencies): void {
     const selectedName = (e.target as HTMLInputElement).value;
     if (!selectedName) return;
 
-    // Find the node with exact name match (assume unique names; if not, take first)
-    const selectedNode = deps.root.descendants().find((d: any) => d.data.name === selectedName);
+    const selectedNode = deps.searchIndex.findExact(selectedName);
     if (!selectedNode) return;
 
     // Remove highlights
