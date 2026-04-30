@@ -11,6 +11,140 @@ export interface GEDCOMExportOptions {
   encoding?: string;
   sourceName?: string;
   sourceVersion?: string;
+  livingPersonPrivacy?: LivingPersonPrivacy;
+  currentYear?: number;
+  livingAgeThreshold?: number;
+}
+
+export type LivingPersonPrivacy = 'include' | 'redact-details' | 'name-only' | 'exclude';
+
+export interface GEDCOMExportSummary {
+  totalPeople: number;
+  exportedPeople: number;
+  livingPeople: number;
+  includedLivingPeople: number;
+  redactedLivingPeople: number;
+  nameOnlyLivingPeople: number;
+  excludedLivingPeople: number;
+  storyRecords: number;
+  imageRecords: number;
+}
+
+interface NormalizedGEDCOMExportOptions {
+  includeStories: boolean;
+  includeImages: boolean;
+  encoding: string;
+  sourceName: string;
+  sourceVersion: string;
+  livingPersonPrivacy: LivingPersonPrivacy;
+  currentYear: number;
+  livingAgeThreshold: number;
+}
+
+function normalizeOptions(options: GEDCOMExportOptions = {}): NormalizedGEDCOMExportOptions {
+  return {
+    includeStories: true,
+    includeImages: false,
+    encoding: 'UTF-8',
+    sourceName: 'Ancestry Tree Export',
+    sourceVersion: '1.0',
+    livingPersonPrivacy: 'include',
+    currentYear: new Date().getFullYear(),
+    livingAgeThreshold: 110,
+    ...options
+  };
+}
+
+function collectUniquePersons(rootPerson: Person): Person[] {
+  const persons: Person[] = [];
+  const visited = new Set<Person>();
+  
+  const collectRecursive = (person: Person) => {
+    if (visited.has(person)) return;
+    visited.add(person);
+    persons.push(person);
+    
+    person.parents?.forEach(parent => collectRecursive(parent));
+  };
+  
+  collectRecursive(rootPerson);
+  return persons;
+}
+
+function getPrivacyMode(person: Person, options: NormalizedGEDCOMExportOptions): LivingPersonPrivacy {
+  if (!isLivingPerson(person, options)) return 'include';
+  return options.livingPersonPrivacy;
+}
+
+function isLivingPerson(person: Person, options: NormalizedGEDCOMExportOptions): boolean {
+  if (person.deathDate && !isMissingGEDCOMData(person.deathDate)) return false;
+
+  const birthYear = extractGEDCOMYear(person.birthDate);
+  if (birthYear === null) return true;
+
+  return options.currentYear - birthYear <= options.livingAgeThreshold;
+}
+
+function extractGEDCOMYear(value?: string): number | null {
+  if (!value || isMissingGEDCOMData(value)) return null;
+
+  const matches = Array.from(value.matchAll(/\b(\d{1,5})\b/g), match => Number(match[1]));
+  if (matches.length === 0) return null;
+
+  const year = matches.find(match => match >= 100) ?? matches[matches.length - 1];
+  const lowerValue = value.toLowerCase();
+
+  return lowerValue.includes('bce') || lowerValue.includes('bc') ? -year : year;
+}
+
+function isMissingGEDCOMData(value: string): boolean {
+  const normalized = value.trim().toLowerCase();
+
+  return normalized === '' ||
+    normalized === 'unknown' ||
+    normalized === 'n/a' ||
+    normalized === 'not available' ||
+    normalized === 'not applicable' ||
+    normalized === '?';
+}
+
+export function getGEDCOMExportSummary(rootPerson: Person, options: GEDCOMExportOptions = {}): GEDCOMExportSummary {
+  const normalizedOptions = normalizeOptions(options);
+  const allPersons = collectUniquePersons(rootPerson);
+  const summary: GEDCOMExportSummary = {
+    totalPeople: allPersons.length,
+    exportedPeople: 0,
+    livingPeople: 0,
+    includedLivingPeople: 0,
+    redactedLivingPeople: 0,
+    nameOnlyLivingPeople: 0,
+    excludedLivingPeople: 0,
+    storyRecords: 0,
+    imageRecords: 0
+  };
+
+  allPersons.forEach(person => {
+    const privacyMode = getPrivacyMode(person, normalizedOptions);
+    const isExcluded = privacyMode === 'exclude';
+    const isRedacted = privacyMode === 'redact-details' || privacyMode === 'name-only';
+    const isLiving = isLivingPerson(person, normalizedOptions);
+
+    if (isLiving) {
+      summary.livingPeople++;
+      if (privacyMode === 'include') summary.includedLivingPeople++;
+      if (privacyMode === 'redact-details') summary.redactedLivingPeople++;
+      if (privacyMode === 'name-only') summary.nameOnlyLivingPeople++;
+      if (privacyMode === 'exclude') summary.excludedLivingPeople++;
+    }
+
+    if (isExcluded) return;
+
+    summary.exportedPeople++;
+    if (!isRedacted && normalizedOptions.includeStories && person.story) summary.storyRecords++;
+    if (!isRedacted && normalizedOptions.includeImages && person.imageUrl) summary.imageRecords++;
+  });
+
+  return summary;
 }
 
 export class GEDCOMExporter {
@@ -18,17 +152,10 @@ export class GEDCOMExporter {
   private familyIdMap = new Map<string, string>();
   private nextPersonId = 1;
   private nextFamilyId = 1;
-  private options: GEDCOMExportOptions;
+  private options: NormalizedGEDCOMExportOptions;
 
   constructor(options: GEDCOMExportOptions = {}) {
-    this.options = {
-      includeStories: true,
-      includeImages: false,
-      encoding: 'UTF-8',
-      sourceName: 'Ancestry Tree Export',
-      sourceVersion: '1.0',
-      ...options
-    };
+    this.options = normalizeOptions(options);
   }
 
   /**
@@ -50,7 +177,8 @@ export class GEDCOMExporter {
     lines.push(...this.generateSourceRecord());
     
     // Collect all persons and families
-    const allPersons = this.collectAllPersons(rootPerson);
+    const allPersons = this.collectAllPersons(rootPerson)
+      .filter(person => !this.shouldExcludePerson(person));
     const families = this.collectFamilies(allPersons);
     
     // Add individual records
@@ -108,36 +236,23 @@ export class GEDCOMExporter {
    * Collect all persons in the family tree
    */
   private collectAllPersons(rootPerson: Person): Person[] {
-    const persons: Person[] = [];
-    const visited = new Set<Person>();
-    
-    const collectRecursive = (person: Person) => {
-      if (visited.has(person)) return;
-      visited.add(person);
-      persons.push(person);
-      
-      if (person.parents) {
-        person.parents.forEach(parent => collectRecursive(parent));
-      }
-    };
-    
-    collectRecursive(rootPerson);
-    return persons;
+    return collectUniquePersons(rootPerson);
   }
 
   /**
    * Collect family relationships
    */
   private collectFamilies(persons: Person[]): Array<{husband?: Person, wife?: Person, children: Person[]}> {
-    const families: Array<{husband?: Person, wife?: Person, children: Person[]}> = [];
     const familyMap = new Map<string, {husband?: Person, wife?: Person, children: Person[]}>();
+    const includedPersons = new Set(persons);
     
     persons.forEach(person => {
       if (person.parents && person.parents.length > 0) {
         // Find the family this person belongs to
         const parents = person.parents;
-        const husband = parents.find(p => p.sex === Sex.MALE);
-        const wife = parents.find(p => p.sex === Sex.FEMALE);
+        const husband = parents.find(p => includedPersons.has(p) && p.sex === Sex.MALE);
+        const wife = parents.find(p => includedPersons.has(p) && p.sex === Sex.FEMALE);
+        if (!husband && !wife) return;
         
         // Create a unique key for this family
         const familyKey = this.getFamilyKey(husband, wife);
@@ -168,6 +283,9 @@ export class GEDCOMExporter {
   private generateIndividualRecord(person: Person): string[] {
     const lines: string[] = [];
     const personId = this.getPersonId(person);
+    const privacy = this.getPrivacyMode(person);
+    const shouldRedactDetails = privacy === 'redact-details' || privacy === 'name-only';
+    const shouldExportNameOnly = privacy === 'name-only';
     
     lines.push(`0 @${personId}@ INDI`);
     
@@ -179,13 +297,13 @@ export class GEDCOMExporter {
     }
     
     // Sex
-    if (person.sex) {
+    if (person.sex && !shouldExportNameOnly) {
       const sexCode = person.sex === Sex.MALE ? 'M' : person.sex === Sex.FEMALE ? 'F' : 'U';
       lines.push(`1 SEX ${sexCode}`);
     }
     
     // Birth
-    if (person.birthDate || person.birthPlace) {
+    if (!shouldRedactDetails && (person.birthDate || person.birthPlace)) {
       lines.push('1 BIRT');
       if (person.birthDate) {
         lines.push(`2 DATE ${this.formatGEDCOMDate(person.birthDate)}`);
@@ -196,7 +314,7 @@ export class GEDCOMExporter {
     }
     
     // Death
-    if (person.deathDate || person.deathPlace) {
+    if (!shouldRedactDetails && (person.deathDate || person.deathPlace)) {
       lines.push('1 DEAT');
       if (person.deathDate) {
         lines.push(`2 DATE ${this.formatGEDCOMDate(person.deathDate)}`);
@@ -207,7 +325,7 @@ export class GEDCOMExporter {
     }
     
     // Story/Notes
-    if (person.story && this.options.includeStories) {
+    if (!shouldRedactDetails && person.story && this.options.includeStories) {
       lines.push('1 NOTE');
       const storyLines = person.story.split('\n');
       storyLines.forEach(line => {
@@ -216,7 +334,7 @@ export class GEDCOMExporter {
     }
     
     // Image
-    if (person.imageUrl && this.options.includeImages) {
+    if (!shouldRedactDetails && person.imageUrl && this.options.includeImages) {
       lines.push('1 OBJE');
       lines.push('2 FILE ' + person.imageUrl);
       lines.push('2 FORM jpeg');
@@ -286,6 +404,14 @@ export class GEDCOMExporter {
     return this.familyIdMap.get(familyKey)!;
   }
 
+  private shouldExcludePerson(person: Person): boolean {
+    return this.getPrivacyMode(person) === 'exclude';
+  }
+
+  private getPrivacyMode(person: Person): LivingPersonPrivacy {
+    return getPrivacyMode(person, this.options);
+  }
+
   /**
    * Parse name into given and surname
    */
@@ -316,22 +442,52 @@ export class GEDCOMExporter {
    * Format date for GEDCOM
    */
   private formatGEDCOMDate(dateStr: string): string {
-    // Try to parse various date formats and convert to GEDCOM format
-    const date = new Date(dateStr);
-    if (isNaN(date.getTime())) {
-      // If we can't parse it, return as-is
-      return dateStr;
-    }
-    
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-    
-    // GEDCOM date format: DD MMM YYYY
+    const trimmedDate = dateStr.trim();
     const monthNames = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN',
                        'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
-    
-    return `${day.toString().padStart(2, '0')} ${monthNames[month - 1]} ${year}`;
+    const monthLookup = new Map([
+      ['january', 'JAN'],
+      ['february', 'FEB'],
+      ['march', 'MAR'],
+      ['april', 'APR'],
+      ['may', 'MAY'],
+      ['june', 'JUN'],
+      ['july', 'JUL'],
+      ['august', 'AUG'],
+      ['september', 'SEP'],
+      ['october', 'OCT'],
+      ['november', 'NOV'],
+      ['december', 'DEC']
+    ]);
+
+    if (/^\d{4}$/.test(trimmedDate)) {
+      return trimmedDate;
+    }
+
+    const isoDateMatch = trimmedDate.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (isoDateMatch) {
+      const [, year, month, day] = isoDateMatch;
+      const monthIndex = Number(month) - 1;
+      if (monthNames[monthIndex]) {
+        return `${day} ${monthNames[monthIndex]} ${year}`;
+      }
+    }
+
+    const writtenDateMatch = trimmedDate.match(/^(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})$/);
+    if (writtenDateMatch) {
+      const [, day, monthName, year] = writtenDateMatch;
+      const gedcomMonth = monthLookup.get(monthName.toLowerCase());
+      if (gedcomMonth) {
+        return `${day.padStart(2, '0')} ${gedcomMonth} ${year}`;
+      }
+    }
+
+    const circaMatch = trimmedDate.match(/^(?:circa|c\.)\s*(\d{4})$/i);
+    if (circaMatch) {
+      return `ABT ${circaMatch[1]}`;
+    }
+
+    return trimmedDate;
   }
 
   /**

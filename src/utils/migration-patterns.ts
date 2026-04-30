@@ -384,10 +384,10 @@ export function extractMigrationPatterns(rootPerson: Person): MigrationPatterns 
   }
   
   const bounds = {
-    north: Math.max(...allCoords.map(([lng, lat]) => lat)),
-    south: Math.min(...allCoords.map(([lng, lat]) => lat)),
-    east: Math.max(...allCoords.map(([lng, lat]) => lng)),
-    west: Math.min(...allCoords.map(([lng, lat]) => lng))
+    north: Math.max(...allCoords.map(([, lat]) => lat)),
+    south: Math.min(...allCoords.map(([, lat]) => lat)),
+    east: Math.max(...allCoords.map(([lng]) => lng)),
+    west: Math.min(...allCoords.map(([lng]) => lng))
   };
   
   return {

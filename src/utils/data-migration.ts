@@ -1,7 +1,6 @@
 // Data migration utilities for standardizing existing family tree data
-import { Person, Sex, ConfidenceLevel, MISSING_DATA } from '../interfaces/person';
+import { Person, Sex, MISSING_DATA } from '../interfaces/person';
 import { standardizeMissingData, addMetadata, validatePerson } from './data-validation';
-import { DataVersionManager, ChangeType } from './data-versioning';
 
 /**
  * Migrates legacy Person data to the new standardized format
@@ -203,11 +202,11 @@ export interface MigrationError {
  */
 export function createDataBackup(data: any, filename?: string): string {
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-  const backupFilename = filename || `backup-${timestamp}.json`;
   
   const backup = {
     timestamp: new Date().toISOString(),
     version: '1.0',
+    filename: filename || `backup-${timestamp}.json`,
     data: data,
     metadata: {
       backupType: 'pre-migration',

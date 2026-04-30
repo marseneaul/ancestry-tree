@@ -110,7 +110,7 @@ function createHeader(): HTMLElement {
               <path d="m21 21-4.35-4.35"></path>
             </svg>
             <input type="text" id="search-input" placeholder="Search for ancestors..." autocomplete="off">
-            <button class="search-clear-btn" id="search-clear-btn" onclick="clearSearch()" aria-label="Clear search">
+            <button class="search-clear-btn" id="search-clear-btn" aria-label="Clear search">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
                 <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -124,7 +124,7 @@ function createHeader(): HTMLElement {
       <div class="header-right">
         <div class="header-controls">
           <div class="control-group">
-            <button class="header-btn" id="stats-toggle-btn" title="Statistics Dashboard">
+            <button type="button" class="header-btn" id="stats-toggle-btn" title="Statistics Dashboard" aria-label="Statistics Dashboard" aria-pressed="false">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M3 3v18h18"/>
                 <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/>
@@ -132,7 +132,7 @@ function createHeader(): HTMLElement {
               <span class="btn-label">Stats</span>
             </button>
             
-            <button class="header-btn" id="timeline-toggle-btn" title="Timeline View">
+            <button type="button" class="header-btn" id="timeline-toggle-btn" title="Timeline View" aria-label="Timeline View" aria-pressed="false">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
                 <line x1="16" y1="2" x2="16" y2="6"/>
@@ -142,7 +142,7 @@ function createHeader(): HTMLElement {
               <span class="btn-label">Timeline</span>
             </button>
             
-            <button class="header-btn" id="filter-toggle-btn" title="Filter Options">
+            <button type="button" class="header-btn" id="filter-toggle-btn" title="Filter Options" aria-label="Filter Options" aria-pressed="false">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46"/>
               </svg>
@@ -152,7 +152,7 @@ function createHeader(): HTMLElement {
           </div>
           
           <div class="control-group">
-            <button class="header-btn" id="export-btn" title="Export to GEDCOM">
+            <button type="button" class="header-btn" id="export-btn" title="Export to GEDCOM" aria-label="Export to GEDCOM">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                 <polyline points="7,10 12,15 17,10"/>
@@ -161,7 +161,7 @@ function createHeader(): HTMLElement {
               <span class="btn-label">Export</span>
             </button>
             
-            <button class="header-btn" id="legend-toggle-btn" title="Toggle Legend">
+            <button type="button" class="header-btn" id="legend-toggle-btn" title="Toggle Legend" aria-label="Toggle Legend" aria-pressed="true">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                 <polyline points="14,2 14,8 20,8"/>
@@ -172,7 +172,7 @@ function createHeader(): HTMLElement {
               <span class="btn-label">Legend</span>
             </button>
             
-            <button class="header-btn" id="theme-toggle-btn" title="Toggle Dark Mode">
+            <button type="button" class="header-btn" id="theme-toggle-btn" title="Toggle Dark Mode" aria-label="Toggle Dark Mode" aria-pressed="false">
               <svg class="theme-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
               </svg>
@@ -221,11 +221,11 @@ export function addButtonInteractions(): void {
   
   headerButtons.forEach(button => {
     // Add simple highlight effect on click
-    button.addEventListener('click', function() {
+    button.addEventListener('click', () => {
       // Add highlight class temporarily
-      this.classList.add('clicked');
+      button.classList.add('clicked');
       setTimeout(() => {
-        this.classList.remove('clicked');
+        button.classList.remove('clicked');
       }, 200);
     });
   });

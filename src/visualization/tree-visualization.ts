@@ -9,6 +9,7 @@ import {
   traceMatrilineal 
 } from "../utils/utils";
 import { slugify } from "../utils/helpers";
+import { measureSync } from "../utils/performance";
 import { Minimap, MinimapConfig } from "./minimap";
 
 export interface TreeVisualizationConfig {
@@ -29,16 +30,29 @@ export interface TreeVisualizationState {
   svg: d3.Selection<SVGSVGElement, unknown, null, undefined>;
   g: d3.Selection<SVGGElement, unknown, null, undefined>;
   defs: d3.Selection<SVGDefsElement, unknown, null, undefined>;
-  zoom: d3.ZoomBehavior<Element, unknown>;
+  zoom: d3.ZoomBehavior<SVGSVGElement, unknown>;
   currentTransform: d3.ZoomTransform;
   treeLayout: d3.TreeLayout<Person>;
   minimap: Minimap;
+}
+
+interface RenderProfile {
+  totalNodes: number;
+  labelDepthLimit: number;
+  imageDepthLimit: number;
+  animate: boolean;
 }
 
 export class TreeVisualization {
   private config: TreeVisualizationConfig;
   private state: TreeVisualizationState;
   private hoverTimeout: number | null = null;
+  private renderProfile: RenderProfile = {
+    totalNodes: 0,
+    labelDepthLimit: Number.POSITIVE_INFINITY,
+    imageDepthLimit: Number.POSITIVE_INFINITY,
+    animate: true
+  };
 
   constructor(config: TreeVisualizationConfig) {
     this.config = {
@@ -70,7 +84,7 @@ export class TreeVisualization {
       .attr("width", "100%")
       .attr("height", height)
       .attr("viewBox", `${-margin!.left} ${-margin!.top} ${width + margin!.left + margin!.right} ${height + margin!.top + margin!.bottom}`)
-      .attr("preserveAspectRatio", "xMidYMid meet") as d3.Selection<SVGSVGElement, unknown, null, undefined>;
+      .attr("preserveAspectRatio", "xMidYMid meet") as unknown as d3.Selection<SVGSVGElement, unknown, null, undefined>;
 
     // Create main group
     this.state.g = this.state.svg.append("g");
@@ -95,7 +109,7 @@ export class TreeVisualization {
   private createZoomBehavior(): void {
     this.state.currentTransform = d3.zoomIdentity;
     
-    this.state.zoom = d3.zoom().on("zoom", (event) => {
+    this.state.zoom = d3.zoom<SVGSVGElement, unknown>().on("zoom", (event) => {
       this.state.currentTransform = event.transform;
       this.state.g.attr("transform", this.state.currentTransform.toString());
       this.state.minimap.updateMinimapViewport(this.state.currentTransform);
@@ -148,7 +162,7 @@ export class TreeVisualization {
    */
   updateTree(root: any): void {
     this.state.root = root;
-    this.renderTree();
+    measureSync("tree.update", () => this.renderTree());
   }
 
   /**
@@ -158,11 +172,14 @@ export class TreeVisualization {
     const { width, height } = this.config;
     const root = this.state.root;
 
-    // Apply tree layout
-    this.state.treeLayout(root);
+    const descendants = measureSync("tree.layout", () => {
+      this.state.treeLayout(root);
+      return root.descendants();
+    });
+    this.renderProfile = this.getRenderProfile(descendants.length);
 
     // Flip Y for Root at Bottom (invert coordinates)
-    root.descendants().forEach((d: any) => {
+    descendants.forEach((d: any) => {
       d.y = height - d.y!;
     });
 
@@ -171,55 +188,61 @@ export class TreeVisualization {
     const rootXShift = horizontalCenter - (root.x ?? 0);
     const verticalOffset = -20;
 
-    root.descendants().forEach((d: any) => {
+    descendants.forEach((d: any) => {
       d.x = (d.x ?? 0) + rootXShift;
       d.y = (d.y ?? 0) + verticalOffset;
     });
 
     // Render links
-    this.renderLinks(root);
+    measureSync("tree.renderLinks", () => this.renderLinks(root));
 
     // Render nodes
-    this.renderNodes(root);
+    measureSync("tree.renderNodes", () => this.renderNodes(root));
 
     // Render generation headers
-    this.renderGenerationHeaders(root, horizontalCenter);
+    measureSync("tree.renderGenerationHeaders", () => this.renderGenerationHeaders(descendants, horizontalCenter));
 
     // Render lineages
-    this.renderLineages(root);
+    measureSync("tree.renderLineages", () => this.renderLineages());
 
     // Update minimap
-    this.state.minimap.updateMinimap(root, this.state.currentTransform);
+    measureSync("tree.updateMinimap", () => this.state.minimap.updateMinimap(root, this.state.currentTransform));
   }
 
   /**
    * Render tree links
    */
   private renderLinks(root: any): void {
+    const duration = this.renderProfile.animate ? 300 : 0;
     const links = this.state.g.selectAll(".link")
-      .data(root.links(), (d: any) => `${(d.source as any).id || (d.source as any).data.name}-${(d.target as any).id || (d.target as any).data.name}`);
+      .data(root.links(), (d: any) => `${this.getNodeKey((d as any).source)}-${this.getNodeKey((d as any).target)}`);
 
     links.enter().append("path")
       .attr("class", "link")
       .attr("d", d3.linkVertical<any, any>().x((d: any) => d.x ?? 0).y((d: any) => d.y ?? 0))
       .attr("opacity", 0)
-      .transition().duration(300).attr("opacity", 1);
+      .transition().duration(duration).attr("opacity", 1);
 
-    links.transition().duration(300)
+    links.transition().duration(duration)
       .attr("d", d3.linkVertical<any, any>().x((d: any) => d.x ?? 0).y((d: any) => d.y ?? 0));
 
-    links.exit().transition().duration(300).attr("opacity", 0).remove();
+    links.exit().transition().duration(duration).attr("opacity", 0).remove();
   }
 
   /**
    * Render tree nodes
    */
   private renderNodes(root: any): void {
+    const duration = this.renderProfile.animate ? 300 : 0;
     const nodes = this.state.g.selectAll(".node")
-      .data(root.descendants(), (d: any) => d.id || d.data.name);
+      .data(root.descendants(), (d: any) => this.getNodeKey(d));
 
     const nodeEnter = nodes.enter().append("g")
-      .attr("class", (d: any) => d.depth === 0 ? "node root-node" : "node")
+      .attr("class", (d: any) => {
+        const classes = [d.depth === 0 ? "node root-node" : "node"];
+        if (!this.shouldRenderLabel(d.depth)) classes.push("compact-node");
+        return classes.join(" ");
+      })
       .attr("transform", (d: any) => `translate(${d.x ?? 0},${d.y ?? 0})`)
       .attr("opacity", 0)
       .on("click", (_, d: any) => {
@@ -242,18 +265,18 @@ export class TreeVisualization {
         }
       });
 
-    nodeEnter.transition().duration(300).attr("opacity", 1);
+    nodeEnter.transition().duration(duration).attr("opacity", 1);
 
-    nodes.transition().duration(300)
+    nodes.transition().duration(duration)
       .attr("transform", (d: any) => `translate(${d.x ?? 0},${d.y ?? 0})`);
 
-    nodes.exit().transition().duration(300).attr("opacity", 0).remove();
+    nodes.exit().transition().duration(duration).attr("opacity", 0).remove();
 
     // Render node shapes
     this.renderNodeShapes(nodeEnter);
 
     // Render node text
-    this.renderNodeText(nodeEnter);
+    this.renderNodeText(nodeEnter.filter((d: any) => this.shouldRenderLabel(d.depth)));
   }
 
   /**
@@ -272,8 +295,8 @@ export class TreeVisualization {
       const svgUrl = self.config.countrySvgs[country];
       const patternId = `country-pattern-${slugify(country)}`;
 
-      if (d.data.imageUrl) {
-        const clipId = `clip-${d.data.name.replace(/[^a-zA-Z0-9-]/g, "")}`;
+      if (d.data.imageUrl && self.shouldRenderImage(d.depth)) {
+        const clipId = self.getClipId(d);
         self.state.defs.append("clipPath")
           .attr("id", clipId)
           .append("rect")
@@ -318,8 +341,8 @@ export class TreeVisualization {
       const svgUrl = self.config.countrySvgs[country];
       const patternId = `country-pattern-${slugify(country)}`;
 
-      if (d.data.imageUrl) {
-        const clipId = `clip-${d.data.name.replace(/[^a-zA-Z0-9-]/g, "")}`;
+      if (d.data.imageUrl && self.shouldRenderImage(d.depth)) {
+        const clipId = self.getClipId(d);
         self.state.defs.append("clipPath")
           .attr("id", clipId)
           .append("circle")
@@ -387,17 +410,18 @@ export class TreeVisualization {
   /**
    * Render generation headers
    */
-  private renderGenerationHeaders(root: any, horizontalCenter: number): void {
+  private renderGenerationHeaders(descendants: any[], horizontalCenter: number): void {
     const { width } = this.config;
 
     // Remove existing headers
     this.state.g.selectAll(".generation-header").remove();
     this.state.g.selectAll(".generation-separator").remove();
 
-    const gens = getGenerations(root);
+    const gens = getGenerations(this.state.root);
+    const nodesByDepth = d3.group(descendants, (d: any) => d.depth);
 
     gens.forEach((info: any, depth: number) => {
-      const nodesAtDepth = root.descendants().filter((d: any) => d.depth === depth);
+      const nodesAtDepth = nodesByDepth.get(depth) ?? [];
       if (nodesAtDepth.length === 0) return;
       const y = nodesAtDepth[0].y ?? 0;
 
@@ -432,7 +456,7 @@ export class TreeVisualization {
   /**
    * Render lineage highlighting
    */
-  private renderLineages(root: any): void {
+  private renderLineages(): void {
     if (!this.config.originalPersonData) return;
 
     const patrilinealNames = tracePatrilineal(this.config.originalPersonData);
@@ -456,6 +480,49 @@ export class TreeVisualization {
       .attr("stroke-width", 3);
   }
 
+  private getRenderProfile(totalNodes: number): RenderProfile {
+    if (totalNodes > 800) {
+      return {
+        totalNodes,
+        labelDepthLimit: 6,
+        imageDepthLimit: 4,
+        animate: false
+      };
+    }
+
+    if (totalNodes > 400) {
+      return {
+        totalNodes,
+        labelDepthLimit: 8,
+        imageDepthLimit: 6,
+        animate: true
+      };
+    }
+
+    return {
+      totalNodes,
+      labelDepthLimit: Number.POSITIVE_INFINITY,
+      imageDepthLimit: Number.POSITIVE_INFINITY,
+      animate: true
+    };
+  }
+
+  private shouldRenderLabel(depth: number): boolean {
+    return depth <= this.renderProfile.labelDepthLimit;
+  }
+
+  private shouldRenderImage(depth: number): boolean {
+    return depth <= this.renderProfile.imageDepthLimit;
+  }
+
+  private getNodeKey(node: any): string {
+    return node.data.id || `${node.data.name}-${node.data.birthDate || "unknown"}-${node.depth}`;
+  }
+
+  private getClipId(node: any): string {
+    return `clip-${slugify(`${this.getNodeKey(node)}`)}`;
+  }
+
 
   /**
    * Get the current SVG element
@@ -467,7 +534,7 @@ export class TreeVisualization {
   /**
    * Get the current zoom behavior
    */
-  getZoom(): d3.ZoomBehavior<Element, unknown> {
+  getZoom(): d3.ZoomBehavior<SVGSVGElement, unknown> {
     return this.state.zoom;
   }
 

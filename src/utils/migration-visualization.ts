@@ -21,9 +21,7 @@ export class MigrationMapVisualization {
   private height: number;
   private patterns: MigrationPatterns | null = null;
   private worldData: any = null;
-  private zoom: d3.ZoomBehavior<SVGSVGElement, unknown>;
-  private initialScale: number = 1;
-  private initialCenter: [number, number] = [0, 0];
+  private zoom!: d3.ZoomBehavior<SVGSVGElement, unknown>;
 
   private getThemeColors() {
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
@@ -229,7 +227,6 @@ export class MigrationMapVisualization {
 
   private async loadWorldData(): Promise<void> {
     try {
-      console.log('Loading world data...');
       // Try multiple possible paths for the world data
       const possiblePaths = [
         './world-110m.json',
@@ -240,17 +237,14 @@ export class MigrationMapVisualization {
         './dist/world-110m.json'
       ];
       
-      let response = null;
+      let response: Response | null = null;
       for (const path of possiblePaths) {
         try {
-          console.log(`Trying path: ${path}`);
           response = await fetch(path);
           if (response.ok) {
-            console.log(`Successfully loaded from: ${path}`);
             break;
           }
         } catch (e) {
-          console.log(`Failed to load from: ${path}`);
           continue;
         }
       }
@@ -339,11 +333,11 @@ export class MigrationMapVisualization {
     
     // Add some sample migration points if we have patterns
     if (this.patterns && this.patterns.points.length > 0) {
-      console.log('Adding sample migration points to fallback map');
       this.patterns.points.forEach((point, index) => {
-        // Place points randomly on the map for now
-        const x = centerX + (Math.random() - 0.5) * 200;
-        const y = centerY + (Math.random() - 0.5) * 100;
+        const angle = index * 2.399963229728653;
+        const radius = 18 + (index % 9) * 10;
+        const x = centerX + Math.cos(angle) * radius;
+        const y = centerY + Math.sin(angle) * radius * 0.5;
         
         this.g.append('circle')
           .attr('cx', x)
@@ -402,11 +396,11 @@ export class MigrationMapVisualization {
       return width > 2 && height > 2; // Only render features larger than 2x2 pixels
     });
     
-    const paths = countriesGroup.selectAll('path')
+    countriesGroup.selectAll('path')
       .data(filteredFeatures)
       .enter()
       .append('path')
-      .attr('d', this.path)
+      .attr('d', (feature: any) => this.path(feature) || '')
       .attr('fill', colors.countries)
       .attr('stroke', colors.borders)
       .attr('stroke-width', 0.5)
@@ -440,8 +434,12 @@ export class MigrationMapVisualization {
       .enter()
       .append('path')
       .attr('d', (route: MigrationRoute) => {
-        const [x1, y1] = this.projection(route.from.coordinates);
-        const [x2, y2] = this.projection(route.to.coordinates);
+        const from = this.projection(route.from.coordinates);
+        const to = this.projection(route.to.coordinates);
+        if (!from || !to) return '';
+
+        const [x1, y1] = from;
+        const [x2, y2] = to;
         
         if (!x1 || !y1 || !x2 || !y2) return '';
         
@@ -472,11 +470,11 @@ export class MigrationMapVisualization {
       .enter()
       .append('circle')
       .attr('cx', (point: MigrationPoint) => {
-        const [x] = this.projection(point.coordinates);
+        const [x] = this.projection(point.coordinates) ?? [0, 0];
         return x || 0;
       })
       .attr('cy', (point: MigrationPoint) => {
-        const [, y] = this.projection(point.coordinates);
+        const [, y] = this.projection(point.coordinates) ?? [0, 0];
         return y || 0;
       })
       .attr('r', (point: MigrationPoint) => Math.max(2, Math.min(8, point.count * 1.5)))
@@ -488,12 +486,12 @@ export class MigrationMapVisualization {
     
     // Add simplified hover effects for better performance
     circles
-      .on('mouseover', function(event: MouseEvent, point: MigrationPoint) {
+      .on('mouseover', function(_event: MouseEvent, point: MigrationPoint) {
         d3.select(this)
           .style('opacity', 1)
           .attr('r', Math.max(3, Math.min(10, point.count * 1.8)));
       })
-      .on('mouseout', function(event: MouseEvent, point: MigrationPoint) {
+      .on('mouseout', function(_event: MouseEvent, point: MigrationPoint) {
         d3.select(this)
           .style('opacity', 0.8)
           .attr('r', Math.max(2, Math.min(8, point.count * 1.5)));
@@ -528,63 +526,12 @@ export class MigrationMapVisualization {
               ${point.country}
             </div>
           `)
-          .style('left', (event.pageX / 0.75 + 10) + 'px')
-          .style('top', (event.pageY / 0.75 - 28) + 'px');
+          .style('left', (event.pageX + 10) + 'px')
+          .style('top', (event.pageY - 28) + 'px');
       })
       .on('mouseout', function() {
         tooltip.style('opacity', 0);
       });
-  }
-
-  private getMapTransform(): { center: [number, number]; zoom: number } {
-    if (!this.patterns || this.patterns.points.length === 0) {
-      this.initialCenter = [0, 0];
-      this.initialScale = 100;
-      return { center: this.initialCenter, zoom: this.initialScale };
-    }
-    
-    // Calculate bounds
-    const validPoints = this.patterns.points.filter(p => p.coordinates[0] !== 0 || p.coordinates[1] !== 0);
-    
-    if (validPoints.length === 0) {
-      this.initialCenter = [0, 0];
-      this.initialScale = 100;
-      return { center: this.initialCenter, zoom: this.initialScale };
-    }
-    
-    const lngs = validPoints.map(p => p.coordinates[0]);
-    const lats = validPoints.map(p => p.coordinates[1]);
-    
-    const bounds = {
-      west: Math.min(...lngs),
-      east: Math.max(...lngs),
-      south: Math.min(...lats),
-      north: Math.max(...lats)
-    };
-    
-    // Add padding
-    const padding = 5;
-    const center: [number, number] = [
-      (bounds.west + bounds.east) / 2,
-      (bounds.south + bounds.north) / 2
-    ];
-    
-    // Calculate zoom based on bounds
-    const latRange = bounds.north - bounds.south + padding * 2;
-    const lngRange = bounds.east - bounds.west + padding * 2;
-    const maxRange = Math.max(latRange, lngRange);
-    
-    let zoom = 100;
-    if (maxRange < 10) zoom = 300;
-    else if (maxRange < 20) zoom = 250;
-    else if (maxRange < 40) zoom = 200;
-    else if (maxRange < 80) zoom = 150;
-    
-    // Store initial values for zoom behavior
-    this.initialCenter = center;
-    this.initialScale = zoom;
-    
-    return { center, zoom };
   }
 
   public resize(width: number, height: number): void {

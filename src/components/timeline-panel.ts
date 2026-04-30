@@ -1,6 +1,5 @@
 import { getCountry } from "../utils/utils";
 import { cleanUnknown } from "../utils/helpers";
-import { showPersonModal } from "./modal";
 
 export interface TimelinePerson {
   year: number;
@@ -19,11 +18,14 @@ export interface TimelinePerson {
 
 export interface TimelinePanelData {
   root: any; // d3.HierarchyNode<Person>
+  onPersonSelect?: (person: TimelinePerson, depth: number) => void;
 }
 
 export class TimelinePanel {
   private container: HTMLElement;
   private data: TimelinePanelData;
+  private timelinePeople: TimelinePerson[] = [];
+  private hasInteractionListener = false;
 
   constructor(container: HTMLElement, data: TimelinePanelData) {
     this.container = container;
@@ -35,6 +37,7 @@ export class TimelinePanel {
    */
   public initialize(): void {
     this.renderTimeline();
+    this.setupInteractions();
   }
 
   /**
@@ -49,11 +52,11 @@ export class TimelinePanel {
    * Render the timeline panel
    */
   private renderTimeline(): void {
-    const allNodes = this.data.root.descendants();
+    const allNodes: any[] = this.data.root.descendants();
     
     // Extract birth years and create timeline data
-    const timelineData = allNodes
-      .map(node => {
+    const timelineData: TimelinePerson[] = allNodes
+      .map((node: any): TimelinePerson | null => {
         if (!node.data.birthDate || node.data.birthDate === "Unknown" || node.data.birthDate === "UNKNOWN") return null;
         
         // Extract year from birth date
@@ -78,13 +81,14 @@ export class TimelinePanel {
           story: node.data.story
         };
       })
-      .filter(item => item !== null)
-      .sort((a, b) => b!.year - a!.year);
+      .filter((item): item is TimelinePerson => item !== null)
+      .sort((a, b) => b.year - a.year);
+    this.timelinePeople = timelineData;
 
     // Group by decade for better visualization
     const decadeGroups = new Map<number, TimelinePerson[]>();
-    timelineData.forEach(item => {
-      const decade = Math.floor(item!.year / 10) * 10;
+    timelineData.forEach((item: TimelinePerson) => {
+      const decade = Math.floor(item.year / 10) * 10;
       if (!decadeGroups.has(decade)) {
         decadeGroups.set(decade, []);
       }
@@ -102,10 +106,11 @@ export class TimelinePanel {
               <div class="decade-header">${decade}s</div>
               <div class="decade-people">
                 ${people.slice(0, 10).map(person => {
+                  const personIndex = this.timelinePeople.indexOf(person);
                   const cleanName = cleanUnknown(person.name);
                   const cleanBirthPlace = cleanUnknown(person.birthPlace);
                   return `
-                  <div class="timeline-person" onclick="showPersonModal(${JSON.stringify(person).replace(/"/g, '&quot;')}, ${person.depth})">
+                  <div class="timeline-person" data-person-index="${personIndex}">
                     <div class="person-year">${person.year}</div>
                     <div class="person-name">${cleanName || "Name not available"}</div>
                     ${cleanBirthPlace ? `<div class="person-place">${cleanBirthPlace}</div>` : ""}
@@ -119,5 +124,23 @@ export class TimelinePanel {
           `).join('')}
       </div>
     `;
+  }
+
+  private setupInteractions(): void {
+    if (this.hasInteractionListener) return;
+
+    this.container.addEventListener('click', (event) => {
+      const target = event.target as HTMLElement;
+      const personEl = target.closest('.timeline-person') as HTMLElement | null;
+      if (!personEl) return;
+
+      const personIndex = Number(personEl.dataset.personIndex);
+      const person = this.timelinePeople[personIndex];
+      if (person) {
+        this.data.onPersonSelect?.(person, person.depth);
+      }
+    });
+
+    this.hasInteractionListener = true;
   }
 }

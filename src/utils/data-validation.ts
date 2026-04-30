@@ -1,5 +1,6 @@
 // Data validation utilities for Person objects
 import { Person, Sex, ConfidenceLevel, ValidationResult, ValidationError, ValidationWarning, MISSING_DATA } from '../interfaces/person';
+import { slugify } from './helpers';
 
 /**
  * Validates a Person object and returns detailed validation results
@@ -7,6 +8,21 @@ import { Person, Sex, ConfidenceLevel, ValidationResult, ValidationError, Valida
 export function validatePerson(person: Person, options: ValidationOptions = {}): ValidationResult {
   const errors: ValidationError[] = [];
   const warnings: ValidationWarning[] = [];
+  const activePath = options.activePath ?? new WeakSet<Person>();
+
+  if (activePath.has(person)) {
+    return {
+      isValid: false,
+      errors: [{
+        field: 'parents',
+        message: 'Cycle detected in parent relationships',
+        severity: 'error'
+      }],
+      warnings: []
+    };
+  }
+
+  activePath.add(person);
   
   // Required field validation
   if (!person.name || person.name.trim() === '') {
@@ -99,7 +115,11 @@ export function validatePerson(person: Person, options: ValidationOptions = {}):
     // Validate parent relationships
     person.parents.forEach((parent, index) => {
       if (parent) {
-        const parentValidation = validatePerson(parent, { ...options, depth: (options.depth || 0) + 1 });
+        const parentValidation = validatePerson(parent, {
+          ...options,
+          activePath,
+          depth: (options.depth || 0) + 1
+        });
         if (!parentValidation.isValid) {
           parentValidation.errors.forEach(error => {
             errors.push({
@@ -135,6 +155,8 @@ export function validatePerson(person: Person, options: ValidationOptions = {}):
       severity: 'error'
     });
   }
+
+  activePath.delete(person);
 
   return {
     isValid: errors.length === 0,
@@ -182,7 +204,7 @@ export function standardizeMissingData(person: Person): Person {
 export function addMetadata(person: Person, source: string = 'manual'): Person {
   return {
     ...person,
-    id: person.id || generateId(),
+    id: person.id || generateId(person, source),
     version: person.version || 1,
     lastModified: new Date().toISOString(),
     dataSource: source,
@@ -220,6 +242,7 @@ export function migratePersonData(legacyPerson: any): Person {
 interface ValidationOptions {
   depth?: number;
   maxDepth?: number;
+  activePath?: WeakSet<Person>;
 }
 
 function isValidDate(dateStr: string): boolean {
@@ -296,8 +319,18 @@ function isValidImageUrl(url: string): boolean {
   }
 }
 
-function generateId(): string {
-  return 'person_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+function generateId(person: Person, source: string): string {
+  const keyParts = [
+    person.name,
+    person.birthDate,
+    person.birthPlace,
+    person.deathDate,
+    person.sex,
+    source
+  ].filter(Boolean);
+
+  const stableKey = slugify(keyParts.join('-'));
+  return `person_${stableKey || 'unknown'}`;
 }
 
 /**
@@ -306,8 +339,19 @@ function generateId(): string {
 export function validateFamilyTree(root: Person): ValidationResult {
   const errors: ValidationError[] = [];
   const warnings: ValidationWarning[] = [];
+  const activePath = new WeakSet<Person>();
   
   function validateNode(person: Person, path: string = ''): void {
+    if (activePath.has(person)) {
+      errors.push({
+        field: path || 'parents',
+        message: 'Cycle detected in parent relationships',
+        severity: 'error'
+      });
+      return;
+    }
+
+    activePath.add(person);
     const result = validatePerson(person);
     
     result.errors.forEach(error => {
@@ -332,6 +376,8 @@ export function validateFamilyTree(root: Person): ValidationResult {
         }
       });
     }
+
+    activePath.delete(person);
   }
   
   validateNode(root);

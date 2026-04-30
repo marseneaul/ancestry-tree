@@ -46,7 +46,7 @@ export function extendWithNeanderthal(ancient: Person): void {
     if (isMotherLine) {
       unk.parents = [last];
     } else {
-      unk.parents = [undefined, last];
+      unk.parents = [last];
     }
     last = unk;
   }

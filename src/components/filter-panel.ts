@@ -1,4 +1,5 @@
 import { getCountry, tracePatrilineal, traceMatrilineal } from "../utils/utils";
+import { slugify } from "../utils/helpers";
 
 export interface FilterPanelData {
   root: any; // d3.HierarchyNode<Person>
@@ -49,7 +50,6 @@ export class FilterPanel {
     this.calculateInitialState();
     this.renderFilterPanel();
     this.setupEventListeners();
-    this.makeFunctionsGloballyAvailable();
   }
 
   /**
@@ -124,22 +124,22 @@ export class FilterPanel {
       </div>
       
       <div class="filter-tabs" role="tablist" aria-label="Filter categories">
-        <button class="filter-tab active" data-tab="basic" onclick="switchFilterTab('basic')" 
+        <button class="filter-tab active" data-tab="basic"
                 role="tab" aria-selected="true" aria-controls="tab-basic" tabindex="0">
           <span class="tab-icon" aria-hidden="true">📊</span>
           <span class="tab-label">Basic</span>
         </button>
-        <button class="filter-tab" data-tab="time" onclick="switchFilterTab('time')" 
+        <button class="filter-tab" data-tab="time"
                 role="tab" aria-selected="false" aria-controls="tab-time" tabindex="-1">
           <span class="tab-icon" aria-hidden="true">📅</span>
           <span class="tab-label">Time</span>
         </button>
-        <button class="filter-tab" data-tab="data" onclick="switchFilterTab('data')" 
+        <button class="filter-tab" data-tab="data"
                 role="tab" aria-selected="false" aria-controls="tab-data" tabindex="-1">
           <span class="tab-icon" aria-hidden="true">📋</span>
           <span class="tab-label">Data</span>
         </button>
-        <button class="filter-tab" data-tab="lineage" onclick="switchFilterTab('lineage')" 
+        <button class="filter-tab" data-tab="lineage"
                 role="tab" aria-selected="false" aria-controls="tab-lineage" tabindex="-1">
           <span class="tab-icon" aria-hidden="true">🧬</span>
           <span class="tab-label">Lineage</span>
@@ -157,7 +157,6 @@ export class FilterPanel {
             <div class="slider-container">
               <input type="range" class="modern-slider" id="generation-slider" 
                      min="0" max="${this.filterState.maxGeneration}" value="${this.filterState.maxGeneration}" 
-                     oninput="updateGenerationFilter(this.value)"
                      aria-label="Generation depth slider" aria-valuemin="0" aria-valuemax="${this.filterState.maxGeneration}" aria-valuenow="${this.filterState.maxGeneration}">
               <div class="slider-value">
                 <span class="slider-value-number" id="generation-value">${this.filterState.maxGeneration}</span>
@@ -176,11 +175,11 @@ export class FilterPanel {
                 <div class="country-card">
                   <input type="checkbox" class="country-checkbox" 
                          id="country-${country.replace(/\s+/g, '-').toLowerCase()}" 
-                         checked onchange="updateCountryFilter()">
+                         checked>
                   <label class="country-card-label" for="country-${country.replace(/\s+/g, '-').toLowerCase()}">
                     <div class="country-flag">
-                      <img src="./svgs/${country.toLowerCase().replace(/\s+/g, '-')}.svg" 
-                           alt="${country}" onerror="this.style.display='none'">
+                      <img class="country-flag-img" src="./svgs/${slugify(country)}.svg" 
+                           alt="${country}">
                     </div>
                     <div class="country-info">
                       <div class="country-name">${country}</div>
@@ -191,11 +190,11 @@ export class FilterPanel {
               `).join('')}
             </div>
             <div class="country-actions">
-              <button class="action-btn secondary" onclick="selectAllCountries()">
+              <button class="action-btn secondary" data-filter-action="select-all-countries">
                 <span class="btn-icon">✓</span>
                 Select All
               </button>
-              <button class="action-btn secondary" onclick="selectNoCountries()">
+              <button class="action-btn secondary" data-filter-action="select-no-countries">
                 <span class="btn-icon">✗</span>
                 Clear All
               </button>
@@ -217,8 +216,7 @@ export class FilterPanel {
                   <input type="number" class="modern-input" id="birth-year-min" 
                          value="${this.filterState.birthYearRange.min}" 
                          min="${this.filterState.originalBirthYearRange.min}" 
-                         max="${this.filterState.originalBirthYearRange.max}" 
-                         onchange="updateBirthYearRange()">
+                         max="${this.filterState.originalBirthYearRange.max}">
                 </div>
                 <div class="range-to">to</div>
                 <div class="range-field">
@@ -226,8 +224,7 @@ export class FilterPanel {
                   <input type="number" class="modern-input" id="birth-year-max" 
                          value="${this.filterState.birthYearRange.max}" 
                          min="${this.filterState.originalBirthYearRange.min}" 
-                         max="${this.filterState.originalBirthYearRange.max}" 
-                         onchange="updateBirthYearRange()">
+                         max="${this.filterState.originalBirthYearRange.max}">
                 </div>
               </div>
             </div>
@@ -244,14 +241,14 @@ export class FilterPanel {
                   <label class="range-label">Min Age</label>
                   <input type="number" class="modern-input" id="lifespan-min" 
                          value="${this.filterState.lifespanFilter.min}" 
-                         min="0" max="120" onchange="updateLifespanFilter()">
+                         min="0" max="120">
                 </div>
                 <div class="range-to">to</div>
                 <div class="range-field">
                   <label class="range-label">Max Age</label>
                   <input type="number" class="modern-input" id="lifespan-max" 
                          value="${this.filterState.lifespanFilter.max}" 
-                         min="0" max="120" onchange="updateLifespanFilter()">
+                         min="0" max="120">
                 </div>
               </div>
             </div>
@@ -267,7 +264,7 @@ export class FilterPanel {
             </div>
             <div class="checkbox-grid">
               <div class="checkbox-card">
-                <input type="checkbox" class="modern-checkbox" id="has-photo" onchange="updateDataCompletenessFilter()">
+                <input type="checkbox" class="modern-checkbox" id="has-photo">
                 <label class="checkbox-label" for="has-photo">
                   <div class="checkbox-icon">📸</div>
                   <div class="checkbox-text">
@@ -277,7 +274,7 @@ export class FilterPanel {
                 </label>
               </div>
               <div class="checkbox-card">
-                <input type="checkbox" class="modern-checkbox" id="has-story" onchange="updateDataCompletenessFilter()">
+                <input type="checkbox" class="modern-checkbox" id="has-story">
                 <label class="checkbox-label" for="has-story">
                   <div class="checkbox-icon">📖</div>
                   <div class="checkbox-text">
@@ -287,7 +284,7 @@ export class FilterPanel {
                 </label>
               </div>
               <div class="checkbox-card">
-                <input type="checkbox" class="modern-checkbox" id="has-birth-date" onchange="updateDataCompletenessFilter()">
+                <input type="checkbox" class="modern-checkbox" id="has-birth-date">
                 <label class="checkbox-label" for="has-birth-date">
                   <div class="checkbox-icon">📅</div>
                   <div class="checkbox-text">
@@ -297,7 +294,7 @@ export class FilterPanel {
                 </label>
               </div>
               <div class="checkbox-card">
-                <input type="checkbox" class="modern-checkbox" id="has-death-date" onchange="updateDataCompletenessFilter()">
+                <input type="checkbox" class="modern-checkbox" id="has-death-date">
                 <label class="checkbox-label" for="has-death-date">
                   <div class="checkbox-icon">💀</div>
                   <div class="checkbox-text">
@@ -307,7 +304,7 @@ export class FilterPanel {
                 </label>
               </div>
               <div class="checkbox-card">
-                <input type="checkbox" class="modern-checkbox" id="has-birth-place" onchange="updateDataCompletenessFilter()">
+                <input type="checkbox" class="modern-checkbox" id="has-birth-place">
                 <label class="checkbox-label" for="has-birth-place">
                   <div class="checkbox-icon">📍</div>
                   <div class="checkbox-text">
@@ -317,7 +314,7 @@ export class FilterPanel {
                 </label>
               </div>
               <div class="checkbox-card">
-                <input type="checkbox" class="modern-checkbox" id="has-parents" onchange="updateDataCompletenessFilter()">
+                <input type="checkbox" class="modern-checkbox" id="has-parents">
                 <label class="checkbox-label" for="has-parents">
                   <div class="checkbox-icon">👨‍👩‍👧‍👦</div>
                   <div class="checkbox-text">
@@ -339,7 +336,7 @@ export class FilterPanel {
             </div>
             <div class="checkbox-grid">
               <div class="checkbox-card">
-                <input type="checkbox" class="modern-checkbox" id="direct-line-only" onchange="updateRelationshipFilter()">
+                <input type="checkbox" class="modern-checkbox" id="direct-line-only">
                 <label class="checkbox-label" for="direct-line-only">
                   <div class="checkbox-icon">👤</div>
                   <div class="checkbox-text">
@@ -349,7 +346,7 @@ export class FilterPanel {
                 </label>
               </div>
               <div class="checkbox-card">
-                <input type="checkbox" class="modern-checkbox" id="patrilineal-line" onchange="updateRelationshipFilter()">
+                <input type="checkbox" class="modern-checkbox" id="patrilineal-line">
                 <label class="checkbox-label" for="patrilineal-line">
                   <div class="checkbox-icon">👨</div>
                   <div class="checkbox-text">
@@ -359,7 +356,7 @@ export class FilterPanel {
                 </label>
               </div>
               <div class="checkbox-card">
-                <input type="checkbox" class="modern-checkbox" id="matrilineal-line" onchange="updateRelationshipFilter()">
+                <input type="checkbox" class="modern-checkbox" id="matrilineal-line">
                 <label class="checkbox-label" for="matrilineal-line">
                   <div class="checkbox-icon">👩</div>
                   <div class="checkbox-text">
@@ -369,7 +366,7 @@ export class FilterPanel {
                 </label>
               </div>
               <div class="checkbox-card">
-                <input type="checkbox" class="modern-checkbox" id="migration-patterns" onchange="updateRelationshipFilter()">
+                <input type="checkbox" class="modern-checkbox" id="migration-patterns">
                 <label class="checkbox-label" for="migration-patterns">
                   <div class="checkbox-icon">🌍</div>
                   <div class="checkbox-text">
@@ -389,7 +386,6 @@ export class FilterPanel {
             <div class="slider-container">
               <input type="range" class="modern-slider" id="dna-contribution-slider" 
                      min="0" max="50" step="0.1" value="${this.filterState.minDnaContribution}"
-                     oninput="updateDnaContributionFilter(this.value)"
                      aria-label="DNA contribution slider">
               <div class="slider-value">
                 <span class="slider-value-number" id="dna-contribution-value">${this.filterState.minDnaContribution}%</span>
@@ -405,7 +401,7 @@ export class FilterPanel {
             </div>
             <div class="checkbox-grid">
               <div class="checkbox-card">
-                <input type="checkbox" class="modern-checkbox" id="research-gaps" onchange="updateResearchFilter()">
+                <input type="checkbox" class="modern-checkbox" id="research-gaps">
                 <label class="checkbox-label" for="research-gaps">
                   <div class="checkbox-icon">❓</div>
                   <div class="checkbox-text">
@@ -415,7 +411,7 @@ export class FilterPanel {
                 </label>
               </div>
               <div class="checkbox-card">
-                <input type="checkbox" class="modern-checkbox" id="missing-data" onchange="updateResearchFilter()">
+                <input type="checkbox" class="modern-checkbox" id="missing-data">
                 <label class="checkbox-label" for="missing-data">
                   <div class="checkbox-icon">⚠️</div>
                   <div class="checkbox-text">
@@ -425,7 +421,7 @@ export class FilterPanel {
                 </label>
               </div>
               <div class="checkbox-card">
-                <input type="checkbox" class="modern-checkbox" id="estimated-dates" onchange="updateResearchFilter()">
+                <input type="checkbox" class="modern-checkbox" id="estimated-dates">
                 <label class="checkbox-label" for="estimated-dates">
                   <div class="checkbox-icon">📊</div>
                   <div class="checkbox-text">
@@ -435,7 +431,7 @@ export class FilterPanel {
                 </label>
               </div>
               <div class="checkbox-card">
-                <input type="checkbox" class="modern-checkbox" id="well-documented" onchange="updateResearchFilter()">
+                <input type="checkbox" class="modern-checkbox" id="well-documented">
                 <label class="checkbox-label" for="well-documented">
                   <div class="checkbox-icon">✅</div>
                   <div class="checkbox-text">
@@ -450,7 +446,7 @@ export class FilterPanel {
       </div>
       
       <div class="filter-footer">
-        <button class="action-btn primary" onclick="resetAllFilters()">
+        <button class="action-btn primary" data-filter-action="reset-all">
           <span class="btn-icon">↺</span>
           Reset All Filters
         </button>
@@ -465,7 +461,65 @@ export class FilterPanel {
    * Setup event listeners for the filter panel
    */
   private setupEventListeners(): void {
+    this.addFilterControlListeners();
     this.addFilterKeyboardNavigation();
+  }
+
+  private addFilterControlListeners(): void {
+    this.container.addEventListener('click', (event) => {
+      const target = event.target as HTMLElement;
+      const tab = target.closest('.filter-tab') as HTMLElement | null;
+      if (tab) {
+        const tabName = tab.getAttribute('data-tab');
+        if (tabName) this.switchFilterTab(tabName);
+        return;
+      }
+
+      const actionButton = target.closest('[data-filter-action]') as HTMLElement | null;
+      if (!actionButton) return;
+
+      const action = actionButton.getAttribute('data-filter-action');
+      if (action === 'select-all-countries') {
+        this.selectAllCountries();
+      } else if (action === 'select-no-countries') {
+        this.selectNoCountries();
+      } else if (action === 'reset-all') {
+        this.resetAllFilters();
+      }
+    });
+
+    this.container.addEventListener('input', (event) => {
+      const target = event.target as HTMLInputElement;
+      if (target.id === 'generation-slider') {
+        this.updateGenerationFilter(target.value);
+      } else if (target.id === 'dna-contribution-slider') {
+        this.updateDnaContributionFilter(target.value);
+      }
+    });
+
+    this.container.addEventListener('change', (event) => {
+      const target = event.target as HTMLInputElement;
+      if (target.classList.contains('country-checkbox')) {
+        this.updateCountryFilter();
+      } else if (target.id === 'birth-year-min' || target.id === 'birth-year-max') {
+        this.updateBirthYearRange();
+      } else if (target.id === 'lifespan-min' || target.id === 'lifespan-max') {
+        this.updateLifespanFilter();
+      } else if (target.closest('#tab-data')) {
+        this.updateDataCompletenessFilter();
+      } else if (['direct-line-only', 'patrilineal-line', 'matrilineal-line', 'migration-patterns'].includes(target.id)) {
+        this.updateRelationshipFilter();
+      } else if (['research-gaps', 'missing-data', 'estimated-dates', 'well-documented'].includes(target.id)) {
+        this.updateResearchFilter();
+      }
+    });
+
+    this.container.addEventListener('error', (event) => {
+      const target = event.target as HTMLElement;
+      if (target.classList.contains('country-flag-img')) {
+        target.style.display = 'none';
+      }
+    }, true);
   }
 
   /**
@@ -494,24 +548,6 @@ export class FilterPanel {
         }
       });
     });
-  }
-
-  /**
-   * Make filter functions globally available
-   */
-  private makeFunctionsGloballyAvailable(): void {
-    (window as any).updateGenerationFilter = (value: string) => this.updateGenerationFilter(value);
-    (window as any).updateCountryFilter = () => this.updateCountryFilter();
-    (window as any).selectAllCountries = () => this.selectAllCountries();
-    (window as any).selectNoCountries = () => this.selectNoCountries();
-    (window as any).updateBirthYearRange = () => this.updateBirthYearRange();
-    (window as any).updateLifespanFilter = () => this.updateLifespanFilter();
-    (window as any).updateDataCompletenessFilter = () => this.updateDataCompletenessFilter();
-    (window as any).updateRelationshipFilter = () => this.updateRelationshipFilter();
-    (window as any).updateDnaContributionFilter = (value: string) => this.updateDnaContributionFilter(value);
-    (window as any).updateResearchFilter = () => this.updateResearchFilter();
-    (window as any).resetAllFilters = () => this.resetAllFilters();
-    (window as any).switchFilterTab = (tabName: string) => this.switchFilterTab(tabName);
   }
 
   // Filter update functions
@@ -709,7 +745,7 @@ export class FilterPanel {
     const stats = document.getElementById('filter-stats');
     if (!summary || !stats) return;
     
-    const activeFilters = [];
+    const activeFilters: string[] = [];
     
     if (this.filterState.selectedCountries.size < this.data.root.descendants().length) {
       activeFilters.push(`${this.filterState.selectedCountries.size} countries`);
@@ -751,13 +787,13 @@ export class FilterPanel {
     
     // Filter nodes based on all criteria
     this.data.g.selectAll(".node")
-      .style("opacity", d => {
+      .style("opacity", (d: any) => {
         return this.isNodeVisible(d as any, maxGen, patrilinealNames, matrilinealNames, directLineNames) ? 1 : 0.1;
       });
     
     // Filter links
     this.data.g.selectAll(".link")
-      .style("opacity", d => {
+      .style("opacity", (d: any) => {
         const link = d as any;
         const sourceVisible = this.isNodeVisible(link.source, maxGen, patrilinealNames, matrilinealNames, directLineNames);
         const targetVisible = this.isNodeVisible(link.target, maxGen, patrilinealNames, matrilinealNames, directLineNames);

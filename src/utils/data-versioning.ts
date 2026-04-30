@@ -1,6 +1,7 @@
 // Data versioning and change tracking utilities
 import { Person, ValidationResult } from '../interfaces/person';
 import { validatePerson, standardizeMissingData, addMetadata } from './data-validation';
+import { analyzeDataQuality } from './data-quality';
 
 export interface DataChange {
   id: string;
@@ -222,6 +223,7 @@ export class DataVersionManager {
    */
   getDataQualityMetrics(root: Person): DataQualityMetrics {
     const allPersons = this.collectAllPersons(root);
+    const qualityReport = analyzeDataQuality(root);
     
     const metrics: DataQualityMetrics = {
       totalPersons: allPersons.length,
@@ -230,6 +232,9 @@ export class DataVersionManager {
       dataCompleteness: 0,
       averageConfidence: 0,
       validationIssues: 0,
+      qualityIssues: qualityReport.issues.length,
+      qualityErrors: qualityReport.errors.length,
+      qualityWarnings: qualityReport.warnings.length,
       lastValidated: null
     };
 
@@ -267,13 +272,16 @@ export class DataVersionManager {
     return metrics;
   }
 
-  private collectAllPersons(person: Person): Person[] {
+  private collectAllPersons(person: Person, seen = new WeakSet<Person>()): Person[] {
+    if (seen.has(person)) return [];
+    seen.add(person);
+
     const persons: Person[] = [person];
     
     if (person.parents) {
       person.parents.forEach(parent => {
         if (parent) {
-          persons.push(...this.collectAllPersons(parent));
+          persons.push(...this.collectAllPersons(parent, seen));
         }
       });
     }
@@ -322,6 +330,9 @@ export interface DataQualityMetrics {
   dataCompleteness: number; // percentage
   averageConfidence: number; // 0-3 scale
   validationIssues: number;
+  qualityIssues: number;
+  qualityErrors: number;
+  qualityWarnings: number;
   lastValidated: string | null;
 }
 

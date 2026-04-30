@@ -1,6 +1,5 @@
 // src/visualization/minimap.ts
 import * as d3 from "d3";
-import { Person } from "../interfaces/person";
 import { getCountry, countryColors } from "../utils/utils";
 
 export interface MinimapConfig {
@@ -12,11 +11,11 @@ export interface MinimapConfig {
 
 export interface MinimapState {
   container: HTMLElement;
-  svg: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>;
-  g: d3.Selection<SVGGElement, unknown, HTMLElement, any>;
-  linksG: d3.Selection<SVGGElement, unknown, HTMLElement, any>;
-  nodesG: d3.Selection<SVGGElement, unknown, HTMLElement, any>;
-  viewport: d3.Selection<SVGRectElement, unknown, HTMLElement, any>;
+  svg: d3.Selection<SVGSVGElement, unknown, null, undefined>;
+  g: d3.Selection<SVGGElement, unknown, null, undefined>;
+  linksG: d3.Selection<SVGGElement, unknown, null, undefined>;
+  nodesG: d3.Selection<SVGGElement, unknown, null, undefined>;
+  viewport: d3.Selection<SVGRectElement, unknown, null, undefined>;
   bounds: { x0: number; y0: number; x1: number; y1: number };
   scaleX: number;
   scaleY: number;
@@ -208,11 +207,6 @@ export class Minimap {
 
     this.state.scaleX = (this.miniW / Math.max(bw, 1)) * 0.95;
     this.state.scaleY = (this.miniH / Math.max(bh, 1)) * 0.95;
-
-    const scaledWidth = bw * this.state.scaleX;
-    const scaledHeight = bh * this.state.scaleY;
-    const offsetX = (this.miniW - scaledWidth) / 2;
-    const offsetY = (this.miniH - scaledHeight) / 2;
 
     this.state.g.attr("transform", `translate(12,12)`);
 

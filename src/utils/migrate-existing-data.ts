@@ -2,6 +2,7 @@
 import { Sex, MISSING_DATA } from '../interfaces/person';
 import { migrateLegacyPersonData } from './data-migration';
 import { DataVersionManager, ChangeType } from './data-versioning';
+import { measureSync } from './performance';
 
 // Import existing configs
 import { maxArseneaultConfig } from '../data/configs/max-arseneault.config';
@@ -105,42 +106,55 @@ export function standardizeMissingValues(data: any): any {
   return data;
 }
 
+export interface CompleteMigrationOptions {
+  log?: boolean;
+  trackVersion?: boolean;
+}
+
 /**
  * Complete migration function that fixes all issues
  */
-export function completeDataMigration() {
-  console.log('Starting complete data migration...');
+export function completeDataMigration(options: CompleteMigrationOptions = {}) {
+  const shouldLog = options.log ?? false;
+  const shouldTrackVersion = options.trackVersion ?? false;
+  const log = (...args: unknown[]) => {
+    if (shouldLog) console.log(...args);
+  };
+
+  log('Starting complete data migration...');
   
   // Step 1: Fix sex values
   const sexFixed = fixSexValues(maxArseneaultConfig);
-  console.log('✓ Fixed sex values');
+  log('Fixed sex values');
   
   // Step 2: Standardize missing data
   const standardized = standardizeMissingValues(sexFixed);
-  console.log('✓ Standardized missing data values');
+  log('Standardized missing data values');
   
   // Step 3: Full migration with metadata
   const migrated = migrateLegacyPersonData(standardized, {
     source: 'complete-migration',
     addMetadata: true
   });
-  console.log('✓ Applied full migration with metadata');
+  log('Applied full migration with metadata');
   
   // Step 4: Create version manager and record changes
-  const versionManager = new DataVersionManager();
-  versionManager.recordChange(
-    ChangeType.MIGRATE,
-    migrated.id || 'max-arseneault',
-    'Complete data migration - fixed sex values, standardized missing data, added metadata',
-    undefined,
-    maxArseneaultConfig,
-    migrated,
-    'migration-script',
-    'automated'
-  );
-  console.log('✓ Recorded migration in version manager');
+  const versionManager = shouldTrackVersion ? new DataVersionManager() : null;
+  if (versionManager) {
+    versionManager.recordChange(
+      ChangeType.MIGRATE,
+      migrated.id || 'max-arseneault',
+      'Complete data migration - fixed sex values, standardized missing data, added metadata',
+      undefined,
+      maxArseneaultConfig,
+      migrated,
+      'migration-script',
+      'automated'
+    );
+    log('Recorded migration in version manager');
+  }
   
-  console.log('Complete migration finished successfully');
+  log('Complete migration finished successfully');
   
   return {
     originalData: maxArseneaultConfig,
@@ -150,4 +164,7 @@ export function completeDataMigration() {
 }
 
 // Export the migrated data for use in main.ts
-export const migratedMaxArseneaultConfig = completeDataMigration().migratedData;
+export const migratedMaxArseneaultConfig = measureSync(
+  'data.completeMigration',
+  () => completeDataMigration({ log: false, trackVersion: false }).migratedData
+);

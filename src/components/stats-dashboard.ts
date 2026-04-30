@@ -6,6 +6,7 @@ import { getCountry, calculateAgeAtDate } from "../utils/utils";
 export interface StatsDashboardData {
   root: any;
   countrySvgs: { [key: string]: string };
+  onSectionExpanded?: (sectionId: string) => void;
 }
 
 export interface StatisticsData {
@@ -55,6 +56,7 @@ export class StatsDashboard {
   public initialize(): void {
     this.calculateStatistics();
     this.renderDashboard();
+    this.setupSectionToggles();
     this.renderCharts();
   }
 
@@ -62,7 +64,7 @@ export class StatsDashboard {
    * Calculate all statistics from the tree data
    */
   private calculateStatistics(): void {
-    const allNodes = this.data.root.descendants();
+    const allNodes: any[] = this.data.root.descendants();
     
     // Basic statistics
     const totalPeople = allNodes.length;
@@ -71,7 +73,7 @@ export class StatsDashboard {
     const birthYears = this.extractBirthYears(allNodes);
     
     // Count countries
-    allNodes.forEach(node => {
+    allNodes.forEach((node: any) => {
       const country = getCountry(node.data.birthPlace);
       countries.set(country, (countries.get(country) || 0) + 1);
     });
@@ -102,7 +104,7 @@ export class StatsDashboard {
     };
 
     // Process each node
-    allNodes.forEach(node => {
+    allNodes.forEach((node: any) => {
       dataCompleteness.total++;
       
       // Data completeness tracking
@@ -150,7 +152,7 @@ export class StatsDashboard {
       // Migration patterns (parent-child country changes) - only for first 15 generations
       if (node.data.parents && node.depth <= 15) {
         const currentCountry = getCountry(node.data.birthPlace);
-        node.data.parents.forEach(parent => {
+        node.data.parents.forEach((parent: any) => {
           if (parent) {
             const parentCountry = getCountry(parent.birthPlace);
             if (currentCountry !== parentCountry) {
@@ -226,7 +228,7 @@ export class StatsDashboard {
    * Calculate DNA breakdown by generation
    */
   private calculateDnaBreakdown(allNodes: any[], maxDepth: number): Array<{generation: number, count: number, dnaPercent: number}> {
-    const dnaBreakdown = [];
+    const dnaBreakdown: Array<{ generation: number; count: number; dnaPercent: number }> = [];
     for (let depth = 0; depth <= maxDepth; depth++) {
       const nodesAtDepth = allNodes.filter(d => d.depth === depth);
       if (nodesAtDepth.length > 0) {
@@ -248,10 +250,10 @@ export class StatsDashboard {
     const ageAtBirthData: number[] = [];
     const generationalGaps: number[] = [];
     
-    allNodes.forEach(node => {
+    allNodes.forEach((node: any) => {
       // Calculate age at birth (parent's age when child was born)
       if (node.data.parents && node.data.parents.length > 0 && node.data.birthDate) {
-        node.data.parents.forEach(parent => {
+        node.data.parents.forEach((parent: any) => {
           if (parent && parent.birthDate && parent.birthDate !== "Unknown" && parent.birthDate !== "UNKNOWN") {
             const parentBirthYear = this.extractBirthYear(parent.birthDate);
             const childBirthYear = this.extractBirthYear(node.data.birthDate);
@@ -269,7 +271,7 @@ export class StatsDashboard {
       
       // Calculate generational gaps (time between generations)
       if (node.data.parents && node.data.parents.length > 0 && node.data.birthDate) {
-        node.data.parents.forEach(parent => {
+        node.data.parents.forEach((parent: any) => {
           if (parent && parent.birthDate && parent.birthDate !== "Unknown" && parent.birthDate !== "UNKNOWN") {
             const parentBirthYear = this.extractBirthYear(parent.birthDate);
             const childBirthYear = this.extractBirthYear(node.data.birthDate);
@@ -349,8 +351,8 @@ export class StatsDashboard {
       
       <div class="stats-content">
       <div class="stats-section">
-        <div class="stats-section-title collapsible" onclick="toggleSection('overview')">
-          📈 Overview <span class="collapse-icon" onclick="event.stopPropagation(); toggleSection('overview');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
+        <div class="stats-section-title collapsible" data-section-id="overview">
+          📈 Overview <span class="collapse-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
         </div>
         <div class="stats-section-content" id="overview">
         <div class="stats-grid">
@@ -383,8 +385,8 @@ export class StatsDashboard {
       </div>
 
       <div class="stats-section">
-        <div class="stats-section-title collapsible" onclick="toggleSection('data-completeness')">
-          📋 Data Completeness <span class="collapse-icon" onclick="event.stopPropagation(); toggleSection('data-completeness');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
+        <div class="stats-section-title collapsible" data-section-id="data-completeness">
+          📋 Data Completeness <span class="collapse-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
         </div>
         <div class="stats-section-content" id="data-completeness">
           <div class="dna-breakdown">
@@ -428,8 +430,8 @@ export class StatsDashboard {
       </div>
 
       <div class="stats-section">
-        <div class="stats-section-title collapsible" onclick="toggleSection('research-gaps')">
-          🔍 Research Gaps <span class="collapse-icon" onclick="event.stopPropagation(); toggleSection('research-gaps');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
+        <div class="stats-section-title collapsible" data-section-id="research-gaps">
+          🔍 Research Gaps <span class="collapse-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
         </div>
         <div class="stats-section-content" id="research-gaps">
           <div class="dna-breakdown">
@@ -473,8 +475,8 @@ export class StatsDashboard {
       </div>
 
       <div class="stats-section">
-        <div class="stats-section-title collapsible" onclick="toggleSection('gender-distribution')">
-          👥 Gender Distribution <span class="collapse-icon" onclick="event.stopPropagation(); toggleSection('gender-distribution');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
+        <div class="stats-section-title collapsible" data-section-id="gender-distribution">
+          👥 Gender Distribution <span class="collapse-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
         </div>
         <div class="stats-section-content" id="gender-distribution">
           <!-- Gender Pie Chart -->
@@ -490,8 +492,8 @@ export class StatsDashboard {
       </div>
 
       <div class="stats-section">
-        <div class="stats-section-title collapsible" onclick="toggleSection('lifespan')">
-          ⏰ Average Lifespan by Generation <span class="collapse-icon" onclick="event.stopPropagation(); toggleSection('lifespan');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
+        <div class="stats-section-title collapsible" data-section-id="lifespan">
+          ⏰ Average Lifespan by Generation <span class="collapse-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
         </div>
         <div class="stats-section-content" id="lifespan">
           <div class="lifespan-chart-container">
@@ -518,8 +520,8 @@ export class StatsDashboard {
       </div>
 
       <div class="stats-section">
-        <div class="stats-section-title collapsible" onclick="toggleSection('migration')">
-          🌍 Migration Patterns <span class="collapse-icon" onclick="event.stopPropagation(); toggleSection('migration');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
+        <div class="stats-section-title collapsible" data-section-id="migration">
+          🌍 Migration Patterns <span class="collapse-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
         </div>
         <div class="stats-section-content" id="migration" style="display: block;">
           <div class="migration-content">
@@ -570,8 +572,8 @@ export class StatsDashboard {
       </div>
 
       <div class="stats-section">
-        <div class="stats-section-title collapsible" onclick="toggleSection('dna-inheritance')">
-          🧬 DNA Inheritance by Generation <span class="collapse-icon" onclick="event.stopPropagation(); toggleSection('dna-inheritance');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
+        <div class="stats-section-title collapsible" data-section-id="dna-inheritance">
+          🧬 DNA Inheritance by Generation <span class="collapse-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
         </div>
         <div class="stats-section-content" id="dna-inheritance">
           <div class="lifespan-chart-container">
@@ -594,8 +596,8 @@ export class StatsDashboard {
       </div>
 
       <div class="stats-section">
-        <div class="stats-section-title collapsible" onclick="toggleSection('countries-origin')">
-          🌎 Countries of Origin <span class="collapse-icon" onclick="event.stopPropagation(); toggleSection('countries-origin');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
+        <div class="stats-section-title collapsible" data-section-id="countries-origin">
+          🌎 Countries of Origin <span class="collapse-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
         </div>
         <div class="stats-section-content" id="countries-origin">
         <div class="dna-breakdown">
@@ -625,8 +627,8 @@ export class StatsDashboard {
       </div>
 
       <div class="stats-section">
-        <div class="stats-section-title collapsible" onclick="toggleSection('dna-ethnicity')">
-          🧬 DNA Contribution by Ethnicity <span class="collapse-icon" onclick="event.stopPropagation(); toggleSection('dna-ethnicity');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
+        <div class="stats-section-title collapsible" data-section-id="dna-ethnicity">
+          🧬 DNA Contribution by Ethnicity <span class="collapse-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
         </div>
         <div class="stats-section-content" id="dna-ethnicity">
         <div class="dna-breakdown">
@@ -645,8 +647,8 @@ export class StatsDashboard {
       </div>
 
       <div class="stats-section">
-        <div class="stats-section-title collapsible" onclick="toggleSection('archaic-ancestry')">
-          🦴 Archaic Hominid Ancestry <span class="collapse-icon" onclick="event.stopPropagation(); toggleSection('archaic-ancestry');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
+        <div class="stats-section-title collapsible" data-section-id="archaic-ancestry">
+          🦴 Archaic Hominid Ancestry <span class="collapse-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
         </div>
         <div class="stats-section-content" id="archaic-ancestry">
           <div class="dna-breakdown">
@@ -694,6 +696,29 @@ export class StatsDashboard {
     `;
   }
 
+  private setupSectionToggles(): void {
+    this.container.querySelectorAll<HTMLElement>('.stats-section-title.collapsible').forEach(title => {
+      title.addEventListener('click', () => {
+        const sectionId = title.dataset.sectionId;
+        if (!sectionId) return;
+
+        const content = this.container.querySelector<HTMLElement>(`.stats-section-content#${sectionId}`);
+        const icon = title.querySelector<HTMLElement>('.collapse-icon');
+        if (!content || !icon) return;
+
+        const isCollapsed = content.style.display === 'none';
+        content.style.display = isCollapsed ? 'block' : 'none';
+        icon.innerHTML = isCollapsed
+          ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg>'
+          : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9,18 15,12 9,6"></polyline></svg>';
+
+        if (isCollapsed) {
+          this.data.onSectionExpanded?.(sectionId);
+        }
+      });
+    });
+  }
+
   /**
    * Generate DNA ethnicity breakdown HTML
    */
@@ -725,7 +750,7 @@ export class StatsDashboard {
           node.data.parents.forEach((parent: any) => {
             if (parent) {
               // Find the parent node in the tree by matching the data
-              const parentNode = allNodes.find(n => 
+              const parentNode = allNodes.find((n: any) => 
                 n.data.name === parent.name && 
                 n.data.birthDate === parent.birthDate &&
                 n.data.birthPlace === parent.birthPlace
@@ -751,7 +776,7 @@ export class StatsDashboard {
     };
     
     // Start tracing from the root (you)
-    const rootNode = allNodes.find(n => n.depth === 0);
+    const rootNode = allNodes.find((n: any) => n.depth === 0);
     if (rootNode) {
       traceAncestry(rootNode, 0);
     }
@@ -886,10 +911,10 @@ export class StatsDashboard {
           <strong>${d.data.gender}</strong><br/>
           ${d.data.count} people (${percentage}%)
         `)
-          .style("left", (event.pageX / 0.75 + 10) + "px")
-          .style("top", (event.pageY / 0.75 - 28) + "px");
+          .style("left", (event.pageX + 10) + "px")
+          .style("top", (event.pageY - 28) + "px");
       })
-      .on("mouseout", function(event, d) {
+      .on("mouseout", function() {
         d3.select(this)
           .attr("stroke-width", 2)
           .attr("stroke", "var(--bg-secondary)");
@@ -1034,10 +1059,10 @@ export class StatsDashboard {
           <strong>${d.data.country}</strong><br/>
           ${d.data.count} people (${percentage}%)
         `)
-          .style("left", (event.pageX / 0.75 + 10) + "px")
-          .style("top", (event.pageY / 0.75 - 28) + "px");
+          .style("left", (event.pageX + 10) + "px")
+          .style("top", (event.pageY - 28) + "px");
       })
-      .on("mouseout", (event, d) => {
+      .on("mouseout", (event) => {
         d3.select(event.currentTarget)
           .attr("stroke-width", 2)
           .attr("stroke", "var(--bg-secondary)");
@@ -1104,7 +1129,7 @@ export class StatsDashboard {
         if (node.data.parents) {
           node.data.parents.forEach((parent: any) => {
             if (parent) {
-              const parentNode = allNodes.find(n => 
+              const parentNode = allNodes.find((n: any) => 
                 n.data.name === parent.name && 
                 n.data.birthDate === parent.birthDate &&
                 n.data.birthPlace === parent.birthPlace
@@ -1127,7 +1152,7 @@ export class StatsDashboard {
       visitedNodes.delete(node.data.name);
     };
     
-    const rootNode = allNodes.find(n => n.depth === 0);
+    const rootNode = allNodes.find((n: any) => n.depth === 0);
     if (rootNode) {
       traceAncestry(rootNode, 0);
     }
@@ -1228,10 +1253,10 @@ export class StatsDashboard {
           <strong>${d.data.country}</strong><br/>
           ${d.data.value.toFixed(1)}% DNA contribution
         `)
-          .style("left", (event.pageX / 0.75 + 10) + "px")
-          .style("top", (event.pageY / 0.75 - 28) + "px");
+          .style("left", (event.pageX + 10) + "px")
+          .style("top", (event.pageY - 28) + "px");
       })
-      .on("mouseout", function(event, d) {
+      .on("mouseout", function() {
         d3.select(this)
           .attr("stroke-width", 2)
           .attr("stroke", "var(--bg-secondary)");
@@ -1338,10 +1363,10 @@ export class StatsDashboard {
           <strong>${d.data.ancestry}</strong><br/>
           ${d.data.percentage}% DNA
         `)
-          .style("left", (event.pageX / 0.75 + 10) + "px")
-          .style("top", (event.pageY / 0.75 - 28) + "px");
+          .style("left", (event.pageX + 10) + "px")
+          .style("top", (event.pageY - 28) + "px");
       })
-      .on("mouseout", function(event, d) {
+      .on("mouseout", function() {
         d3.select(this)
           .attr("stroke-width", 2)
           .attr("stroke", "var(--bg-secondary)");
@@ -1459,13 +1484,11 @@ export class StatsDashboard {
 
     const svg = document.getElementById('lifespan-line-chart');
     if (!svg) {
-      console.log('SVG element not found');
       return;
     }
     
     const container = svg.parentElement;
     if (!container) {
-      console.log('Container not found');
       return;
     }
     
@@ -1473,9 +1496,6 @@ export class StatsDashboard {
     const margin = { top: 20, right: 30, bottom: 50, left: 50 };
     const width = Math.max(containerRect.width - margin.left - margin.right, 300);
     const height = 300;
-    
-    console.log('Container dimensions:', containerRect.width, containerRect.height);
-    console.log('Chart dimensions:', width, height);
     
     svg.setAttribute('width', String(width + margin.left + margin.right));
     svg.setAttribute('height', String(height + margin.top + margin.bottom));
@@ -1486,9 +1506,7 @@ export class StatsDashboard {
     // Prepare data
     const sortedGenerations = Array.from(this.statistics.lifespanByGeneration.entries())
       .sort((a, b) => a[0] - b[0]);
-    
-    console.log('Sorted generations:', sortedGenerations);
-    
+
     if (sortedGenerations.length === 0) {
       // Create a simple test chart to verify SVG rendering works
       svg.innerHTML = `
@@ -1512,8 +1530,6 @@ export class StatsDashboard {
       };
     });
     
-    console.log('Processed data:', chartData);
-    
     // Create scales
     const xScale = (generation: number) => {
       if (chartData.length === 1) return margin.left + width / 2;
@@ -1523,9 +1539,7 @@ export class StatsDashboard {
     const minAge = Math.min(...chartData.map(d => d.minAge));
     const maxAge = Math.max(...chartData.map(d => d.maxAge));
     const ageRange = maxAge - minAge;
-    
-    console.log('Age range:', minAge, 'to', maxAge, 'range:', ageRange);
-    
+
     const yScale = (age: number) => {
       if (ageRange === 0) return margin.top + height / 2;
       return margin.top + height - ((age - minAge) / ageRange) * height;
@@ -1639,9 +1653,8 @@ export class StatsDashboard {
         document.body.appendChild(tooltip);
         
         const rect = (e.target as Element).getBoundingClientRect();
-        const scale = 0.75;
-        tooltip.style.left = (rect.left / scale + window.scrollX) + 'px';
-        tooltip.style.top = ((rect.top / scale + window.scrollY) - tooltip.offsetHeight - 10) + 'px';
+        tooltip.style.left = (rect.left + window.scrollX) + 'px';
+        tooltip.style.top = ((rect.top + window.scrollY) - tooltip.offsetHeight - 10) + 'px';
       });
       
       circle.addEventListener('mouseleave', () => {
@@ -1677,7 +1690,7 @@ export class StatsDashboard {
     
     // Add axis labels with smart spacing to prevent overlapping
     const labelSpacing = 60; // Minimum pixel spacing between labels
-    const labelsToShow = [];
+    const labelsToShow: Array<{ index: number; x: number; generation: number }> = [];
     
     // Calculate which labels to show based on spacing
     for (let i = 0; i < chartData.length; i++) {
@@ -1718,7 +1731,7 @@ export class StatsDashboard {
     // Render the selected labels
     labelsToShow.forEach(({ x, generation }) => {
       const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-      text.setAttribute('x', x);
+      text.setAttribute('x', String(x));
       text.setAttribute('y', String(margin.top + height + 25));
       text.setAttribute('text-anchor', 'middle');
       text.setAttribute('fill', 'var(--text-secondary)');
@@ -1763,18 +1776,14 @@ export class StatsDashboard {
    */
   private renderDnaInheritanceChart(): void {
     if (!this.statistics) return;
-
-    console.log('renderDnaInheritanceChart called, dnaBreakdown:', this.statistics.dnaBreakdown);
     
     const svg = document.getElementById('dna-inheritance-line-chart');
     if (!svg) {
-      console.log('DNA inheritance SVG element not found');
       return;
     }
     
     const container = svg.parentElement;
     if (!container) {
-      console.log('DNA inheritance container not found');
       return;
     }
     
@@ -1782,9 +1791,6 @@ export class StatsDashboard {
     const margin = { top: 20, right: 30, bottom: 50, left: 50 };
     const width = Math.max(containerRect.width - margin.left - margin.right, 300);
     const height = 300;
-    
-    console.log('DNA inheritance container dimensions:', containerRect.width, containerRect.height);
-    console.log('DNA inheritance chart dimensions:', width, height);
     
     svg.setAttribute('width', String(width + margin.left + margin.right));
     svg.setAttribute('height', String(height + margin.top + margin.bottom));
@@ -1794,10 +1800,8 @@ export class StatsDashboard {
     
     // Use the dnaBreakdown data that's already calculated
     const data = this.statistics.dnaBreakdown.sort((a, b) => a.generation - b.generation);
-    console.log('DNA inheritance processed data:', data);
     
     if (data.length === 0) {
-      console.log('No DNA breakdown data available');
       svg.innerHTML = `
         <rect x="50" y="50" width="200" height="100" fill="rgba(123, 179, 240, 0.3)" stroke="var(--accent-primary)" stroke-width="2"/>
         <text x="150" y="110" text-anchor="middle" fill="var(--text-primary)" font-size="14">No DNA inheritance data available</text>
@@ -1815,9 +1819,7 @@ export class StatsDashboard {
     const minDna = Math.min(...data.map(d => d.dnaPercent));
     const maxDna = Math.max(...data.map(d => d.dnaPercent));
     const dnaRange = maxDna - minDna;
-    
-    console.log('DNA range:', minDna, 'to', maxDna, 'range:', dnaRange);
-    
+
     const yScale = (dnaPercent: number) => {
       if (dnaRange === 0) return margin.top + height / 2;
       return margin.top + height - ((dnaPercent - minDna) / dnaRange) * height;
@@ -1909,9 +1911,8 @@ export class StatsDashboard {
         document.body.appendChild(tooltip);
         
         const rect = (e.target as Element).getBoundingClientRect();
-        const scale = 0.75;
-        tooltip.style.left = (rect.left / scale + window.scrollX) + 'px';
-        tooltip.style.top = ((rect.top / scale + window.scrollY) - tooltip.offsetHeight - 10) + 'px';
+        tooltip.style.left = (rect.left + window.scrollX) + 'px';
+        tooltip.style.top = ((rect.top + window.scrollY) - tooltip.offsetHeight - 10) + 'px';
       });
       
       circle.addEventListener('mouseleave', () => {
@@ -1947,7 +1948,7 @@ export class StatsDashboard {
     
     // Add axis labels with smart spacing to prevent overlapping
     const labelSpacing = 60; // Minimum pixel spacing between labels
-    const labelsToShow = [];
+    const labelsToShow: Array<{ index: number; x: number; generation: number }> = [];
     
     // Calculate which labels to show based on spacing
     for (let i = 0; i < data.length; i++) {
@@ -1988,7 +1989,7 @@ export class StatsDashboard {
     // Render the selected labels
     labelsToShow.forEach(({ x, generation }) => {
       const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-      text.setAttribute('x', x);
+      text.setAttribute('x', String(x));
       text.setAttribute('y', String(margin.top + height + 25));
       text.setAttribute('text-anchor', 'middle');
       text.setAttribute('fill', 'var(--text-secondary)');

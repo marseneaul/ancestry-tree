@@ -3,14 +3,23 @@
 import { Person } from "../interfaces/person";
 import { hierarchy, HierarchyNode } from "d3-hierarchy";
 
+const hierarchyCache = new WeakMap<Person, HierarchyNode<Person>>();
+const generationsCache = new WeakMap<HierarchyNode<Person>, Map<number, { count: number; dnaPercentEach: number; dnaPercentTotal: number, probOfSharingDna: number }>>();
+
 export function buildHierarchy(root: Person): HierarchyNode<Person> {
-  return hierarchy(root, d => {
+  const cached = hierarchyCache.get(root);
+  if (cached) return cached;
+
+  const tree = hierarchy(root, d => {
     // Sort parents: mother (female/left) first, father (male/right) second
     if (d.parents) {
-      return d.parents.filter(p => p).sort((a, b) => (a.sex === "Female" ? -1 : 1));
+      const parentOrder = (person: Person) => person.sex === "Female" ? 0 : person.sex === "Male" ? 1 : 2;
+      return d.parents.filter(p => p).sort((a, b) => parentOrder(a) - parentOrder(b));
     }
     return [];
   });
+  hierarchyCache.set(root, tree);
+  return tree;
 }
 
 export function tracePatrilineal(root: Person): string[] {  // Y-chromosome: father"s line
@@ -157,6 +166,9 @@ export const countryColors: Record<string, string> = {
 
   
 export function getGenerations(root: HierarchyNode<Person>): Map<number, { count: number; dnaPercentEach: number; dnaPercentTotal: number, probOfSharingDna: number }> {
+    const cached = generationsCache.get(root);
+    if (cached) return cached;
+
     const gens = new Map<number, { count: number; dnaPercentEach: number; dnaPercentTotal: number, probOfSharingDna: number }>();
     root.each(d => {
       const depth = d.depth;
@@ -168,6 +180,7 @@ export function getGenerations(root: HierarchyNode<Person>): Map<number, { count
       const c = 34;
       info.probOfSharingDna = (1 - Math.pow(Math.E, (-c / Math.pow(2, depth)))) * 100;
     });
+    generationsCache.set(root, gens);
     return gens;
 }
 
@@ -196,7 +209,7 @@ export function getOrdinalFromNumber(num: number): string {
 
 export function getLeaves(person: Person): Person[] {
   if (!person.parents || person.parents.length === 0) return [person];
-  let leaves = [];
+  let leaves: Person[] = [];
   for (let p of person.parents) {
     if (p) leaves = leaves.concat(getLeaves(p));
   }

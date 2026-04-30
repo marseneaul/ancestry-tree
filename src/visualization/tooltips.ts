@@ -20,7 +20,7 @@ export class TooltipSystem {
 
   constructor(config: TooltipConfig = {}) {
     this.config = {
-      scale: 0.75,
+      scale: 1,
       zIndex: 10000,
       transitionDuration: 200,
       ...config
@@ -67,7 +67,7 @@ export class TooltipSystem {
   /**
    * Create and position tooltip
    */
-  private createTooltip(person: Person, depth: number, element: any, event?: any): void {
+  private createTooltip(person: Person, depth: number, _element: any, event?: any): void {
     const tooltip = document.createElement('div');
     tooltip.className = 'person-tooltip';
     this.state.currentTooltip = tooltip;
@@ -83,14 +83,14 @@ export class TooltipSystem {
     const countryColor = countryColors[country] || "#808080";
     
     // Calculate relationship
-    const relation = this.calculateRelationship(depth, person.sex);
+    const relation = this.calculateRelationship(depth, person.sex ?? "Unknown");
     
     // Clean up data for display
     const cleanName = this.cleanUnknown(person.name);
-    const cleanBirthDate = this.cleanUnknown(person.birthDate);
-    const cleanBirthPlace = this.cleanUnknown(person.birthPlace);
-    const cleanDeathDate = this.cleanUnknown(person.deathDate);
-    const cleanStory = this.cleanUnknown(person.story);
+    const cleanBirthDate = this.cleanUnknown(person.birthDate ?? "");
+    const cleanBirthPlace = this.cleanUnknown(person.birthPlace ?? "");
+    const cleanDeathDate = this.cleanUnknown(person.deathDate ?? "");
+    const cleanStory = this.cleanUnknown(person.story ?? "");
     
     // Calculate DNA contribution
     const dnaContribution = depth === 0 ? 100 : (100 / Math.pow(2, depth));
@@ -188,8 +188,6 @@ export class TooltipSystem {
       
       // Adjust if tooltip would go off screen (use scaled viewport)
       const scaledViewportWidth = window.innerWidth / this.config.scale!;
-      const scaledViewportHeight = window.innerHeight / this.config.scale!;
-      
       if (left + tooltipRect.width > scaledViewportWidth) {
         left = scaledX - tooltipRect.width - 20; // Position to the left instead
       }

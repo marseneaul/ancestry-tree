@@ -235,7 +235,7 @@ export function standardizeDataExample() {
     birthPlace: "N/A", // Inconsistent missing data
     deathPlace: "Unknown", // Different format
     birthDate: "1980",
-    deathDate: null, // null value
+    deathDate: undefined,
     parents: []
   };
 

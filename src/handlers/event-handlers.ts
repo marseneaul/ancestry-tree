@@ -1,4 +1,11 @@
 import * as d3 from 'd3';
+import { UIState } from '../state/ui-state';
+import { getGEDCOMExportSummary } from '../utils/gedcom-export';
+import type { GEDCOMExportOptions, LivingPersonPrivacy } from '../utils/gedcom-export';
+
+function setPressed(button: HTMLButtonElement, pressed: boolean): void {
+  button.setAttribute('aria-pressed', String(pressed));
+}
 
 // Types for event handler parameters
 export interface EventHandlerDependencies {
@@ -38,12 +45,8 @@ export interface EventHandlerDependencies {
   width: number;
   height: number;
   
-  // State variables
-  isStatsDashboardVisible: boolean;
-  isTimelinePanelVisible: boolean;
-  isFilterPanelVisible: boolean;
-  legendVisible: boolean;
-  currentTheme: string;
+  // State
+  uiState: UIState;
   
   // Callback functions
   showPersonModal: (person: any, depth: number) => void;
@@ -59,9 +62,211 @@ export interface EventHandlerDependencies {
   closeStatsDashboard: () => void;
   closeTimelinePanel: () => void;
   updateTree: () => void;
-  exportPersonToGEDCOM: (person: any, options: any) => string;
+  exportPersonToGEDCOM: (person: any, options: GEDCOMExportOptions) => string;
   downloadGEDCOM: (content: string, filename: string) => void;
+  clearSearch: () => void;
   rootPerson: any;
+}
+
+const exportButtonDefaultHtml = `
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+    <polyline points="7,10 12,15 17,10"/>
+    <line x1="12" y1="15" x2="12" y2="3"/>
+  </svg>
+  <span class="btn-label">Export</span>
+`;
+
+function resetExportButton(exportBtn: HTMLButtonElement): void {
+  exportBtn.disabled = false;
+  exportBtn.innerHTML = exportButtonDefaultHtml;
+}
+
+function positionExportMenu(menu: HTMLElement, anchor: HTMLElement): void {
+  const anchorRect = anchor.getBoundingClientRect();
+  const menuWidth = Math.min(320, window.innerWidth - 24);
+  const left = Math.min(
+    Math.max(12, anchorRect.right - menuWidth),
+    window.innerWidth - menuWidth - 12
+  );
+  const top = Math.min(anchorRect.bottom + 8, window.innerHeight - 24);
+
+  menu.style.width = `${menuWidth}px`;
+  menu.style.left = `${left}px`;
+  menu.style.top = `${top}px`;
+}
+
+function pluralize(count: number, singular: string, plural = `${singular}s`): string {
+  return `${count} ${count === 1 ? singular : plural}`;
+}
+
+function getExportOptionsFromMenu(menu: HTMLElement): GEDCOMExportOptions {
+  const privacySelect = menu.querySelector<HTMLSelectElement>('#export-privacy-mode');
+  const includeStories = menu.querySelector<HTMLInputElement>('#export-include-stories');
+  const includeImages = menu.querySelector<HTMLInputElement>('#export-include-images');
+
+  return {
+    includeStories: includeStories?.checked ?? true,
+    includeImages: includeImages?.checked ?? false,
+    livingPersonPrivacy: (privacySelect?.value ?? 'redact-details') as LivingPersonPrivacy,
+    sourceName: 'Ancestry Tree',
+    sourceVersion: '1.0'
+  };
+}
+
+function updateExportSummary(menu: HTMLElement, deps: EventHandlerDependencies): void {
+  const summary = getGEDCOMExportSummary(deps.rootPerson, getExportOptionsFromMenu(menu));
+  const peopleSummary = menu.querySelector<HTMLElement>('[data-export-summary="people"]');
+  const livingSummary = menu.querySelector<HTMLElement>('[data-export-summary="living"]');
+  const extrasSummary = menu.querySelector<HTMLElement>('[data-export-summary="extras"]');
+
+  if (peopleSummary) {
+    peopleSummary.textContent = `${pluralize(summary.exportedPeople, 'person', 'people')} exported`;
+    if (summary.exportedPeople !== summary.totalPeople) {
+      peopleSummary.textContent += ` from ${pluralize(summary.totalPeople, 'person', 'people')}`;
+    }
+  }
+
+  if (livingSummary) {
+    if (summary.livingPeople === 0) {
+      livingSummary.textContent = 'No living-person records detected.';
+    } else if (summary.excludedLivingPeople > 0) {
+      livingSummary.textContent = `${pluralize(summary.excludedLivingPeople, 'living record')} excluded.`;
+    } else if (summary.nameOnlyLivingPeople > 0) {
+      livingSummary.textContent = `${pluralize(summary.nameOnlyLivingPeople, 'living record')} exported with names only.`;
+    } else if (summary.redactedLivingPeople > 0) {
+      livingSummary.textContent = `${pluralize(summary.redactedLivingPeople, 'living record')} exported with details redacted.`;
+    } else {
+      livingSummary.textContent = `${pluralize(summary.includedLivingPeople, 'living record')} exported with full details.`;
+    }
+  }
+
+  if (extrasSummary) {
+    extrasSummary.textContent = `${pluralize(summary.storyRecords, 'story', 'stories')} and ${pluralize(summary.imageRecords, 'image path')} included.`;
+  }
+}
+
+function createExportMenu(deps: EventHandlerDependencies): HTMLElement {
+  const menu = document.createElement('div');
+  menu.className = 'export-menu hidden';
+  menu.id = 'export-options-menu';
+  menu.setAttribute('role', 'dialog');
+  menu.setAttribute('aria-label', 'GEDCOM export options');
+
+  menu.innerHTML = `
+    <div class="export-menu-header">
+      <h2>GEDCOM Export</h2>
+      <button type="button" class="export-menu-close" aria-label="Close export options">×</button>
+    </div>
+
+    <label class="export-field" for="export-privacy-mode">
+      <span>Living people</span>
+      <select id="export-privacy-mode">
+        <option value="redact-details" selected>Redact details</option>
+        <option value="name-only">Name only</option>
+        <option value="exclude">Exclude</option>
+        <option value="include">Include all</option>
+      </select>
+    </label>
+
+    <label class="export-checkbox">
+      <input type="checkbox" id="export-include-stories" checked>
+      <span>Include stories</span>
+    </label>
+
+    <label class="export-checkbox">
+      <input type="checkbox" id="export-include-images">
+      <span>Include image paths</span>
+    </label>
+
+    <div class="export-summary" aria-live="polite">
+      <div data-export-summary="people"></div>
+      <div data-export-summary="living"></div>
+      <div data-export-summary="extras"></div>
+    </div>
+
+    <div class="export-menu-actions">
+      <button type="button" class="export-menu-secondary" data-export-action="cancel">Cancel</button>
+      <button type="button" class="export-menu-primary" data-export-action="export">Export</button>
+    </div>
+  `;
+
+  const closeMenu = () => {
+    menu.classList.add('hidden');
+    deps.exportBtn.setAttribute('aria-expanded', 'false');
+  };
+
+  const runExport = () => {
+    closeMenu();
+    executeGEDCOMExport(deps, getExportOptionsFromMenu(menu));
+  };
+
+  menu.querySelector('.export-menu-close')?.addEventListener('click', closeMenu);
+  menu.querySelector('[data-export-action="cancel"]')?.addEventListener('click', closeMenu);
+  menu.querySelector('[data-export-action="export"]')?.addEventListener('click', runExport);
+  menu.querySelectorAll('select, input').forEach(control => {
+    control.addEventListener('change', () => updateExportSummary(menu, deps));
+  });
+  menu.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      closeMenu();
+      deps.exportBtn.focus();
+    }
+  });
+
+  document.addEventListener('mousedown', (event) => {
+    const target = event.target as Node;
+    if (menu.classList.contains('hidden')) return;
+    if (menu.contains(target) || deps.exportBtn.contains(target)) return;
+    closeMenu();
+  });
+
+  document.body.appendChild(menu);
+  updateExportSummary(menu, deps);
+  return menu;
+}
+
+function executeGEDCOMExport(deps: EventHandlerDependencies, options: GEDCOMExportOptions): void {
+  try {
+    deps.exportBtn.disabled = true;
+    deps.exportBtn.innerHTML = `
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 12a9 9 0 11-6.219-8.56"/>
+      </svg>
+      <span class="btn-label">Exporting...</span>
+    `;
+    
+    const gedcomContent = deps.exportPersonToGEDCOM(deps.rootPerson, options);
+    const now = new Date();
+    const dateStr = now.toISOString().split('T')[0];
+    const filename = `ancestry-tree-${dateStr}.ged`;
+    
+    deps.downloadGEDCOM(gedcomContent, filename);
+    
+    setTimeout(() => {
+      deps.exportBtn.innerHTML = `
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="20,6 9,17 4,12"/>
+        </svg>
+        <span class="btn-label">Exported!</span>
+      `;
+      
+      setTimeout(() => resetExportButton(deps.exportBtn), 2000);
+    }, 500);
+  } catch (error) {
+    console.error('Export failed:', error);
+    
+    deps.exportBtn.innerHTML = `
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="15" y1="9" x2="9" y2="15"/>
+        <line x1="9" y1="9" x2="15" y2="15"/>
+      </svg>
+      <span class="btn-label">Error</span>
+    `;
+    
+    setTimeout(() => resetExportButton(deps.exportBtn), 3000);
+  }
 }
 
 /**
@@ -79,7 +284,7 @@ export function setupKeyboardShortcuts(deps: EventHandlerDependencies): void {
     // ESC to clear search or close modal
     if (e.key === "Escape") {
       if (document.activeElement === deps.searchInput) {
-        (window as any).clearSearch();
+        deps.clearSearch();
       } else {
         const modal = document.getElementById("detail-modal");
         if (modal && !modal.classList.contains("hidden")) {
@@ -102,6 +307,8 @@ export function setupKeyboardShortcuts(deps: EventHandlerDependencies): void {
  * Sets up search input event handlers
  */
 export function setupSearchHandlers(deps: EventHandlerDependencies): void {
+  deps.searchClearBtn.addEventListener('click', deps.clearSearch);
+
   // Enhanced search input interactions
   deps.searchInput.addEventListener('input', function() {
     const hasValue = this.value.length > 0;
@@ -234,27 +441,29 @@ export function setupButtonHandlers(deps: EventHandlerDependencies): void {
     deps.timelinePanel.classList.add("hidden");
     deps.filterToggleBtn.classList.remove("active");
     deps.timelineToggleBtn.classList.remove("active");
-    deps.isFilterPanelVisible = false;
-    deps.isTimelinePanelVisible = false;
+    setPressed(deps.filterToggleBtn, false);
+    setPressed(deps.timelineToggleBtn, false);
+    deps.uiState.isFilterPanelVisible = false;
+    deps.uiState.isTimelinePanelVisible = false;
     
     // Toggle stats panel
-    deps.isStatsDashboardVisible = shouldShowStats;
-    deps.statsDashboard.classList.toggle("hidden", !deps.isStatsDashboardVisible);
-    deps.statsToggleBtn.classList.toggle("active", deps.isStatsDashboardVisible);
+    deps.uiState.isStatsDashboardVisible = shouldShowStats;
+    deps.statsDashboard.classList.toggle("hidden", !deps.uiState.isStatsDashboardVisible);
+    deps.statsToggleBtn.classList.toggle("active", deps.uiState.isStatsDashboardVisible);
+    setPressed(deps.statsToggleBtn, deps.uiState.isStatsDashboardVisible);
     
     // Update grid layout
     deps.updateGridLayout();
     
     // On mobile, toggle the left sidebar visibility
     if (window.innerWidth <= 768) {
-      deps.leftSidebar.classList.toggle('active', deps.isStatsDashboardVisible);
+      deps.leftSidebar.classList.toggle('active', deps.uiState.isStatsDashboardVisible);
     }
     
-    if (deps.isStatsDashboardVisible) {
+    if (deps.uiState.isStatsDashboardVisible) {
       deps.initializeStatsDashboard();
       // Charts are now rendered by the StatsDashboard component
       // Initialize migration content when stats dashboard is opened
-      console.log('Initializing migration content...');
       deps.initializeMigrationContent();
     }
   });
@@ -268,23 +477,26 @@ export function setupButtonHandlers(deps: EventHandlerDependencies): void {
     deps.statsDashboard.classList.add("hidden");
     deps.filterToggleBtn.classList.remove("active");
     deps.statsToggleBtn.classList.remove("active");
-    deps.isFilterPanelVisible = false;
-    deps.isStatsDashboardVisible = false;
+    setPressed(deps.filterToggleBtn, false);
+    setPressed(deps.statsToggleBtn, false);
+    deps.uiState.isFilterPanelVisible = false;
+    deps.uiState.isStatsDashboardVisible = false;
     
     // Toggle timeline panel
-    deps.isTimelinePanelVisible = shouldShowTimeline;
-    deps.timelinePanel.classList.toggle("hidden", !deps.isTimelinePanelVisible);
-    deps.timelineToggleBtn.classList.toggle("active", deps.isTimelinePanelVisible);
+    deps.uiState.isTimelinePanelVisible = shouldShowTimeline;
+    deps.timelinePanel.classList.toggle("hidden", !deps.uiState.isTimelinePanelVisible);
+    deps.timelineToggleBtn.classList.toggle("active", deps.uiState.isTimelinePanelVisible);
+    setPressed(deps.timelineToggleBtn, deps.uiState.isTimelinePanelVisible);
     
     // Update grid layout
     deps.updateGridLayout();
     
     // On mobile, toggle the left sidebar visibility
     if (window.innerWidth <= 768) {
-      deps.leftSidebar.classList.toggle('active', deps.isTimelinePanelVisible);
+      deps.leftSidebar.classList.toggle('active', deps.uiState.isTimelinePanelVisible);
     }
     
-    if (deps.isTimelinePanelVisible) {
+    if (deps.uiState.isTimelinePanelVisible) {
       deps.initializeTimelinePanel();
     }
   });
@@ -298,103 +510,43 @@ export function setupButtonHandlers(deps: EventHandlerDependencies): void {
     deps.timelinePanel.classList.add("hidden");
     deps.statsToggleBtn.classList.remove("active");
     deps.timelineToggleBtn.classList.remove("active");
-    deps.isStatsDashboardVisible = false;
-    deps.isTimelinePanelVisible = false;
+    setPressed(deps.statsToggleBtn, false);
+    setPressed(deps.timelineToggleBtn, false);
+    deps.uiState.isStatsDashboardVisible = false;
+    deps.uiState.isTimelinePanelVisible = false;
     
     // Toggle filter panel
-    deps.isFilterPanelVisible = shouldShowFilter;
-    deps.filterPanel.classList.toggle("hidden", !deps.isFilterPanelVisible);
-    deps.filterToggleBtn.classList.toggle("active", deps.isFilterPanelVisible);
+    deps.uiState.isFilterPanelVisible = shouldShowFilter;
+    deps.filterPanel.classList.toggle("hidden", !deps.uiState.isFilterPanelVisible);
+    deps.filterToggleBtn.classList.toggle("active", deps.uiState.isFilterPanelVisible);
+    setPressed(deps.filterToggleBtn, deps.uiState.isFilterPanelVisible);
     
     // Update grid layout
     deps.updateGridLayout();
     
     // On mobile, toggle the left sidebar visibility
     if (window.innerWidth <= 768) {
-      deps.leftSidebar.classList.toggle('active', deps.isFilterPanelVisible);
+      deps.leftSidebar.classList.toggle('active', deps.uiState.isFilterPanelVisible);
     }
     
-    if (deps.isFilterPanelVisible) {
+    if (deps.uiState.isFilterPanelVisible) {
       deps.initializeFilterPanel();
     }
   });
 
   // Export to GEDCOM
+  const exportMenu = createExportMenu(deps);
+  deps.exportBtn.setAttribute('aria-haspopup', 'dialog');
+  deps.exportBtn.setAttribute('aria-expanded', 'false');
   deps.exportBtn.addEventListener("click", () => {
-    try {
-      // Show loading state
-      deps.exportBtn.disabled = true;
-      deps.exportBtn.innerHTML = `
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M21 12a9 9 0 11-6.219-8.56"/>
-        </svg>
-        <span class="btn-label">Exporting...</span>
-      `;
-      
-      // Export the data
-      const gedcomContent = deps.exportPersonToGEDCOM(deps.rootPerson, {
-        includeStories: true,
-        includeImages: false,
-        sourceName: 'Ancestry Tree',
-        sourceVersion: '1.0'
-      });
-      
-      // Generate filename with current date
-      const now = new Date();
-      const dateStr = now.toISOString().split('T')[0]; // YYYY-MM-DD format
-      const filename = `ancestry-tree-${dateStr}.ged`;
-      
-      // Download the file
-      deps.downloadGEDCOM(gedcomContent, filename);
-      
-      // Show success message
-      setTimeout(() => {
-        deps.exportBtn.innerHTML = `
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="20,6 9,17 4,12"/>
-          </svg>
-          <span class="btn-label">Exported!</span>
-        `;
-        
-        // Reset button after 2 seconds
-        setTimeout(() => {
-          deps.exportBtn.disabled = false;
-          deps.exportBtn.innerHTML = `
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-              <polyline points="7,10 12,15 17,10"/>
-              <line x1="12" y1="15" x2="12" y2="3"/>
-            </svg>
-            <span class="btn-label">Export</span>
-          `;
-        }, 2000);
-      }, 500);
-      
-    } catch (error) {
-      console.error('Export failed:', error);
-      
-      // Show error state
-      deps.exportBtn.innerHTML = `
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="10"/>
-          <line x1="15" y1="9" x2="9" y2="15"/>
-          <line x1="9" y1="9" x2="15" y2="15"/>
-        </svg>
-        <span class="btn-label">Error</span>
-      `;
-      
-      // Reset button after 3 seconds
-      setTimeout(() => {
-        deps.exportBtn.disabled = false;
-        deps.exportBtn.innerHTML = `
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-            <polyline points="7,10 12,15 17,10"/>
-            <line x1="12" y1="15" x2="12" y2="3"/>
-          </svg>
-          <span class="btn-label">Export</span>
-        `;
-      }, 3000);
+    const shouldOpen = exportMenu.classList.contains('hidden');
+    exportMenu.classList.toggle('hidden', !shouldOpen);
+    deps.exportBtn.setAttribute('aria-expanded', String(shouldOpen));
+
+    if (shouldOpen) {
+      updateExportSummary(exportMenu, deps);
+      positionExportMenu(exportMenu, deps.exportBtn);
+      exportMenu.querySelector<HTMLSelectElement>('#export-privacy-mode')?.focus();
     }
   });
 
@@ -408,18 +560,19 @@ export function setupButtonHandlers(deps: EventHandlerDependencies): void {
 
   // Legend toggle functionality
   deps.legendToggleBtn.addEventListener('click', () => {
-    deps.legendVisible = !deps.legendVisible;
+    deps.uiState.isLegendVisible = !deps.uiState.isLegendVisible;
     if (deps.legendElement) {
-      deps.legendElement.classList.toggle('hidden', !deps.legendVisible);
+      deps.legendElement.classList.toggle('hidden', !deps.uiState.isLegendVisible);
     }
-    deps.legendToggleBtn.style.opacity = deps.legendVisible ? '1' : '0.5';
+    deps.legendToggleBtn.style.opacity = deps.uiState.isLegendVisible ? '1' : '0.5';
+    setPressed(deps.legendToggleBtn, deps.uiState.isLegendVisible);
     
     // Update grid layout
     deps.updateGridLayout();
     
     // On mobile, toggle the right sidebar visibility
     if (window.innerWidth <= 768) {
-      deps.rightSidebar.classList.toggle('active', deps.legendVisible);
+      deps.rightSidebar.classList.toggle('active', deps.uiState.isLegendVisible);
     }
   });
 }
@@ -524,11 +677,8 @@ export function setupTouchHandlers(deps: EventHandlerDependencies): void {
   let tapCount = 0;
   let hoverTimeout: number | null = null;
 
-  // Override the existing node click behavior for mobile
-  const originalNodeClick = deps.g.selectAll(".node").on("click");
-  
   deps.g.selectAll(".node")
-    .on("click", function(event: any, d: any) {
+    .on("click", function(_event: any, d: any) {
       // Clear any pending hover timeout to prevent conflicts
       if (hoverTimeout) {
         clearTimeout(hoverTimeout);
@@ -729,13 +879,13 @@ export function setupWindowHandlers(deps: EventHandlerDependencies): void {
         !deps.statsDashboard.contains(event.target as Node) && 
         !deps.statsToggleBtn.contains(event.target as Node)) {
       deps.closeStatsDashboard();
-      deps.isStatsDashboardVisible = false;
+      deps.uiState.isStatsDashboardVisible = false;
     }
     if (!deps.timelinePanel.classList.contains("hidden") && 
         !deps.timelinePanel.contains(event.target as Node) && 
         !deps.timelineToggleBtn.contains(event.target as Node)) {
       deps.closeTimelinePanel();
-      deps.isTimelinePanelVisible = false;
+      deps.uiState.isTimelinePanelVisible = false;
     }
   });
 
@@ -818,38 +968,14 @@ export function setupWindowHandlers(deps: EventHandlerDependencies): void {
  */
 function positionDropdown(deps: EventHandlerDependencies): void {
   if (deps.dropdown.style.display === "block") {
-    const inputRect = deps.searchInput.getBoundingClientRect();
-    
-    console.log('Input rect for positioning:', inputRect);
-    console.log('Dropdown will be positioned at:', {
-      top: `${inputRect.bottom + 2}px`,
-      left: `${inputRect.left}px`,
-      width: `${inputRect.width}px`
-    });
-    
-    // Use fixed positioning to escape the body's transform stacking context
     const inputRectFixed = deps.searchInput.getBoundingClientRect();
-    
-    // Position fixed relative to viewport, accounting for the body's scale transform
-    const scale = 0.75; // The body's scale transform
-    const adjustedTop = (inputRectFixed.bottom + 2) / scale;
-    const adjustedLeft = inputRectFixed.left / scale; // No offset - align with input edge
-    const adjustedWidth = inputRectFixed.width / scale;
-    
-    console.log('Fixed positioning with scale compensation:', {
-      originalRect: inputRectFixed,
-      scale: scale,
-      adjustedTop: adjustedTop,
-      adjustedLeft: adjustedLeft,
-      adjustedWidth: adjustedWidth
-    });
     
     // Position fixed to escape stacking context
     deps.dropdown.style.position = 'fixed';
-    deps.dropdown.style.top = `${adjustedTop}px`;
-    deps.dropdown.style.left = `${adjustedLeft}px`;
-    deps.dropdown.style.width = `${adjustedWidth}px`;
-    deps.dropdown.style.minWidth = `${adjustedWidth}px`;
+    deps.dropdown.style.top = `${inputRectFixed.bottom + 2}px`;
+    deps.dropdown.style.left = `${inputRectFixed.left}px`;
+    deps.dropdown.style.width = `${inputRectFixed.width}px`;
+    deps.dropdown.style.minWidth = `${inputRectFixed.width}px`;
     deps.dropdown.style.zIndex = '999999'; // Very high z-index
     
     // Append to body to escape the transform stacking context

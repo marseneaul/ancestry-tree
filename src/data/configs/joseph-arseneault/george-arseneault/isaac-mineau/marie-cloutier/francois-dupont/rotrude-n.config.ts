@@ -1,6 +1,5 @@
 import { charlesMartelConfig } from "./charles-martel.config";
 import { chrotrudisDeTrevesConfig } from "./chrotrudis-de-treves.config";
-import { pepinOfHerstalConfig } from "./pepin-of-herstal.config";
 
 export const rotrudeNConfig = {
     name: "Rotrude N.",

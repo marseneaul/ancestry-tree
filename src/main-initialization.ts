@@ -1,4 +1,3 @@
-import * as d3 from "d3";
 import { Person } from "./interfaces/person";
 import { migratedMaxArseneaultConfig } from "./utils/migrate-existing-data";
 import { buildHierarchy, countryColors } from "./utils/utils";
@@ -12,6 +11,8 @@ import { TreeVisualization, TreeVisualizationConfig } from "./visualization/tree
 import { TooltipSystem } from "./visualization/tooltips";
 import { setupAllEventHandlers, EventHandlerDependencies } from "./handlers/event-handlers";
 import { exportPersonToGEDCOM, downloadGEDCOM } from "./utils/gedcom-export";
+import { measureSync } from "./utils/performance";
+import { createInitialUIState, UIState } from "./state/ui-state";
 
 // Types for initialization
 export interface InitializationConfig {
@@ -55,6 +56,7 @@ export interface InitializationResult {
   dropdown: HTMLElement;
   
   // State
+  uiState: UIState;
   isStatsDashboardVisible: boolean;
   isTimelinePanelVisible: boolean;
   isFilterPanelVisible: boolean;
@@ -201,41 +203,40 @@ export function initializeMainApplication(): InitializationResult {
     tooltipSystem.hidePersonTooltip();
   }
   
-  function updateTreeWithNewData(newRoot: any) {
-    // Update the root reference
-    root = newRoot;
-    
-    // Update tree visualization
-    treeVisualization.updateTree(newRoot);
-  }
-  
-  let root = buildHierarchy(rootPerson);
+  let root = measureSync("data.buildHierarchy", () => buildHierarchy(rootPerson));
 
   // State variables
-  let maxGeneration = 0;
-  let isFilterPanelVisible = true;
-  let isStatsDashboardVisible = false;
-  let isTimelinePanelVisible = false;
+  const uiState = createInitialUIState(localStorage.getItem('theme') || 'light');
   let statsDashboardInstance: StatsDashboard | null = null;
   let timelinePanelInstance: TimelinePanel | null = null;
   let filterPanelInstance: FilterPanel | null = null;
   let migrationMapViz: any = null;
-  let currentTheme = localStorage.getItem('theme') || 'light';
+  let statsDashboardInitialized = false;
+  let timelinePanelInitialized = false;
+  let filterPanelInitialized = false;
 
   // Initialize statistics dashboard
   function initializeStatsDashboard() {
     if (!statsDashboardInstance) {
       statsDashboardInstance = new StatsDashboard(statsDashboard, {
         root: root,
-        countrySvgs: countrySvgs
+        countrySvgs: countrySvgs,
+        onSectionExpanded: (sectionId) => {
+          if (sectionId === 'migration') {
+            initializeMigrationContent();
+          }
+        }
       });
     }
-    statsDashboardInstance.initialize();
+    if (!statsDashboardInitialized) {
+      measureSync("stats.initialize", () => statsDashboardInstance!.initialize());
+      statsDashboardInitialized = true;
+    }
   }
 
   // Close statistics dashboard function
   function closeStatsDashboard() {
-    isStatsDashboardVisible = false;
+    uiState.isStatsDashboardVisible = false;
     statsDashboard.classList.add("hidden");
     statsToggleBtn.classList.remove("active");
   }
@@ -244,15 +245,19 @@ export function initializeMainApplication(): InitializationResult {
   function initializeTimelinePanel() {
     if (!timelinePanelInstance) {
       timelinePanelInstance = new TimelinePanel(timelinePanel, {
-        root: root
+        root: root,
+        onPersonSelect: (person, depth) => showPersonModal(person as Person, depth)
       });
     }
-    timelinePanelInstance.initialize();
+    if (!timelinePanelInitialized) {
+      measureSync("timeline.initialize", () => timelinePanelInstance!.initialize());
+      timelinePanelInitialized = true;
+    }
   }
 
   // Close timeline panel function
   function closeTimelinePanel() {
-    isTimelinePanelVisible = false;
+    uiState.isTimelinePanelVisible = false;
     timelinePanel.classList.add("hidden");
     timelineToggleBtn.classList.remove("active");
   }
@@ -275,7 +280,6 @@ export function initializeMainApplication(): InitializationResult {
         const locationsCountEl = document.getElementById('migration-locations-count');
         const routesCountEl = document.getElementById('migration-routes-count');
         
-        console.log('Stats elements found:', { locationsCountEl: !!locationsCountEl, routesCountEl: !!routesCountEl });
         if (locationsCountEl) locationsCountEl.textContent = patterns.points.length.toString();
         if (routesCountEl) routesCountEl.textContent = patterns.routes.length.toString();
         
@@ -334,7 +338,10 @@ export function initializeMainApplication(): InitializationResult {
         updateGridLayout: updateGridLayout
       });
     }
-    filterPanelInstance.initialize();
+    if (!filterPanelInitialized) {
+      measureSync("filters.initialize", () => filterPanelInstance!.initialize());
+      filterPanelInitialized = true;
+    }
   }
 
   // Function to update grid layout based on visible panels
@@ -360,16 +367,17 @@ export function initializeMainApplication(): InitializationResult {
 
   // Theme management functions
   function applyTheme(theme: string) {
-    currentTheme = theme;
+    uiState.currentTheme = theme;
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('theme', theme);
+    themeToggleBtn.setAttribute('aria-pressed', String(theme === 'dark'));
   }
 
   function updateThemeButton() {
     // Update the SVG icon based on theme
     const themeIcon = document.querySelector('#theme-toggle-btn .theme-icon');
     if (themeIcon) {
-      if (currentTheme === 'dark') {
+      if (uiState.currentTheme === 'dark') {
         // Sun icon for dark mode (to switch to light)
         themeIcon.innerHTML = `
           <circle cx="12" cy="12" r="5"/>
@@ -399,88 +407,8 @@ export function initializeMainApplication(): InitializationResult {
     updateThemeButton();
   }
 
-  // Toggle section functionality
-  (window as any).toggleSection = function(sectionId: string) {
-    // Look specifically for the stats section content, not filter checkboxes
-    const content = document.querySelector(`.stats-section-content#${sectionId}`) as HTMLElement;
-    if (!content) {
-      console.error(`Stats section content with id '${sectionId}' not found`);
-      return;
-    }
-    
-    // Try multiple approaches to find the title element
-    let title = null;
-    let icon = null;
-    
-    // Approach 1: Look for previous sibling
-    title = content.previousElementSibling;
-    if (title && title.classList.contains('stats-section-title')) {
-      icon = title.querySelector('.collapse-icon');
-    }
-    
-    // Approach 2: Look for parent stats-section
-    if (!title || !icon) {
-      const statsSection = content.closest('.stats-section');
-      if (statsSection) {
-        title = statsSection.querySelector('.stats-section-title.collapsible');
-        if (title) {
-          icon = title.querySelector('.collapse-icon');
-        }
-      }
-    }
-    
-    // Approach 3: Look for any element with the onclick attribute containing the sectionId
-    if (!title || !icon) {
-      const titleElements = document.querySelectorAll('.stats-section-title.collapsible');
-      for (const element of titleElements) {
-        if (element.getAttribute('onclick')?.includes(sectionId)) {
-          title = element;
-          icon = element.querySelector('.collapse-icon');
-          break;
-        }
-      }
-    }
-    
-    if (!title || !icon) {
-      console.error(`Title element or icon not found for section '${sectionId}'`);
-      console.log('Content element:', content);
-      console.log('Content parent:', content.parentElement);
-      console.log('Available title elements:', document.querySelectorAll('.stats-section-title.collapsible'));
-      return;
-    }
-    
-    // Debug: Log current state
-    console.log('Current display style:', content.style.display);
-    console.log('Current computed display:', window.getComputedStyle(content).display);
-    console.log('Content element:', content);
-    
-    if (content.style.display === 'none') {
-      console.log('Expanding section...');
-      content.style.display = 'block';
-      icon.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg>';
-      
-      // Initialize migration content when migration section is expanded
-      if (sectionId === 'migration') {
-        setTimeout(() => {
-          initializeMigrationContent();
-        }, 100);
-      }
-    } else {
-      console.log('Collapsing section...');
-      content.style.display = 'none';
-      icon.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9,18 15,12 9,6"></polyline></svg>';
-    }
-    
-    // Debug: Log new state
-    console.log('New display style:', content.style.display);
-    console.log('New computed display:', window.getComputedStyle(content).display);
-  };
-
-  // Make functions globally available
-  (window as any).closeStatsDashboard = closeStatsDashboard;
-
   function updateTree() {
-    treeVisualization.updateTree(root);
+    measureSync("tree.initialUpdate", () => treeVisualization.updateTree(root));
   }
 
   updateTree();
@@ -501,7 +429,7 @@ export function initializeMainApplication(): InitializationResult {
   document.body.appendChild(dropdown);
 
   // Clear search function (now that dropdown and g are defined)
-  (window as any).clearSearch = function() {
+  function clearSearch() {
     searchInput.value = "";
     searchClearBtn.classList.remove("visible");
     searchResultsCount.textContent = "";
@@ -509,10 +437,11 @@ export function initializeMainApplication(): InitializationResult {
     dropdown.style.display = "none";
     dropdown.innerHTML = ""; // Clear old suggestions
     g.selectAll(".node").classed("highlighted", false);
-  };
+  }
 
   // Set initial active state for filter button since panel is open by default
   filterToggleBtn.classList.add("active");
+  filterToggleBtn.setAttribute('aria-pressed', 'true');
 
   // Initialize theme on load
   initializeTheme();
@@ -558,12 +487,8 @@ export function initializeMainApplication(): InitializationResult {
     width,
     height,
     
-    // State variables
-    isStatsDashboardVisible,
-    isTimelinePanelVisible,
-    isFilterPanelVisible,
-    legendVisible: true,
-    currentTheme,
+    // State
+    uiState,
     
     // Callback functions
     showPersonModal,
@@ -581,6 +506,7 @@ export function initializeMainApplication(): InitializationResult {
     updateTree,
     exportPersonToGEDCOM,
     downloadGEDCOM,
+    clearSearch,
     rootPerson
   };
 
@@ -622,10 +548,11 @@ export function initializeMainApplication(): InitializationResult {
     dropdown,
     
     // State
-    isStatsDashboardVisible,
-    isTimelinePanelVisible,
-    isFilterPanelVisible,
-    currentTheme,
+    uiState,
+    isStatsDashboardVisible: uiState.isStatsDashboardVisible,
+    isTimelinePanelVisible: uiState.isTimelinePanelVisible,
+    isFilterPanelVisible: uiState.isFilterPanelVisible,
+    currentTheme: uiState.currentTheme,
     
     // Functions
     showPersonModal,

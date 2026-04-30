@@ -1,5 +1,4 @@
 import { emmaSaintJohnStory } from "../../../stories/emma-saint-john";
-import { leviSaintJohnConfig } from "./levi-saint-john.config";
 
 // COMPLETE
 export const emmaSaintJohnConfig = {
