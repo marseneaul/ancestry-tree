@@ -116,32 +116,53 @@ export class FilterPanel {
       .sort((a, b) => b[1] - a[1])
       .slice(0, 8)
       .map(([country]) => country);
+    const icons = {
+      filters: `<svg class="panel-title-icon" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5h18"/><path d="M6 12h12"/><path d="M10 19h4"/></svg>`,
+      basic: `<svg class="tab-icon" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M18 8l-5 5-3-3-4 4"/></svg>`,
+      time: `<svg class="tab-icon" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>`,
+      data: `<svg class="tab-icon" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8"/><path d="M8 17h6"/></svg>`,
+      lineage: `<svg class="tab-icon" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="19" r="2"/><path d="M12 7v5"/><path d="M12 12l-6 5"/><path d="M12 12l6 5"/></svg>`,
+      photo: `<svg class="checkbox-icon" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h3l2-3h6l2 3h3v13H4z"/><circle cx="12" cy="13" r="4"/></svg>`,
+      story: `<svg class="checkbox-icon" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z"/></svg>`,
+      calendar: `<svg class="checkbox-icon" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg>`,
+      death: `<svg class="checkbox-icon" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-4.4 7-11a7 7 0 1 0-14 0c0 6.6 7 11 7 11z"/><path d="M9 10h6"/><path d="M12 7v6"/></svg>`,
+      place: `<svg class="checkbox-icon" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-4.4 7-11a7 7 0 1 0-14 0c0 6.6 7 11 7 11z"/><circle cx="12" cy="10" r="2"/></svg>`,
+      parents: `<svg class="checkbox-icon" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="8" r="3"/><circle cx="17" cy="8" r="3"/><path d="M2 20a6 6 0 0 1 12 0"/><path d="M11 20a6 6 0 0 1 11 0"/></svg>`,
+      person: `<svg class="checkbox-icon" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>`,
+      male: `<svg class="checkbox-icon" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10" cy="14" r="5"/><path d="M14 10l6-6"/><path d="M15 4h5v5"/></svg>`,
+      female: `<svg class="checkbox-icon" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="5"/><path d="M12 13v8"/><path d="M9 18h6"/></svg>`,
+      globe: `<svg class="checkbox-icon" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18"/><path d="M12 3a14 14 0 0 0 0 18"/></svg>`,
+      gap: `<svg class="checkbox-icon" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 5 0c0 2-2.5 2-2.5 4"/><path d="M12 17h.01"/></svg>`,
+      warning: `<svg class="checkbox-icon" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>`,
+      estimated: `<svg class="checkbox-icon" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 16l3-3 3 2 4-6"/></svg>`,
+      documented: `<svg class="checkbox-icon" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>`
+    };
 
     this.container.innerHTML = `
       <div class="filter-header">
-        <h3 class="filter-main-title">🔍 Advanced Filters</h3>
+        <h3 class="filter-main-title">${icons.filters} Advanced Filters</h3>
         <div class="filter-summary" id="filter-summary">No filters active</div>
       </div>
       
       <div class="filter-tabs" role="tablist" aria-label="Filter categories">
         <button class="filter-tab active" data-tab="basic"
                 role="tab" aria-selected="true" aria-controls="tab-basic" tabindex="0">
-          <span class="tab-icon" aria-hidden="true">📊</span>
+          ${icons.basic}
           <span class="tab-label">Basic</span>
         </button>
         <button class="filter-tab" data-tab="time"
                 role="tab" aria-selected="false" aria-controls="tab-time" tabindex="-1">
-          <span class="tab-icon" aria-hidden="true">📅</span>
+          ${icons.time}
           <span class="tab-label">Time</span>
         </button>
         <button class="filter-tab" data-tab="data"
                 role="tab" aria-selected="false" aria-controls="tab-data" tabindex="-1">
-          <span class="tab-icon" aria-hidden="true">📋</span>
+          ${icons.data}
           <span class="tab-label">Data</span>
         </button>
         <button class="filter-tab" data-tab="lineage"
                 role="tab" aria-selected="false" aria-controls="tab-lineage" tabindex="-1">
-          <span class="tab-icon" aria-hidden="true">🧬</span>
+          ${icons.lineage}
           <span class="tab-label">Lineage</span>
         </button>
       </div>
@@ -191,11 +212,9 @@ export class FilterPanel {
             </div>
             <div class="country-actions">
               <button class="action-btn secondary" data-filter-action="select-all-countries">
-                <span class="btn-icon">✓</span>
                 Select All
               </button>
               <button class="action-btn secondary" data-filter-action="select-no-countries">
-                <span class="btn-icon">✗</span>
                 Clear All
               </button>
             </div>
@@ -266,7 +285,7 @@ export class FilterPanel {
               <div class="checkbox-card">
                 <input type="checkbox" class="modern-checkbox" id="has-photo">
                 <label class="checkbox-label" for="has-photo">
-                  <div class="checkbox-icon">📸</div>
+                  ${icons.photo}
                   <div class="checkbox-text">
                     <div class="checkbox-title">Has Photo</div>
                     <div class="checkbox-description">Profile image available</div>
@@ -276,7 +295,7 @@ export class FilterPanel {
               <div class="checkbox-card">
                 <input type="checkbox" class="modern-checkbox" id="has-story">
                 <label class="checkbox-label" for="has-story">
-                  <div class="checkbox-icon">📖</div>
+                  ${icons.story}
                   <div class="checkbox-text">
                     <div class="checkbox-title">Has Story</div>
                     <div class="checkbox-description">Biographical information</div>
@@ -286,7 +305,7 @@ export class FilterPanel {
               <div class="checkbox-card">
                 <input type="checkbox" class="modern-checkbox" id="has-birth-date">
                 <label class="checkbox-label" for="has-birth-date">
-                  <div class="checkbox-icon">📅</div>
+                  ${icons.calendar}
                   <div class="checkbox-text">
                     <div class="checkbox-title">Birth Date</div>
                     <div class="checkbox-description">Known birth date</div>
@@ -296,7 +315,7 @@ export class FilterPanel {
               <div class="checkbox-card">
                 <input type="checkbox" class="modern-checkbox" id="has-death-date">
                 <label class="checkbox-label" for="has-death-date">
-                  <div class="checkbox-icon">💀</div>
+                  ${icons.death}
                   <div class="checkbox-text">
                     <div class="checkbox-title">Death Date</div>
                     <div class="checkbox-description">Known death date</div>
@@ -306,7 +325,7 @@ export class FilterPanel {
               <div class="checkbox-card">
                 <input type="checkbox" class="modern-checkbox" id="has-birth-place">
                 <label class="checkbox-label" for="has-birth-place">
-                  <div class="checkbox-icon">📍</div>
+                  ${icons.place}
                   <div class="checkbox-text">
                     <div class="checkbox-title">Birth Place</div>
                     <div class="checkbox-description">Known birth location</div>
@@ -316,7 +335,7 @@ export class FilterPanel {
               <div class="checkbox-card">
                 <input type="checkbox" class="modern-checkbox" id="has-parents">
                 <label class="checkbox-label" for="has-parents">
-                  <div class="checkbox-icon">👨‍👩‍👧‍👦</div>
+                  ${icons.parents}
                   <div class="checkbox-text">
                     <div class="checkbox-title">Has Parents</div>
                     <div class="checkbox-description">Parent information available</div>
@@ -338,7 +357,7 @@ export class FilterPanel {
               <div class="checkbox-card">
                 <input type="checkbox" class="modern-checkbox" id="direct-line-only">
                 <label class="checkbox-label" for="direct-line-only">
-                  <div class="checkbox-icon">👤</div>
+                  ${icons.person}
                   <div class="checkbox-text">
                     <div class="checkbox-title">Direct Line Only</div>
                     <div class="checkbox-description">Direct ancestors only</div>
@@ -348,7 +367,7 @@ export class FilterPanel {
               <div class="checkbox-card">
                 <input type="checkbox" class="modern-checkbox" id="patrilineal-line">
                 <label class="checkbox-label" for="patrilineal-line">
-                  <div class="checkbox-icon">👨</div>
+                  ${icons.male}
                   <div class="checkbox-text">
                     <div class="checkbox-title">Patrilineal Line</div>
                     <div class="checkbox-description">Father's line only</div>
@@ -358,7 +377,7 @@ export class FilterPanel {
               <div class="checkbox-card">
                 <input type="checkbox" class="modern-checkbox" id="matrilineal-line">
                 <label class="checkbox-label" for="matrilineal-line">
-                  <div class="checkbox-icon">👩</div>
+                  ${icons.female}
                   <div class="checkbox-text">
                     <div class="checkbox-title">Matrilineal Line</div>
                     <div class="checkbox-description">Mother's line only</div>
@@ -368,7 +387,7 @@ export class FilterPanel {
               <div class="checkbox-card">
                 <input type="checkbox" class="modern-checkbox" id="migration-patterns">
                 <label class="checkbox-label" for="migration-patterns">
-                  <div class="checkbox-icon">🌍</div>
+                  ${icons.globe}
                   <div class="checkbox-text">
                     <div class="checkbox-title">Migration Patterns</div>
                     <div class="checkbox-description">Cross-country movements</div>
@@ -403,7 +422,7 @@ export class FilterPanel {
               <div class="checkbox-card">
                 <input type="checkbox" class="modern-checkbox" id="research-gaps">
                 <label class="checkbox-label" for="research-gaps">
-                  <div class="checkbox-icon">❓</div>
+                  ${icons.gap}
                   <div class="checkbox-text">
                     <div class="checkbox-title">Research Gaps</div>
                     <div class="checkbox-description">Missing information</div>
@@ -413,7 +432,7 @@ export class FilterPanel {
               <div class="checkbox-card">
                 <input type="checkbox" class="modern-checkbox" id="missing-data">
                 <label class="checkbox-label" for="missing-data">
-                  <div class="checkbox-icon">⚠️</div>
+                  ${icons.warning}
                   <div class="checkbox-text">
                     <div class="checkbox-title">Missing Critical Data</div>
                     <div class="checkbox-description">Essential info missing</div>
@@ -423,7 +442,7 @@ export class FilterPanel {
               <div class="checkbox-card">
                 <input type="checkbox" class="modern-checkbox" id="estimated-dates">
                 <label class="checkbox-label" for="estimated-dates">
-                  <div class="checkbox-icon">📊</div>
+                  ${icons.estimated}
                   <div class="checkbox-text">
                     <div class="checkbox-title">Estimated Dates</div>
                     <div class="checkbox-description">Approximate dates only</div>
@@ -433,7 +452,7 @@ export class FilterPanel {
               <div class="checkbox-card">
                 <input type="checkbox" class="modern-checkbox" id="well-documented">
                 <label class="checkbox-label" for="well-documented">
-                  <div class="checkbox-icon">✅</div>
+                  ${icons.documented}
                   <div class="checkbox-text">
                     <div class="checkbox-title">Well Documented</div>
                     <div class="checkbox-description">Complete information</div>
@@ -447,7 +466,6 @@ export class FilterPanel {
       
       <div class="filter-footer">
         <button class="action-btn primary" data-filter-action="reset-all">
-          <span class="btn-icon">↺</span>
           Reset All Filters
         </button>
         <div class="filter-stats" id="filter-stats">

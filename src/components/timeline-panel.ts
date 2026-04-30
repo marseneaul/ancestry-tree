@@ -97,7 +97,7 @@ export class TimelinePanel {
 
     // Create timeline HTML
     this.container.innerHTML = `
-      <div class="timeline-title">📅 Family Timeline</div>
+      <div class="timeline-title">Family Timeline</div>
       <div class="timeline-content">
         ${Array.from(decadeGroups.entries())
           .sort((a, b) => b[0] - a[0])

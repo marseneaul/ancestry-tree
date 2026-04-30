@@ -347,12 +347,12 @@ export class StatsDashboard {
     } = this.statistics;
 
     this.container.innerHTML = `
-      <div class="stats-title">📊 Family Tree Statistics</div>
+      <div class="stats-title">Family Tree Statistics</div>
       
       <div class="stats-content">
       <div class="stats-section">
         <div class="stats-section-title collapsible" data-section-id="overview">
-          📈 Overview <span class="collapse-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
+          Overview <span class="collapse-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
         </div>
         <div class="stats-section-content" id="overview">
         <div class="stats-grid">
@@ -386,40 +386,40 @@ export class StatsDashboard {
 
       <div class="stats-section">
         <div class="stats-section-title collapsible" data-section-id="data-completeness">
-          📋 Data Completeness <span class="collapse-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
+          Data Completeness <span class="collapse-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
         </div>
         <div class="stats-section-content" id="data-completeness">
           <div class="dna-breakdown">
             <div class="dna-item">
-              <span class="dna-label">📅 Birth Dates</span>
+              <span class="dna-label">Birth Dates</span>
               <div class="dna-bar">
                 <div class="dna-fill" style="width: ${(dataCompleteness.hasBirthDate / dataCompleteness.total) * 100}%"></div>
               </div>
               <span class="dna-percent">${((dataCompleteness.hasBirthDate / dataCompleteness.total) * 100).toFixed(1)}%</span>
             </div>
             <div class="dna-item">
-              <span class="dna-label">💀 Death Dates</span>
+              <span class="dna-label">Death Dates</span>
               <div class="dna-bar">
                 <div class="dna-fill" style="width: ${(dataCompleteness.hasDeathDate / dataCompleteness.total) * 100}%"></div>
               </div>
               <span class="dna-percent">${((dataCompleteness.hasDeathDate / dataCompleteness.total) * 100).toFixed(1)}%</span>
             </div>
             <div class="dna-item">
-              <span class="dna-label">📍 Birth Places</span>
+              <span class="dna-label">Birth Places</span>
               <div class="dna-bar">
                 <div class="dna-fill" style="width: ${(dataCompleteness.hasBirthPlace / dataCompleteness.total) * 100}%"></div>
               </div>
               <span class="dna-percent">${((dataCompleteness.hasBirthPlace / dataCompleteness.total) * 100).toFixed(1)}%</span>
             </div>
             <div class="dna-item">
-              <span class="dna-label">📸 Photos</span>
+              <span class="dna-label">Photos</span>
               <div class="dna-bar">
                 <div class="dna-fill" style="width: ${(dataCompleteness.hasPhoto / dataCompleteness.total) * 100}%"></div>
               </div>
               <span class="dna-percent">${((dataCompleteness.hasPhoto / dataCompleteness.total) * 100).toFixed(1)}%</span>
             </div>
             <div class="dna-item">
-              <span class="dna-label">👨‍👩‍👧‍👦 Parents</span>
+              <span class="dna-label">Parents</span>
               <div class="dna-bar">
                 <div class="dna-fill" style="width: ${(dataCompleteness.hasParents / dataCompleteness.total) * 100}%"></div>
               </div>
@@ -431,40 +431,40 @@ export class StatsDashboard {
 
       <div class="stats-section">
         <div class="stats-section-title collapsible" data-section-id="research-gaps">
-          🔍 Research Gaps <span class="collapse-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
+          Research Gaps <span class="collapse-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
         </div>
         <div class="stats-section-content" id="research-gaps">
           <div class="dna-breakdown">
             <div class="dna-item">
-              <span class="dna-label">❓ Missing Birth Dates</span>
+              <span class="dna-label">Missing Birth Dates</span>
               <div class="dna-bar">
                 <div class="dna-fill" style="width: ${Math.min((researchGaps.missingBirthDate.length / dataCompleteness.total) * 100, 100)}%"></div>
               </div>
               <span class="dna-percent">${researchGaps.missingBirthDate.length}</span>
             </div>
             <div class="dna-item">
-              <span class="dna-label">❓ Missing Death Dates</span>
+              <span class="dna-label">Missing Death Dates</span>
               <div class="dna-bar">
                 <div class="dna-fill" style="width: ${Math.min((researchGaps.missingDeathDate.length / dataCompleteness.total) * 100, 100)}%"></div>
               </div>
               <span class="dna-percent">${researchGaps.missingDeathDate.length}</span>
             </div>
             <div class="dna-item">
-              <span class="dna-label">❓ Missing Birth Places</span>
+              <span class="dna-label">Missing Birth Places</span>
               <div class="dna-bar">
                 <div class="dna-fill" style="width: ${Math.min((researchGaps.missingBirthPlace.length / dataCompleteness.total) * 100, 100)}%"></div>
               </div>
               <span class="dna-percent">${researchGaps.missingBirthPlace.length}</span>
             </div>
             <div class="dna-item">
-              <span class="dna-label">❓ Missing Parents</span>
+              <span class="dna-label">Missing Parents</span>
               <div class="dna-bar">
                 <div class="dna-fill" style="width: ${Math.min((researchGaps.missingParents.length / dataCompleteness.total) * 100, 100)}%"></div>
               </div>
               <span class="dna-percent">${researchGaps.missingParents.length}</span>
             </div>
             <div class="dna-item">
-              <span class="dna-label">📷 No Photos</span>
+              <span class="dna-label">No Photos</span>
               <div class="dna-bar">
                 <div class="dna-fill" style="width: ${Math.min((researchGaps.noPhoto.length / dataCompleteness.total) * 100, 100)}%"></div>
               </div>
@@ -476,7 +476,7 @@ export class StatsDashboard {
 
       <div class="stats-section">
         <div class="stats-section-title collapsible" data-section-id="gender-distribution">
-          👥 Gender Distribution <span class="collapse-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
+          Gender Distribution <span class="collapse-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
         </div>
         <div class="stats-section-content" id="gender-distribution">
           <!-- Gender Pie Chart -->
@@ -493,7 +493,7 @@ export class StatsDashboard {
 
       <div class="stats-section">
         <div class="stats-section-title collapsible" data-section-id="lifespan">
-          ⏰ Average Lifespan by Generation <span class="collapse-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
+          Average Lifespan by Generation <span class="collapse-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
         </div>
         <div class="stats-section-content" id="lifespan">
           <div class="lifespan-chart-container">
@@ -521,7 +521,7 @@ export class StatsDashboard {
 
       <div class="stats-section">
         <div class="stats-section-title collapsible" data-section-id="migration">
-          🌍 Migration Patterns <span class="collapse-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
+          Migration Patterns <span class="collapse-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
         </div>
         <div class="stats-section-content" id="migration" style="display: block;">
           <div class="migration-content">
@@ -573,7 +573,7 @@ export class StatsDashboard {
 
       <div class="stats-section">
         <div class="stats-section-title collapsible" data-section-id="dna-inheritance">
-          🧬 DNA Inheritance by Generation <span class="collapse-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
+          DNA Inheritance by Generation <span class="collapse-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
         </div>
         <div class="stats-section-content" id="dna-inheritance">
           <div class="lifespan-chart-container">
@@ -597,7 +597,7 @@ export class StatsDashboard {
 
       <div class="stats-section">
         <div class="stats-section-title collapsible" data-section-id="countries-origin">
-          🌎 Countries of Origin <span class="collapse-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
+          Countries of Origin <span class="collapse-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
         </div>
         <div class="stats-section-content" id="countries-origin">
         <div class="dna-breakdown">
@@ -628,7 +628,7 @@ export class StatsDashboard {
 
       <div class="stats-section">
         <div class="stats-section-title collapsible" data-section-id="dna-ethnicity">
-          🧬 DNA Contribution by Ethnicity <span class="collapse-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
+          DNA Contribution by Ethnicity <span class="collapse-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
         </div>
         <div class="stats-section-content" id="dna-ethnicity">
         <div class="dna-breakdown">
@@ -648,33 +648,33 @@ export class StatsDashboard {
 
       <div class="stats-section">
         <div class="stats-section-title collapsible" data-section-id="archaic-ancestry">
-          🦴 Archaic Hominid Ancestry <span class="collapse-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
+          Archaic Hominid Ancestry <span class="collapse-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"></polyline></svg></span>
         </div>
         <div class="stats-section-content" id="archaic-ancestry">
           <div class="dna-breakdown">
             <div class="dna-item">
-              <span class="dna-label">🧬 Neanderthal DNA</span>
+              <span class="dna-label">Neanderthal DNA</span>
               <div class="dna-bar">
                 <div class="dna-fill" style="width: 2.1%; background: #8B4513;"></div>
               </div>
               <span class="dna-percent">2.1%</span>
             </div>
             <div class="dna-item">
-              <span class="dna-label">🦴 Denisovan DNA</span>
+              <span class="dna-label">Denisovan DNA</span>
               <div class="dna-bar">
                 <div class="dna-fill" style="width: 0.05%; background: #A0522D;"></div>
               </div>
               <span class="dna-percent">0.05%</span>
             </div>
             <div class="dna-item">
-              <span class="dna-label">👤 Other Archaic DNA</span>
+              <span class="dna-label">Other Archaic DNA</span>
               <div class="dna-bar">
                 <div class="dna-fill" style="width: 0.1%; background: #CD853F;"></div>
               </div>
               <span class="dna-percent">0.1%</span>
             </div>
             <div class="dna-item">
-              <span class="dna-label">🧑 Modern Human DNA</span>
+              <span class="dna-label">Modern Human DNA</span>
               <div class="dna-bar">
                 <div class="dna-fill" style="width: 97.75%; background: #4A90E2;"></div>
               </div>
@@ -845,12 +845,12 @@ export class StatsDashboard {
     // Get the gender data from the stats
     const genderStats = this.statistics.genderStats;
     const pieData = [
-      { gender: 'Male', count: genderStats.male, emoji: '👨' },
-      { gender: 'Female', count: genderStats.female, emoji: '👩' }
+      { gender: 'Male', count: genderStats.male },
+      { gender: 'Female', count: genderStats.female }
     ];
     
     if (genderStats.unknown > 0) {
-      pieData.push({ gender: 'Unknown', count: genderStats.unknown, emoji: '❓' });
+      pieData.push({ gender: 'Unknown', count: genderStats.unknown });
     }
     
     if (pieData.length === 0) return;
@@ -942,7 +942,7 @@ export class StatsDashboard {
       .style("border-radius", "2px");
     
     legendItems.append("span")
-      .text(d => `${d.emoji} ${d.gender} (${d.count})`)
+      .text(d => `${d.gender} (${d.count})`)
       .style("color", "var(--text-primary)")
       .style("font-weight", "500");
   }
@@ -1411,7 +1411,7 @@ export class StatsDashboard {
     const ages = sortedGenerations.map(([_, ages]) => ages.reduce((sum, age) => sum + age, 0) / ages.length);
     const trend = ages[ages.length - 1] - ages[0];
     const trendDirection = trend > 0 ? 'increasing' : trend < 0 ? 'decreasing' : 'stable';
-    const trendIcon = trend > 0 ? '📈' : trend < 0 ? '📉' : '➡️';
+    const trendLabel = trend > 0 ? 'Increase' : trend < 0 ? 'Decrease' : 'Stable';
     
     const totalPeople = sortedGenerations.reduce((sum, [_, ages]) => sum + ages.length, 0);
     const overallAvg = sortedGenerations.reduce((sum, [_, ages]) => sum + ages.reduce((s, age) => s + age, 0), 0) / totalPeople;
@@ -1419,7 +1419,7 @@ export class StatsDashboard {
     return `
       <div class="stats-grid">
         <div class="stat-item">
-          <div class="stat-value">${trendIcon} ${Math.abs(trend).toFixed(1)}</div>
+          <div class="stat-value">${trendLabel}: ${Math.abs(trend).toFixed(1)}</div>
           <div class="stat-label">${trendDirection} trend</div>
         </div>
         <div class="stat-item">

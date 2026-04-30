@@ -299,7 +299,6 @@ export function initializeMainApplication(): InitializationResult {
         } else if (mapContainer) {
           mapContainer.innerHTML = `
             <div class="no-migration-data">
-              <div class="no-data-icon">📍</div>
               <div class="no-data-text">No migration data available</div>
               <div class="no-data-subtext">Add birth and death locations to see migration patterns</div>
             </div>
@@ -310,7 +309,6 @@ export function initializeMainApplication(): InitializationResult {
         if (mapContainer) {
           mapContainer.innerHTML = `
             <div class="migration-error">
-              <div class="error-icon">⚠️</div>
               <div class="error-text">Failed to load migration visualization</div>
             </div>
           `;
@@ -321,7 +319,6 @@ export function initializeMainApplication(): InitializationResult {
       if (mapContainer) {
         mapContainer.innerHTML = `
           <div class="migration-error">
-            <div class="error-icon">⚠️</div>
             <div class="error-text">Failed to load migration data</div>
           </div>
         `;
