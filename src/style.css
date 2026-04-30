@@ -4878,3 +4878,43 @@ button {
     max-height: none;
   }
 }
+
+/* Search clear button alignment */
+.search-input-wrapper #search-input {
+  padding-right: 3rem;
+}
+
+.search-input-wrapper .search-clear-btn {
+  top: 50%;
+  right: var(--space-2);
+  width: 32px;
+  min-width: 32px;
+  height: 32px;
+  min-height: 32px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-tertiary);
+  transform: translateY(-50%);
+  box-shadow: none;
+}
+
+.search-input-wrapper .search-clear-btn:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--border-primary);
+  color: var(--text-primary);
+  transform: translateY(-50%);
+  box-shadow: none;
+}
+
+.search-input-wrapper .search-clear-btn:active {
+  transform: translateY(-50%);
+}
+
+.search-input-wrapper .search-clear-btn svg {
+  display: block;
+  width: 18px;
+  height: 18px;
+  stroke-width: 2.25;
+}
