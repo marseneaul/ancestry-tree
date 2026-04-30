@@ -36,13 +36,11 @@ This app has a compelling product core: a visual, searchable ancestry experience
 - Made existing person/tree validators cycle-safe and added regression coverage.
 - Replaced the one-click GEDCOM export with an accessible export options menu for privacy mode, stories, and image paths.
 - Added a live GEDCOM export summary showing exported person count, living-record handling, and included story/image-path counts.
+- Added depth-bounded tree rendering for large trees with keyboard-accessible branch expand/collapse controls and search-driven path expansion.
 
 ## Performance Roadmap
 
-1. Render less by default.
-   - Start at a bounded generation depth.
-   - Add expand/collapse per branch.
-   - Keep a clear "show all" control for power users.
+1. Expand the new branch controls with a clear "show all" / "collapse deep branches" command for power users.
 
 2. Move heavy work out of the interaction path.
    - Run migration, statistics, search indexing, and migration-pattern extraction in Web Workers.
