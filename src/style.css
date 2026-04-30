@@ -4799,7 +4799,8 @@ button {
 /* Filter panel scroll and alignment fixes */
 .filter-panel {
   min-height: 0;
-  overflow: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .filter-header,
@@ -4809,10 +4810,9 @@ button {
 }
 
 .filter-content {
-  flex: 1 1 auto;
+  flex: 0 0 auto;
   min-height: 0;
-  overflow-y: auto;
-  overscroll-behavior: contain;
+  overflow: visible;
   padding-bottom: var(--space-6);
 }
 
@@ -4821,7 +4821,7 @@ button {
   padding: var(--space-3) var(--space-5);
   background: var(--bg-secondary);
   border-top: 1px solid var(--border-primary);
-  box-shadow: 0 -8px 16px rgba(17, 24, 39, 0.04);
+  box-shadow: none;
 }
 
 .filter-footer .action-btn {
@@ -4872,6 +4872,7 @@ button {
     display: flex;
     flex-direction: column;
     min-height: 0;
+    overflow-y: auto;
   }
 
   .filter-content {
