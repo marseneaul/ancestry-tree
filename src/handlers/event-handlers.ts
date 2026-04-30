@@ -38,10 +38,6 @@ export interface EventHandlerDependencies {
   svg: any;
   g: any;
   zoom: any;
-  treeVisualization?: {
-    expandToPersonName: (name: string) => any | null;
-    updateDimensions: (width: number, height: number) => void;
-  };
   
   // Data and functions
   root: any;
@@ -401,9 +397,8 @@ export function setupSearchHandlers(deps: EventHandlerDependencies): void {
     const selectedName = (e.target as HTMLInputElement).value;
     if (!selectedName) return;
 
-    // Find the visible node, expanding collapsed ancestors when needed.
-    const selectedNode = deps.treeVisualization?.expandToPersonName(selectedName) ??
-      deps.root.descendants().find((d: any) => d.data.name === selectedName);
+    // Find the node with exact name match (assume unique names; if not, take first)
+    const selectedNode = deps.root.descendants().find((d: any) => d.data.name === selectedName);
     if (!selectedNode) return;
 
     // Remove highlights
@@ -935,7 +930,9 @@ export function setupWindowHandlers(deps: EventHandlerDependencies): void {
         deps.height = Math.max(rect.height, 400);
         
         // Update tree visualization dimensions
-        deps.treeVisualization?.updateDimensions(deps.width, deps.height);
+        if ((deps as any).treeVisualization) {
+          (deps as any).treeVisualization.updateDimensions(deps.width, deps.height);
+        }
         deps.updateTree();
       }
     }, 100);
@@ -956,7 +953,9 @@ export function setupWindowHandlers(deps: EventHandlerDependencies): void {
           deps.height = Math.max(rect.height, 400);
           
           // Update tree visualization dimensions
-          deps.treeVisualization?.updateDimensions(deps.width, deps.height);
+          if ((deps as any).treeVisualization) {
+            (deps as any).treeVisualization.updateDimensions(deps.width, deps.height);
+          }
           deps.updateTree();
         }
       }, 100);

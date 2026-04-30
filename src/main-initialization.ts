@@ -480,7 +480,6 @@ export function initializeMainApplication(): InitializationResult {
     svg,
     g,
     zoom,
-    treeVisualization,
     
     // Data and functions
     root,

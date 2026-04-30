@@ -698,31 +698,6 @@ body {
     stroke: orange;
     stroke-width: 3;
   }
-
-  .branch-toggle {
-    cursor: pointer;
-    outline: none;
-  }
-
-  .branch-toggle-circle {
-    fill: var(--bg-secondary);
-    stroke: var(--accent-primary);
-    stroke-width: 1.5;
-    filter: drop-shadow(0 1px 3px var(--shadow-light));
-  }
-
-  .branch-toggle-text {
-    fill: var(--accent-primary);
-    font-size: 12px;
-    font-weight: var(--font-weight-bold);
-    pointer-events: none;
-  }
-
-  .branch-toggle:hover .branch-toggle-circle,
-  .branch-toggle:focus .branch-toggle-circle {
-    fill: var(--accent-light);
-    stroke-width: 2;
-  }
   
   /* Enhanced Generation Headers */
   .generation-header {

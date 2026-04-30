@@ -19,7 +19,6 @@ export interface TreeVisualizationConfig {
   margin?: { top: number; right: number; bottom: number; left: number };
   countrySvgs: Record<string, string>;
   originalPersonData?: Person; // For lineage tracing
-  initialVisibleDepth?: number;
   onNodeClick?: (person: Person, depth: number) => void;
   onNodeHover?: (person: Person, depth: number, element: any, event?: any) => void;
   onNodeHoverOut?: () => void;
@@ -48,10 +47,6 @@ export class TreeVisualization {
   private config: TreeVisualizationConfig;
   private state: TreeVisualizationState;
   private hoverTimeout: number | null = null;
-  private fullRoot: any = null;
-  private visibleRoot: any = null;
-  private expandedNodeKeys = new Set<string>();
-  private collapsedNodeKeys = new Set<string>();
   private renderProfile: RenderProfile = {
     totalNodes: 0,
     labelDepthLimit: Number.POSITIVE_INFINITY,
@@ -62,7 +57,6 @@ export class TreeVisualization {
   constructor(config: TreeVisualizationConfig) {
     this.config = {
       margin: { top: 50, right: 150, bottom: 50, left: 150 },
-      initialVisibleDepth: 8,
       ...config
     };
     this.state = {} as TreeVisualizationState;
@@ -94,21 +88,6 @@ export class TreeVisualization {
 
     // Create main group
     this.state.g = this.state.svg.append("g");
-
-    this.state.svg.on("click.branch-toggle", (event) => {
-      const target = event.target as Element | null;
-      const toggle = target?.closest?.(".branch-toggle") as SVGElement | null;
-      if (!toggle) return;
-
-      event.preventDefault();
-      event.stopPropagation();
-
-      const nodeKey = toggle.getAttribute("data-node-key");
-      const isCollapsed = toggle.getAttribute("data-collapsed") === "true";
-      if (nodeKey) {
-        this.toggleNodeExpansionByKey(nodeKey, isCollapsed);
-      }
-    });
 
     // Create defs for patterns
     this.state.defs = this.state.svg.append("defs");
@@ -182,7 +161,6 @@ export class TreeVisualization {
    * Update the tree with new data
    */
   updateTree(root: any): void {
-    this.fullRoot = root;
     this.state.root = root;
     measureSync("tree.update", () => this.renderTree());
   }
@@ -192,9 +170,7 @@ export class TreeVisualization {
    */
   private renderTree(): void {
     const { width, height } = this.config;
-    const root = this.buildVisibleHierarchy(this.fullRoot);
-    this.visibleRoot = root;
-    this.state.root = root;
+    const root = this.state.root;
 
     const descendants = measureSync("tree.layout", () => {
       this.state.treeLayout(root);
@@ -258,11 +234,15 @@ export class TreeVisualization {
    */
   private renderNodes(root: any): void {
     const duration = this.renderProfile.animate ? 300 : 0;
-    const nodes = this.state.g.selectAll<SVGGElement, any>(".node")
+    const nodes = this.state.g.selectAll(".node")
       .data(root.descendants(), (d: any) => this.getNodeKey(d));
 
     const nodeEnter = nodes.enter().append("g")
-      .attr("class", (d: any) => this.getNodeClasses(d))
+      .attr("class", (d: any) => {
+        const classes = [d.depth === 0 ? "node root-node" : "node"];
+        if (!this.shouldRenderLabel(d.depth)) classes.push("compact-node");
+        return classes.join(" ");
+      })
       .attr("transform", (d: any) => `translate(${d.x ?? 0},${d.y ?? 0})`)
       .attr("opacity", 0)
       .on("click", (_, d: any) => {
@@ -287,9 +267,6 @@ export class TreeVisualization {
 
     nodeEnter.transition().duration(duration).attr("opacity", 1);
 
-    const allNodes = nodeEnter.merge(nodes)
-      .attr("class", (d: any) => this.getNodeClasses(d));
-
     nodes.transition().duration(duration)
       .attr("transform", (d: any) => `translate(${d.x ?? 0},${d.y ?? 0})`);
 
@@ -300,8 +277,6 @@ export class TreeVisualization {
 
     // Render node text
     this.renderNodeText(nodeEnter.filter((d: any) => this.shouldRenderLabel(d.depth)));
-
-    this.renderBranchToggles(allNodes);
   }
 
   /**
@@ -538,121 +513,6 @@ export class TreeVisualization {
 
   private shouldRenderImage(depth: number): boolean {
     return depth <= this.renderProfile.imageDepthLimit;
-  }
-
-  private buildVisibleHierarchy(root: any): any {
-    if (!root) return root;
-
-    const visibleRoot = root.copy();
-    const shouldDefaultCollapse = root.descendants().length > 800;
-
-    visibleRoot.eachBefore((node: any) => {
-      const key = this.getNodeKey(node);
-      const shouldPrune = this.collapsedNodeKeys.has(key) ||
-        (shouldDefaultCollapse &&
-          node.depth >= (this.config.initialVisibleDepth ?? 8) &&
-          !this.expandedNodeKeys.has(key));
-
-      if (shouldPrune && node.children?.length) {
-        node.children = undefined;
-      }
-    });
-
-    return visibleRoot;
-  }
-
-  private getNodeClasses(node: any): string {
-    const classes = [node.depth === 0 ? "node root-node" : "node"];
-    if (!this.shouldRenderLabel(node.depth)) classes.push("compact-node");
-    if (this.hasExpandableChildren(node)) classes.push("expandable-node");
-    if (this.isNodeCollapsed(node)) classes.push("collapsed-node");
-    return classes.join(" ");
-  }
-
-  private hasExpandableChildren(node: any): boolean {
-    return Array.isArray(node.data.parents) && node.data.parents.filter(Boolean).length > 0;
-  }
-
-  private isNodeCollapsed(node: any): boolean {
-    return this.hasExpandableChildren(node) && !node.children?.length;
-  }
-
-  private renderBranchToggles(nodes: d3.Selection<SVGGElement, any, SVGGElement, any>): void {
-    nodes.selectAll(".branch-toggle").remove();
-
-    const handleToggle = (event: Event, d: any) => {
-      event.stopPropagation();
-      this.toggleNodeExpansion(d);
-    };
-
-    const toggles = nodes
-      .filter((d: any) => this.hasExpandableChildren(d))
-      .append("g")
-      .attr("class", "branch-toggle")
-      .attr("transform", (d: any) => `translate(${this.getToggleOffset(d.depth)}, 0)`)
-      .attr("data-node-key", (d: any) => this.getNodeKey(d))
-      .attr("data-depth", (d: any) => d.depth)
-      .attr("data-parent-count", (d: any) => d.data.parents?.filter(Boolean).length ?? 0)
-      .attr("data-collapsed", (d: any) => String(this.isNodeCollapsed(d)))
-      .attr("tabindex", 0)
-      .attr("role", "button")
-      .attr("aria-label", (d: any) => `${this.isNodeCollapsed(d) ? "Expand" : "Collapse"} ${d.data.name || "branch"}`)
-      .style("pointer-events", "all")
-      .on("click", handleToggle)
-      .on("keydown", (event, d: any) => {
-        if (event.key !== "Enter" && event.key !== " ") return;
-        event.preventDefault();
-        handleToggle(event, d);
-      });
-
-    toggles.append("circle")
-      .attr("class", "branch-toggle-circle")
-      .attr("r", 8)
-      .style("pointer-events", "all")
-      .on("click", handleToggle);
-
-    toggles.append("text")
-      .attr("class", "branch-toggle-text")
-      .attr("text-anchor", "middle")
-      .attr("dominant-baseline", "central")
-      .text((d: any) => this.isNodeCollapsed(d) ? "+" : "-");
-  }
-
-  private getToggleOffset(depth: number): number {
-    return 18 + (8 / Math.max(1, Math.pow(2, Math.max(depth - 1, 0))));
-  }
-
-  private toggleNodeExpansion(node: any): void {
-    this.toggleNodeExpansionByKey(this.getNodeKey(node), this.isNodeCollapsed(node));
-  }
-
-  private toggleNodeExpansionByKey(key: string, isCollapsed: boolean): void {
-    if (isCollapsed) {
-      this.expandedNodeKeys.add(key);
-      this.collapsedNodeKeys.delete(key);
-    } else {
-      this.collapsedNodeKeys.add(key);
-      this.expandedNodeKeys.delete(key);
-    }
-
-    measureSync("tree.toggleBranch", () => this.renderTree());
-  }
-
-  expandToPersonName(name: string): any | null {
-    if (!this.fullRoot) return null;
-
-    const target = this.fullRoot.descendants().find((node: any) => node.data.name === name);
-    if (!target) return null;
-
-    target.ancestors().forEach((ancestor: any) => {
-      const key = this.getNodeKey(ancestor);
-      this.expandedNodeKeys.add(key);
-      this.collapsedNodeKeys.delete(key);
-    });
-
-    measureSync("tree.expandSearchPath", () => this.renderTree());
-    const targetKey = this.getNodeKey(target);
-    return this.visibleRoot?.descendants().find((node: any) => this.getNodeKey(node) === targetKey) ?? null;
   }
 
   private getNodeKey(node: any): string {
