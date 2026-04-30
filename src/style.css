@@ -4881,12 +4881,12 @@ button {
 
 /* Search clear button alignment */
 .search-input-wrapper #search-input {
-  padding-right: 3rem;
+  padding-right: 4rem;
 }
 
 .search-input-wrapper .search-clear-btn {
   top: 50%;
-  right: var(--space-2);
+  right: 1rem;
   width: 32px;
   min-width: 32px;
   height: 32px;
