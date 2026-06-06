@@ -98,9 +98,11 @@ export class TreeVisualization {
    */
   private createTreeLayout(): void {
     const { width, height } = this.config;
+    const [nodeX, nodeY] = this.getNodeSpacing(width);
+
     this.state.treeLayout = d3.tree<Person>()
       .size([width, height - 120])
-      .nodeSize([180, 200]);
+      .nodeSize([nodeX, nodeY]);
   }
 
   /**
@@ -437,10 +439,16 @@ export class TreeVisualization {
         .attr("y", 0)
         .text(genName);
 
+      const subtitle = width < 520
+        ? `${info.count} of ${(2**depth).toLocaleString()} ancestors`
+        : width < 760
+          ? `${info.count} ancestors • ${info.dnaPercentEach.toFixed(1)}% DNA each`
+          : `${info.count} of ${(2**depth).toLocaleString()} ancestors • ${info.dnaPercentEach.toFixed(1)}% DNA each • ${info.probOfSharingDna.toFixed(1)}% chance of sharing`;
+
       headerGroup.append("text")
         .attr("class", "generation-subtitle")
         .attr("y", 20)
-        .text(`${info.count} of ${(2**depth).toLocaleString()} ancestors • ${info.dnaPercentEach.toFixed(1)}% DNA each • ${info.probOfSharingDna.toFixed(1)}% chance of sharing`);
+        .text(subtitle);
 
       if (depth > 0) {
         this.state.g.append("line")
@@ -515,6 +523,13 @@ export class TreeVisualization {
     return depth <= this.renderProfile.imageDepthLimit;
   }
 
+  private getNodeSpacing(width: number): [number, number] {
+    if (width < 520) return [96, 150];
+    if (width < 760) return [128, 170];
+    if (width < 1100) return [150, 185];
+    return [180, 200];
+  }
+
   private getNodeKey(node: any): string {
     return node.data.id || `${node.data.name}-${node.data.birthDate || "unknown"}-${node.depth}`;
   }
@@ -556,9 +571,12 @@ export class TreeVisualization {
       .attr("height", height)
       .attr("viewBox", `${-this.config.margin!.left} ${-this.config.margin!.top} ${width + this.config.margin!.left + this.config.margin!.right} ${height + this.config.margin!.top + this.config.margin!.bottom}`);
 
+    const [nodeX, nodeY] = this.getNodeSpacing(width);
     this.state.treeLayout = d3.tree<Person>()
       .size([width, height - 120])
-      .nodeSize([180, 200]);
+      .nodeSize([nodeX, nodeY]);
+
+    this.state.minimap?.updateDimensions(width, height);
   }
 
   /**

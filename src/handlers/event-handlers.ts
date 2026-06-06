@@ -44,6 +44,10 @@ export interface EventHandlerDependencies {
   root: any;
   allNames: string[];
   searchIndex: TreeSearchIndex;
+  treeVisualization?: {
+    updateDimensions: (width: number, height: number) => void;
+  };
+  header?: HTMLElement;
   width: number;
   height: number;
   
@@ -271,6 +275,29 @@ function executeGEDCOMExport(deps: EventHandlerDependencies, options: GEDCOMExpo
   }
 }
 
+function isCompactLayout(): boolean {
+  return window.matchMedia("(max-width: 900px)").matches;
+}
+
+function closeLeftPanels(deps: EventHandlerDependencies): void {
+  deps.filterPanel.classList.add("hidden");
+  deps.statsDashboard.classList.add("hidden");
+  deps.timelinePanel.classList.add("hidden");
+  deps.filterToggleBtn.classList.remove("active");
+  deps.statsToggleBtn.classList.remove("active");
+  deps.timelineToggleBtn.classList.remove("active");
+  setPressed(deps.filterToggleBtn, false);
+  setPressed(deps.statsToggleBtn, false);
+  setPressed(deps.timelineToggleBtn, false);
+  deps.uiState.isFilterPanelVisible = false;
+  deps.uiState.isStatsDashboardVisible = false;
+  deps.uiState.isTimelinePanelVisible = false;
+}
+
+function syncResponsivePanels(deps: EventHandlerDependencies): void {
+  deps.updateGridLayout();
+}
+
 /**
  * Sets up all keyboard shortcuts
  */
@@ -436,14 +463,7 @@ export function setupButtonHandlers(deps: EventHandlerDependencies): void {
     const shouldShowStats = deps.statsDashboard.classList.contains("hidden");
 
     // Hide other panels first
-    deps.filterPanel.classList.add("hidden");
-    deps.timelinePanel.classList.add("hidden");
-    deps.filterToggleBtn.classList.remove("active");
-    deps.timelineToggleBtn.classList.remove("active");
-    setPressed(deps.filterToggleBtn, false);
-    setPressed(deps.timelineToggleBtn, false);
-    deps.uiState.isFilterPanelVisible = false;
-    deps.uiState.isTimelinePanelVisible = false;
+    closeLeftPanels(deps);
     
     // Toggle stats panel
     deps.uiState.isStatsDashboardVisible = shouldShowStats;
@@ -452,12 +472,7 @@ export function setupButtonHandlers(deps: EventHandlerDependencies): void {
     setPressed(deps.statsToggleBtn, deps.uiState.isStatsDashboardVisible);
     
     // Update grid layout
-    deps.updateGridLayout();
-    
-    // On mobile, toggle the left sidebar visibility
-    if (window.innerWidth <= 768) {
-      deps.leftSidebar.classList.toggle('active', deps.uiState.isStatsDashboardVisible);
-    }
+    syncResponsivePanels(deps);
     
     if (deps.uiState.isStatsDashboardVisible) {
       deps.initializeStatsDashboard();
@@ -472,14 +487,7 @@ export function setupButtonHandlers(deps: EventHandlerDependencies): void {
     const shouldShowTimeline = deps.timelinePanel.classList.contains("hidden");
 
     // Hide other panels first
-    deps.filterPanel.classList.add("hidden");
-    deps.statsDashboard.classList.add("hidden");
-    deps.filterToggleBtn.classList.remove("active");
-    deps.statsToggleBtn.classList.remove("active");
-    setPressed(deps.filterToggleBtn, false);
-    setPressed(deps.statsToggleBtn, false);
-    deps.uiState.isFilterPanelVisible = false;
-    deps.uiState.isStatsDashboardVisible = false;
+    closeLeftPanels(deps);
     
     // Toggle timeline panel
     deps.uiState.isTimelinePanelVisible = shouldShowTimeline;
@@ -488,12 +496,7 @@ export function setupButtonHandlers(deps: EventHandlerDependencies): void {
     setPressed(deps.timelineToggleBtn, deps.uiState.isTimelinePanelVisible);
     
     // Update grid layout
-    deps.updateGridLayout();
-    
-    // On mobile, toggle the left sidebar visibility
-    if (window.innerWidth <= 768) {
-      deps.leftSidebar.classList.toggle('active', deps.uiState.isTimelinePanelVisible);
-    }
+    syncResponsivePanels(deps);
     
     if (deps.uiState.isTimelinePanelVisible) {
       deps.initializeTimelinePanel();
@@ -505,14 +508,7 @@ export function setupButtonHandlers(deps: EventHandlerDependencies): void {
     const shouldShowFilter = deps.filterPanel.classList.contains("hidden");
 
     // Hide other panels first
-    deps.statsDashboard.classList.add("hidden");
-    deps.timelinePanel.classList.add("hidden");
-    deps.statsToggleBtn.classList.remove("active");
-    deps.timelineToggleBtn.classList.remove("active");
-    setPressed(deps.statsToggleBtn, false);
-    setPressed(deps.timelineToggleBtn, false);
-    deps.uiState.isStatsDashboardVisible = false;
-    deps.uiState.isTimelinePanelVisible = false;
+    closeLeftPanels(deps);
     
     // Toggle filter panel
     deps.uiState.isFilterPanelVisible = shouldShowFilter;
@@ -521,12 +517,7 @@ export function setupButtonHandlers(deps: EventHandlerDependencies): void {
     setPressed(deps.filterToggleBtn, deps.uiState.isFilterPanelVisible);
     
     // Update grid layout
-    deps.updateGridLayout();
-    
-    // On mobile, toggle the left sidebar visibility
-    if (window.innerWidth <= 768) {
-      deps.leftSidebar.classList.toggle('active', deps.uiState.isFilterPanelVisible);
-    }
+    syncResponsivePanels(deps);
     
     if (deps.uiState.isFilterPanelVisible) {
       deps.initializeFilterPanel();
@@ -567,12 +558,7 @@ export function setupButtonHandlers(deps: EventHandlerDependencies): void {
     setPressed(deps.legendToggleBtn, deps.uiState.isLegendVisible);
     
     // Update grid layout
-    deps.updateGridLayout();
-    
-    // On mobile, toggle the right sidebar visibility
-    if (window.innerWidth <= 768) {
-      deps.rightSidebar.classList.toggle('active', deps.uiState.isLegendVisible);
-    }
+    syncResponsivePanels(deps);
   });
 }
 
@@ -761,6 +747,9 @@ export function setupTouchHandlers(deps: EventHandlerDependencies): void {
       if (diffX > 0) {
         // Swipe left - close panels
         closeAllPanels();
+        closeLeftPanels(deps);
+        deps.rightSidebar.classList.remove('active');
+        syncResponsivePanels(deps);
       }
       isSwipeGesture = false;
     }
@@ -886,6 +875,18 @@ export function setupWindowHandlers(deps: EventHandlerDependencies): void {
       deps.closeTimelinePanel();
       deps.uiState.isTimelinePanelVisible = false;
     }
+
+    if (
+      isCompactLayout() &&
+      deps.leftSidebar.classList.contains("active") &&
+      !deps.leftSidebar.contains(event.target as Node) &&
+      !deps.filterToggleBtn.contains(event.target as Node) &&
+      !deps.statsToggleBtn.contains(event.target as Node) &&
+      !deps.timelineToggleBtn.contains(event.target as Node)
+    ) {
+      closeLeftPanels(deps);
+      syncResponsivePanels(deps);
+    }
   });
 
   // Listen for system theme changes
@@ -905,11 +906,43 @@ export function setupWindowHandlers(deps: EventHandlerDependencies): void {
     }
   });
 
+  function updateResponsiveMetrics(): void {
+    if (deps.header) {
+      document.documentElement.style.setProperty(
+        "--app-header-height",
+        `${Math.ceil(deps.header.getBoundingClientRect().height)}px`
+      );
+    }
+  }
+
+  function updateTreeDimensions(): void {
+    updateResponsiveMetrics();
+
+    const container = document.getElementById('tree-container');
+    if (!container) return;
+
+    const rect = container.getBoundingClientRect();
+    deps.width = Math.max(rect.width, 320);
+    deps.height = Math.max(rect.height, 360);
+    deps.treeVisualization?.updateDimensions(deps.width, deps.height);
+    deps.updateTree();
+  }
+
   // Debounced positioning function for resize events
   let resizeTimeout: number;
   const debouncedPositionDropdown = () => {
     clearTimeout(resizeTimeout);
     resizeTimeout = setTimeout(() => positionDropdown(deps), 100) as any;
+  };
+
+  let treeResizeTimeout: number;
+  const debouncedResize = () => {
+    clearTimeout(treeResizeTimeout);
+    treeResizeTimeout = setTimeout(() => {
+      syncResponsivePanels(deps);
+      updateTreeDimensions();
+      positionDropdown(deps);
+    }, 120) as any;
   };
 
   // Reposition dropdown on window resize (debounced)
@@ -918,48 +951,9 @@ export function setupWindowHandlers(deps: EventHandlerDependencies): void {
   // Reposition dropdown on scroll
   window.addEventListener("scroll", () => positionDropdown(deps));
 
-  // Handle orientation change
-  window.addEventListener('orientationchange', function() {
-    setTimeout(() => {
-      // Recalculate dimensions and update tree
-      const container = document.getElementById('tree-container');
-      if (container) {
-        const rect = container.getBoundingClientRect();
-        deps.width = rect.width;
-        deps.height = Math.max(rect.height, 400);
-        
-        // Update tree visualization dimensions
-        if ((deps as any).treeVisualization) {
-          (deps as any).treeVisualization.updateDimensions(deps.width, deps.height);
-        }
-        deps.updateTree();
-      }
-    }, 100);
-  });
-
-  // Handle window resize for mobile
-  window.addEventListener('resize', function() {
-    function isMobile() {
-      return window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    }
-    
-    if (isMobile()) {
-      setTimeout(() => {
-        const container = document.getElementById('tree-container');
-        if (container) {
-          const rect = container.getBoundingClientRect();
-          deps.width = rect.width;
-          deps.height = Math.max(rect.height, 400);
-          
-          // Update tree visualization dimensions
-          if ((deps as any).treeVisualization) {
-            (deps as any).treeVisualization.updateDimensions(deps.width, deps.height);
-          }
-          deps.updateTree();
-        }
-      }, 100);
-    }
-  });
+  updateResponsiveMetrics();
+  window.addEventListener('orientationchange', debouncedResize);
+  window.addEventListener('resize', debouncedResize);
 }
 
 /**

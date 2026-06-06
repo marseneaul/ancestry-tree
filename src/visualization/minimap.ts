@@ -283,6 +283,14 @@ export class Minimap {
   }
 
   /**
+   * Update the main viewport dimensions used by minimap viewport math.
+   */
+  updateDimensions(width: number, height: number): void {
+    this.config.width = width;
+    this.config.height = height;
+  }
+
+  /**
    * Helper functions for minimap coordinate mapping
    */
   private mx(x: number): number {

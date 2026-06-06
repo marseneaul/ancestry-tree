@@ -161,9 +161,29 @@ export function initializeMainApplication(): InitializationResult {
     colorLegend?.appendChild(li);
   });
 
+  function getTreeContainerDimensions(): { width: number; height: number } {
+    const treeContainer = document.getElementById("tree-container");
+    const rect = treeContainer?.getBoundingClientRect();
+    const measuredWidth = rect?.width && rect.width > 0 ? rect.width : window.innerWidth;
+    const measuredHeight = rect?.height && rect.height > 0 ? rect.height : window.innerHeight;
+
+    return {
+      width: Math.max(measuredWidth, 320),
+      height: Math.max(measuredHeight, 360)
+    };
+  }
+
+  function updateResponsiveMetrics(): void {
+    document.documentElement.style.setProperty(
+      "--app-header-height",
+      `${Math.ceil(header.getBoundingClientRect().height)}px`
+    );
+  }
+
+  updateResponsiveMetrics();
+
   // Responsive dimensions
-  let width = window.innerWidth * 0.8;
-  let height = window.innerHeight;
+  let { width, height } = getTreeContainerDimensions();
 
   // Initialize Tree Visualization
   const treeVizConfig: TreeVisualizationConfig = {
@@ -240,6 +260,8 @@ export function initializeMainApplication(): InitializationResult {
     uiState.isStatsDashboardVisible = false;
     statsDashboard.classList.add("hidden");
     statsToggleBtn.classList.remove("active");
+    statsToggleBtn.setAttribute('aria-pressed', 'false');
+    updateGridLayout();
   }
 
   // Initialize timeline panel
@@ -261,6 +283,8 @@ export function initializeMainApplication(): InitializationResult {
     uiState.isTimelinePanelVisible = false;
     timelinePanel.classList.add("hidden");
     timelineToggleBtn.classList.remove("active");
+    timelineToggleBtn.setAttribute('aria-pressed', 'false');
+    updateGridLayout();
   }
 
   // Initialize migration content in stats section
@@ -348,16 +372,28 @@ export function initializeMainApplication(): InitializationResult {
                             !statsDashboard.classList.contains("hidden") || 
                             !timelinePanel.classList.contains("hidden");
     const rightPanelVisible = !legend.classList.contains("hidden");
+
+    updateResponsiveMetrics();
+
+    if (window.matchMedia("(max-width: 900px)").matches) {
+      dashboardContainer.style.gridTemplateColumns = "1fr";
+      leftSidebar.classList.toggle("active", leftPanelVisible);
+      rightSidebar.classList.toggle("active", rightPanelVisible);
+      return;
+    }
+
+    leftSidebar.classList.remove("active");
+    rightSidebar.classList.remove("active");
     
     let gridColumns;
     if (leftPanelVisible && rightPanelVisible) {
-      gridColumns = "1fr 3fr 1fr";
+      gridColumns = "minmax(280px, 1fr) minmax(0, 3fr) minmax(240px, 1fr)";
     } else if (leftPanelVisible && !rightPanelVisible) {
-      gridColumns = "1fr 4fr 0fr";
+      gridColumns = "minmax(280px, 1fr) minmax(0, 4fr) 0fr";
     } else if (!leftPanelVisible && rightPanelVisible) {
-      gridColumns = "0fr 4fr 1fr";
+      gridColumns = "0fr minmax(0, 4fr) minmax(240px, 1fr)";
     } else {
-      gridColumns = "0fr 1fr 0fr";
+      gridColumns = "0fr minmax(0, 1fr) 0fr";
     }
     
     dashboardContainer.style.gridTemplateColumns = gridColumns;
@@ -438,9 +474,20 @@ export function initializeMainApplication(): InitializationResult {
     g.selectAll(".node").classed("highlighted", false);
   }
 
-  // Set initial active state for filter button since panel is open by default
-  filterToggleBtn.classList.add("active");
-  filterToggleBtn.setAttribute('aria-pressed', 'true');
+  if (window.matchMedia("(max-width: 900px)").matches) {
+    filterPanel.classList.add("hidden");
+    legend.classList.add("hidden");
+    uiState.isFilterPanelVisible = false;
+    uiState.isLegendVisible = false;
+    filterToggleBtn.classList.remove("active");
+    filterToggleBtn.setAttribute('aria-pressed', 'false');
+    legendToggleBtn.style.opacity = '0.5';
+    legendToggleBtn.setAttribute('aria-pressed', 'false');
+  } else {
+    // Set initial active state for filter button since panel is open by default
+    filterToggleBtn.classList.add("active");
+    filterToggleBtn.setAttribute('aria-pressed', 'true');
+  }
 
   // Initialize theme on load
   initializeTheme();
@@ -484,6 +531,8 @@ export function initializeMainApplication(): InitializationResult {
     root,
     allNames,
     searchIndex,
+    treeVisualization,
+    header,
     width,
     height,
     
